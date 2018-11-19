@@ -1,5 +1,5 @@
 // cSpell:ignore deserialize
-import * as uuid from 'uuid/v4';
+import uuid from '../util/uuid';
 import {NodeMeta, HighlightNodePartial, HighlightSource} from './types';
 import * as dom from '../util/dom';
 
