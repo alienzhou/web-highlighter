@@ -44,9 +44,13 @@ class Cache extends EventEmitter {
         return list;
     }
 
-    removeAll(): void {
+    removeAll(): string[] {
+        const ids: string[] = [];
+        for (let pair of this._data) {
+            ids.push(pair[0]);
+        }
         this._data = new Map();
-        return;
+        return ids;
     }
 }
 

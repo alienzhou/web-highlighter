@@ -124,13 +124,13 @@ export default class Highlighter extends EventEmitter {
         this.paint.removeHighlight(id);
         this.cache.remove(id);
 
-        this.emit(EventType.REMOVE, id);
+        this.emit(EventType.REMOVE, [id]);
     }
 
     removeAll() {
         this.paint.removeAllHighlight();
-        this.cache.removeAll();
+        const ids = this.cache.removeAll();
 
-        this.emit(EventType.REMOVE);
+        this.emit(EventType.REMOVE, ids);
     }
 }
