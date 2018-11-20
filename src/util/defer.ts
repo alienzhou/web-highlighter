@@ -24,6 +24,7 @@ export const resolve = <T>(data) => {
     defer.resolve(data);
     return defer.promise;
 };
+
 export const reject = <T>(data) => {
     const defer = getDefer<T>();
     defer.reject(data)

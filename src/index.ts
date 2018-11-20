@@ -1,24 +1,48 @@
-// cSpell:ignore camelcase
 import * as EventEmitter from 'eventemitter3';
-import {
-    EventType,
-    HighlighterOptions
-} from './model/types';
-import {
-    DEFAULT_OPTIONS,
-    CAMEL_DATASET_IDENTIFIER
-} from './util/const';
-import Highlight from './model/highlight';
-import {Store} from './model/types';
+import {EventType, HighlighterOptions, ERROR} from './types';
+import {DEFAULT_OPTIONS, CAMEL_DATASET_IDENTIFIER} from './util/const';
+import HighlightRange from './model/range';
+import HighlightSource from './model/source';
+import Cache from './data/cache';
 import Paint from './paint';
-import store from './data';
+import Store from './addons/store/local.store';
+
+const schemeValidate = obj => {
+    if (!obj.startMeta) {
+        return false;
+    }
+    if (!obj.endMeta) {
+        return false;
+    }
+    if (!obj.text) {
+        return false;
+    }
+    if (!obj.id) {
+        return false;
+    }
+    return true;
+};
 
 export default class Highlighter extends EventEmitter {
     static event = EventType;
+    static LocalStore = Store;
+    static buildFromJSON(obj: HighlightSource) {
+        if (schemeValidate(obj)) {
+            return null;
+        }
+
+        const source = new HighlightSource(
+            obj.startMeta,
+            obj.endMeta,
+            obj.text,
+            obj.id
+        );
+        return source;
+    }
 
     options: HighlighterOptions;
     paint: Paint;
-    store: Store<Highlight>;
+    cache: Cache;
     _hoverId: string;
 
     constructor(options: HighlighterOptions) {
@@ -31,25 +55,35 @@ export default class Highlighter extends EventEmitter {
             $root: this.options.$root,
             highlightClassName: this.options.style.highlightClassName
         });
-        this.store = store;
+        this.cache = new Cache(this.options.useLocalStore);
     }
 
     private _handleSelection = (e: Event) => {
-        const highlight = this.paint.highlightSelection();
-        if (!highlight) {
+        const range = HighlightRange.fromSelection();
+        if (!range) {
             return;
         }
-        this.store.save(highlight);
-
-        this.emit(EventType.CREATE, [highlight]);
+        const source: HighlightSource = range.freeze();
+        this.paint.highlightRange(range);
+        this.cache.save(source);
+        this.emit(EventType.CREATE, [source]);
+        HighlightRange.removeDomRange();
     }
 
     run = () => this.options.$root.addEventListener('mouseup', this._handleSelection);
     stop = () => this.options.$root.removeEventListener('mouseup', this._handleSelection);
 
-    async init() {
-        const highlights = await this.store.getAll();
-        highlights.forEach(h => this.paint.renderHighlight(h));
+    init(sources: HighlightSource[] = []) {
+        sources.forEach(s => {
+            if (s instanceof HighlightSource) {
+                this.paint.highlightSource(s);
+                return;
+            }
+            console.error(ERROR.SOURCE_TYPE_ERROR);
+        });
+        this.cache.save(sources);
+        this.emit(EventType.INIT, sources);
+
         this.options.$root.addEventListener('mouseover', e => {
             const $target = e.target as HTMLElement;
             const id = $target.dataset ? $target.dataset[CAMEL_DATASET_IDENTIFIER] : undefined;
@@ -70,18 +104,16 @@ export default class Highlighter extends EventEmitter {
             this._hoverId = id;
             this.emit(EventType.HOVER, this._hoverId);
         });
-
-        this.emit(EventType.INIT, highlights);
     }
 
-    render(highlights: Highlight[] | Highlight) {
-        const list = Array.isArray(Highlight)
-            ? highlights as Highlight[]
-            : [highlights as Highlight];
+    render(sources: HighlightSource[] | HighlightSource) {
+        const list = Array.isArray(sources)
+            ? sources as HighlightSource[]
+            : [sources as HighlightSource];
 
-        list.forEach(h => this.paint.renderHighlight(h));
+        list.forEach(s => this.paint.highlightSource(s));
 
-        this.emit(EventType.CREATE, highlights);
+        this.emit(EventType.CREATE, sources);
         return this;
     }
 
@@ -90,17 +122,15 @@ export default class Highlighter extends EventEmitter {
             return;
         }
         this.paint.removeHighlight(id);
-        this.store.remove(id);
+        this.cache.remove(id);
 
         this.emit(EventType.REMOVE, id);
     }
 
     removeAll() {
         this.paint.removeAllHighlight();
-        this.store.removeAll();
+        this.cache.removeAll();
 
         this.emit(EventType.REMOVE);
     }
 }
-
-export const event = EventType;

@@ -1,0 +1,53 @@
+import * as EventEmitter from 'eventemitter3';
+import HighlightSource from '../model/source';
+import {ERROR} from '../types'
+
+class Cache extends EventEmitter {
+    private _data: Map<string, HighlightSource> = new Map();
+    useLocalStore: boolean;
+
+    constructor(useLocalStore: boolean) {
+        super();
+        this.useLocalStore = useLocalStore;
+    }
+
+    get data() {
+        return this.getAll();
+    }
+
+    set data(map) {
+        throw ERROR.CACHE_SET_ERROR;
+    }
+
+    save(source: HighlightSource | HighlightSource[]): void {
+        if (!Array.isArray(source)) {
+            this._data.set(source.id, source);
+            return;
+        }
+        source.forEach(s => this._data.set(s.id, s));
+    }
+
+    get(id: string): HighlightSource {
+        return this._data.get(id);
+    }
+
+    remove(id: string): void {
+        this._data.delete(id);
+    }
+
+    getAll(): HighlightSource[] {
+        const list: HighlightSource[] = [];
+        this._data = new Map();
+        for (let pair of this._data) {
+            list.push(pair[1]);
+        }
+        return list;
+    }
+
+    removeAll(): void {
+        this._data = new Map();
+        return;
+    }
+}
+
+export default Cache;
