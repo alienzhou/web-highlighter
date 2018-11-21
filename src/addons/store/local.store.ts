@@ -1,12 +1,12 @@
-import Highlight from '../model/highlight';
-import {resolve, reject} from '../util/defer';
-import {ERROR} from '../model/types';
-import {LOCAL_STORE_KEY} from '../util/const';
-import {Store, StoreType, HighlightSource} from '../model/types';
+import HighlightSource from '../../model/source';
+import {Store, StoreType} from './types';
+import {ERROR} from '../../types';
+import {resolve, reject} from '../../util/defer';
+import {LOCAL_STORE_KEY} from '../../util/const';
 
-export default class LocalStore implements Store<Highlight> {
-    key = LOCAL_STORE_KEY;
+class LocalStore implements Store<HighlightSource> {
     type = StoreType.LOCAL;
+    key = LOCAL_STORE_KEY;
 
     storeToJson(): HighlightSource[] {
         const store = localStorage.getItem(this.key);
@@ -24,20 +24,28 @@ export default class LocalStore implements Store<Highlight> {
         localStorage.setItem(this.key, JSON.stringify(sources));
     }
 
-    save(highlight: Highlight): Promise<boolean> {
+    save(data: HighlightSource | HighlightSource[]): Promise<boolean> {
         const sources: HighlightSource[] = this.storeToJson();
-        // id 重复
-        if (sources.filter(s => s.id === highlight.id).length > 0) {
-            return reject(ERROR.DB_ID_DUPLICATE_ERROR);
+        const map = {};
+        sources.forEach((s, idx) => map[s.id] = idx);
+        if (!Array.isArray(data)) {
+            data = [data];
         }
-        sources.push(highlight.freeze());
+        data.forEach(s => {
+            if (map[s.id] !== undefined) {
+                sources[map[s.id]] = s;
+            }
+            else {
+                sources.push(s);
+            }
+        })
         this.jsonToStore(sources);
         return resolve(true);
     }
 
-    forceSave(highlight: Highlight): Promise<boolean> {
+    forceSave(source: HighlightSource): Promise<boolean> {
         const sources: HighlightSource[] = this.storeToJson();
-        sources.push(highlight.freeze());
+        sources.push(source);
         this.jsonToStore(sources);
         return resolve(true);
     }
@@ -45,8 +53,13 @@ export default class LocalStore implements Store<Highlight> {
     get(id: string) {
         const list = this.storeToJson()
             .filter(m => m.id === id)
-            .map(m => Highlight.boil(m));
-        return resolve<Highlight>(list[0]);
+            .map(s => new HighlightSource(
+                s.startMeta,
+                s.endMeta,
+                s.text,
+                s.id
+            ));
+        return resolve<HighlightSource>(list[0]);
     }
 
     remove(id: string) {
@@ -64,8 +77,13 @@ export default class LocalStore implements Store<Highlight> {
     }
 
     getAll() {
-        return resolve<Highlight[]>(
-            this.storeToJson().map(m => Highlight.boil(m))
+        return resolve<HighlightSource[]>(
+            this.storeToJson().map(s => new HighlightSource(
+                s.startMeta,
+                s.endMeta,
+                s.text,
+                s.id
+            ))
         );
     }
 
@@ -74,3 +92,5 @@ export default class LocalStore implements Store<Highlight> {
         return resolve<boolean>(true);
     }
 }
+
+export default LocalStore;
