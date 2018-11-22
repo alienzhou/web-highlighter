@@ -1,10 +1,12 @@
 const webpack = require('webpack');
-const config = require('../config/prod.config.js');
+const configPath = process.env.target === 'example' ? '../config/example.config.js' : '../config/prod.config.js';
+const config = require(configPath);
 
-const compiler = webpack(config, (err, stats) => {
+webpack(config, (err, stats) => {
     if (err || stats.hasErrors() || stats.hasWarnings()) {
+        console.log(err);
         process.exit(1);
-    } else {
-        process.exit(0);
     }
+    console.log(stats.toString({colors: true}));
+    process.exit(0);
 });

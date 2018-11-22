@@ -1,5 +1,4 @@
-const path = require('path');
-const distPath = require('./paths.js').distPath;
+const staticPath = require('./paths.js').staticPath;
 
 module.exports = {
     disableHostCheck: true,
@@ -8,6 +7,6 @@ module.exports = {
     watchOptions: {
         ignored: /node_modules/
     },
-    contentBase: distPath,
-    index: distPath
+    contentBase: staticPath,
+    index: 'index.html'
 };
