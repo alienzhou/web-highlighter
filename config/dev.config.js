@@ -1,15 +1,11 @@
 
 // cSpell:ignore devtool
-const path = require('path');
-const baseConfig = require('./base.config');
 const merge = require('webpack-merge');
+const baseConfig = require('./example.base.config');
 
 const config = {
     mode: 'development',
-    devtool: 'cheap-eval-source-map',
-    output: {
-        filename: 'highlight.js'
-    }
+    devtool: 'source-map'
 };
 
 module.exports = merge(baseConfig, config);

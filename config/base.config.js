@@ -1,4 +1,3 @@
-// cSpell:ignore contenthash
 const path = require('path');
 const basePath = require('./paths.js').basePath;
 
