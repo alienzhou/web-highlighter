@@ -6,7 +6,7 @@ const baseConfig = require('./base.config');
 
 const config = {
     entry: [
-        path.resolve(examplePath, 'src/index.js')
+        path.resolve(examplePath, 'index.js')
     ],
     module: {
         rules: [{
@@ -16,7 +16,7 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(examplePath, 'src/index.html')
+            template: path.resolve(examplePath, 'index.html')
         })
     ],
     output: {

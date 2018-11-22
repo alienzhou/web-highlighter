@@ -1,5 +1,5 @@
 import './index.css';
-import Highlighter from '../../dist/highlighter.min.js';
+import Highlighter from '../src/index';
 
 const store = new Highlighter.LocalStore();
 const highlighter = new Highlighter();
@@ -33,13 +33,3 @@ highlighter
         console.log(ids);
         ids.forEach(id => store.remove(id));
     });
-
-const $idInput = document.getElementById('js-highlight-remove-input');
-document.getElementById('js-highlight-remove-btn').addEventListener('click', () => {
-    const id = $idInput.value;
-    highlighter.remove(id);
-});
-
-document.getElementById('js-highlight-remove-all-btn').addEventListener('click', () => {
-    highlighter.removeAll();
-});
