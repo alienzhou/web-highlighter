@@ -12,6 +12,8 @@
 - API调整，配置梳理，事件梳理
 - 记录highlight的页面位置信息，例如top、left
 - 扩展点
+- test
+- 设置highlight属性样式等
 
 ## 主流程
 
