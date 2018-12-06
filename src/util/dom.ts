@@ -18,8 +18,13 @@ const countGlobalNodeIndex = ($node: Node): number => {
     return -1;
 };
 
-const getTextChildByOffset = ($root: Node, offset: number): DomNode => {
-    const nodeStack: Array<Node> = [$root];
+/**
+ * get the text dom node & offset by parent node and overall offset
+ * @param $parent parent node
+ * @param offset offset in all text
+ */
+const getTextChildByOffset = ($parent: Node, offset: number): DomNode => {
+    const nodeStack: Array<Node> = [$parent];
 
     let $curNode: Node = null;
     let curOffset = 0;
@@ -45,8 +50,10 @@ const getTextChildByOffset = ($root: Node, offset: number): DomNode => {
     };
 }
 
-// 根（祖先）内，当前文本节点的前驱文本节点内容的总长度（offset）
-// 不包含当前节点中的offset
+/**
+ * text total length in all predecessors (text nodes) in the root node
+ * (without offset in current node)
+ */
 const getTextPreOffset = ($root: Node, $text: Node): number => {
     const nodeStack: Array<Node> = [$root];
 
@@ -69,7 +76,9 @@ const getTextPreOffset = ($root: Node, $text: Node): number => {
     return offset;
 }
 
-// 找到非 highlight 的最近祖先节点，即为原始文档下的父节点
+/**
+ * find the original dom parent node (none highlight dom)
+ */
 const getOriginParent = ($node: Text): HTMLElement => {
     let $originParent = $node.parentNode as HTMLElement;
     while (
@@ -93,7 +102,11 @@ export const getDomMeta = ($node: Text, offset: number): DomMeta => {
     };
 };
 
-export const queryDomByMeta = (meta: DomMeta) => {
+/**
+ * get current dom node by DomMeta info
+ * @param meta DomMeta
+ */
+export const queryDomByMeta = (meta: DomMeta): {offset: number, $node: Node} => {
     const {
         parentTagName: tagName,
         parentIndex: index,
@@ -104,7 +117,7 @@ export const queryDomByMeta = (meta: DomMeta) => {
 };
 
 /**
- * [DFS] 获取开始与结束节点间选中的所有节点
+ * [DFS] get all the dom nodes between the start and end node
  */
 export const getSelectedNodes = (
     $root: HTMLElement | Document = window.document,
@@ -113,7 +126,7 @@ export const getSelectedNodes = (
     startOffset: number,
     endOffset: number
 ): SelectedNode[] => {
-    // 开始节点和结束节点为同一个节点时，直接截取该节点返回
+    // split current node when the start and end is the same
     if ($startNode === $endNode && $startNode instanceof Text) {
         $startNode.splitText(startOffset);
         let passedNode = $startNode.nextSibling as Text;
@@ -136,7 +149,7 @@ export const getSelectedNodes = (
             nodeStack.push(children[i]);
         }
 
-        // 只记录文本节点
+        // only push text node
         if (curNode === $startNode) {
             if (curNode.nodeType === 3) {
                 // 选取后半段
@@ -149,7 +162,7 @@ export const getSelectedNodes = (
                 });
 
             }
-            // 开始进入选择范围
+            // meet the start node (begin traverse)
             withinSelectedRange = true;
         }
         else if (curNode === $endNode) {
@@ -163,10 +176,10 @@ export const getSelectedNodes = (
                     splitType: SplitType.tail
                 });
             }
-            // 碰到结束节点，退出循环
+            // meet the end node
             break;
         }
-        // 范围内的普通文本节点
+        // text nodes between the range
         else if (withinSelectedRange && curNode.nodeType === 3) {
             selectedNodes.push({
                 $node: curNode as Text,
@@ -178,6 +191,9 @@ export const getSelectedNodes = (
     return selectedNodes;
 };
 
+/**
+ * is current node the highlight wrap node
+ */
 export const isHighlightWrapNode = ($node: HTMLElement) => (
     $node.dataset && $node.dataset[CAMEL_DATASET_IDENTIFIER]
 );

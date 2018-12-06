@@ -20,7 +20,7 @@ class HighlightSource {
         this.id = id;
     }
 
-    boil() {
+    deSerialize() {
         const start = queryDomByMeta(this.startMeta);
         const end = queryDomByMeta(this.endMeta);
         const range = new HighlightRange(

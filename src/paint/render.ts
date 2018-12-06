@@ -9,6 +9,9 @@ import {
     CAMEL_DATASET_IDENTIFIER_EXTRA
 } from '../util/const'
 
+/**
+ * wrap a dom node with highlight wrap
+ */
 const wrapHighlight = (
     selected: SelectedNode,
     range: HighlightRange,
@@ -18,7 +21,7 @@ const wrapHighlight = (
     const $prev = selected.$node.previousSibling;
     const $next = selected.$node.nextSibling;
 
-    // 文本节点，且不包裹在span中，照常加 span 包裹来高亮
+    // text node, not in a highlight wrap -> should wrap in a highlight wrap
     if (!isHighlightWrapNode($parent)) {
         className = className || DEFAULT_OPTIONS.style.highlightClassName;
 
@@ -31,7 +34,7 @@ const wrapHighlight = (
         $wrap.appendChild(selected.$node.cloneNode(false));
         selected.$node.parentElement.replaceChild($wrap, selected.$node);
     }
-    // 文本节点，包裹在span中，则需要切分
+    // text node, in a highlight wrap -> should split the highlight wrap
     else if (isHighlightWrapNode($parent) && ($prev || $next)) {
         const $fr = document.createDocumentFragment();
         const parentId = $parent.dataset[CAMEL_DATASET_IDENTIFIER];
@@ -81,7 +84,7 @@ const wrapHighlight = (
         $wrap.dataset[CAMEL_DATASET_SPLIT_TYPE] = splitType;
         $parent.parentNode.replaceChild($fr, $parent);
     }
-    // 与 span 节点完全重叠，只需要记录额外id信息
+    // completely overlap (with a highlight wrap) -> only add extra id info
     else {
         const dataset = $parent.dataset;
         dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
@@ -90,6 +93,9 @@ const wrapHighlight = (
     }
 };
 
+/**
+ * render range into highlight status
+ */
 export function render($root: HTMLElement|Document, range: HighlightRange, className?: string): void {
     const {
         start: {

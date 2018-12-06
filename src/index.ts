@@ -1,6 +1,7 @@
 import * as EventEmitter from 'eventemitter3';
 import {EventType, HighlighterOptions, ERROR} from './types';
 import {DEFAULT_OPTIONS, CAMEL_DATASET_IDENTIFIER} from './util/const';
+import {isHighlightWrapNode} from './util/dom';
 import HighlightRange from './model/range';
 import HighlightSource from './model/source';
 import Cache from './data/cache';
@@ -63,7 +64,7 @@ export default class Highlighter extends EventEmitter {
         if (!range) {
             return;
         }
-        const source: HighlightSource = range.freeze();
+        const source: HighlightSource = range.serialize();
         this.paint.highlightRange(range);
         this.cache.save(source);
         this.emit(EventType.CREATE, [source]);
@@ -86,10 +87,8 @@ export default class Highlighter extends EventEmitter {
 
         this.options.$root.addEventListener('mouseover', e => {
             const $target = e.target as HTMLElement;
-            const id = $target.dataset ? $target.dataset[CAMEL_DATASET_IDENTIFIER] : undefined;
-            // 未 hover 到 highlight 上
-            if (!id) {
-                // 离开 highlight
+            if (!isHighlightWrapNode($target)) {
+                // leave highlight
                 if (this._hoverId) {
                     this.emit(EventType.HOVER_OUT, this._hoverId);
                 }
@@ -97,7 +96,9 @@ export default class Highlighter extends EventEmitter {
                 this._hoverId = null;
                 return;
             }
-            // 同一个 highlight 上不重复触发
+
+            const id = $target.dataset ? $target.dataset[CAMEL_DATASET_IDENTIFIER] : undefined;
+            // prevent triggering hover in the same highlight
             if (this._hoverId === id) {
                 return;
             }

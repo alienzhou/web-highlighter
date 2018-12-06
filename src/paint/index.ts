@@ -43,7 +43,7 @@ export default class Paint {
     }
 
     highlightSource(source: HighlightSource) {
-        const range = source.boil();
+        const range = source.deSerialize();
         this.highlightRange(range);
     }
 

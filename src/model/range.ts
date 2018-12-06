@@ -51,7 +51,7 @@ class HighlightRange {
         this.frozen = frozen;
     }
 
-    freeze(): HighlightSource {
+    serialize(): HighlightSource {
         const startMeta = getDomMeta(this.start.$node as Text, this.start.offset);
         const endMeta = getDomMeta(this.end.$node as Text, this.end.offset);
         this.frozen = true;
