@@ -1,6 +1,6 @@
 import HighlightSource from './source';
 import uuid from '../util/uuid';
-import {DomNode} from '../types';
+import {DomNode, ERROR} from '../types';
 import {getDomMeta} from '../util/dom';
 import {getDomRange, removeSelection} from '../util/range';
 
@@ -38,6 +38,10 @@ class HighlightRange {
         id?: string,
         frozen: boolean = false
     ) {
+        if ($start.nodeType !== 3 || $end.nodeType !== 3) {
+            console.warn(ERROR.RANGE_NODE_INVALID);
+        }
+
         this.start = {
             $node: $start,
             offset: startOffset
@@ -51,7 +55,7 @@ class HighlightRange {
         this.frozen = frozen;
     }
 
-    freeze(): HighlightSource {
+    serialize(): HighlightSource {
         const startMeta = getDomMeta(this.start.$node as Text, this.start.offset);
         const endMeta = getDomMeta(this.end.$node as Text, this.end.offset);
         this.frozen = true;

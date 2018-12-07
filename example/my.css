@@ -1,0 +1,65 @@
+main .highlight-wrap-hover {
+    background: #f7aaaa;
+}
+
+.my-remove-tip {
+    box-sizing: border-box;
+    position: absolute;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    height: 20px;
+    width: 40px;
+    color: #fff;
+    background: #444;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 18px;
+    overflow: visible;
+}
+
+.my-remove-tip::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    bottom: -4px;
+    border-color: #444 transparent transparent;
+    border-width: 4px 4px 0;
+    border-style: solid;
+    height: 0;
+    width: 0;
+}
+
+.op-panel {
+    position: fixed;
+    top: 40px;
+    left: 40px;
+}
+
+.op-panel input[type="radio"] {
+    opacity: 1;
+    width: auto;
+    position: static;
+    line-height: normal;
+    height: 15px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.op-panel .op-name {
+    margin-right: 0;
+}
+
+.op-panel label {
+    font-size: 12px;
+    margin-right: 10px;
+}
+
+.op-panel .op-btn {
+    display: block;
+    font-size: 12px;
+}
+
+.op-panel .op-btn.disabled {
+    cursor: not-allowed;
+}

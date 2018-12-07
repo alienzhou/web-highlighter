@@ -1,7 +1,6 @@
 import HighlightSource from '../../model/source';
 import {Store, StoreType} from './types';
-import {ERROR} from '../../types';
-import {resolve, reject} from '../../util/defer';
+import {resolve} from '../../util/defer';
 import {LOCAL_STORE_KEY} from '../../util/const';
 
 class LocalStore implements Store<HighlightSource> {

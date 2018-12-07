@@ -19,6 +19,7 @@ export default class Paint {
     constructor(options?: PainterOptions) {
         this.options = {
             $root: options.$root,
+            exceptSelectors: options.exceptSelectors,
             highlightClassName: options.highlightClassName
         };
         this.styleId = STYLE_TAG_ID;
@@ -39,11 +40,12 @@ export default class Paint {
         if (!range.frozen) {
             throw ERROR.HIGHLIGHT_RANGE_FROZEN;
         }
-        render(this.options.$root, range, this.options.highlightClassName);
+        const {$root, highlightClassName, exceptSelectors} = this.options;
+        return render($root, range, exceptSelectors, highlightClassName);
     }
 
     highlightSource(source: HighlightSource) {
-        const range = source.boil();
+        const range = source.deSerialize();
         this.highlightRange(range);
     }
 
