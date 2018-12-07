@@ -5,6 +5,7 @@ const staticDirname = 'static';
 const examplePath = path.resolve(basePath, 'example');
 const staticPath = path.resolve(examplePath, staticDirname);
 const distPath = path.resolve(basePath, distDirname);
+const exampleMdPath = path.resolve(examplePath, 'md.html');
 
 module.exports = {
     basePath,
@@ -12,5 +13,6 @@ module.exports = {
     staticDirname,
     examplePath,
     staticPath,
-    distPath
+    distPath,
+    exampleMdPath
 };
