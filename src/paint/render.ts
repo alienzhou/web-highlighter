@@ -16,16 +16,17 @@ const wrapHighlight = (
     selected: SelectedNode,
     range: HighlightRange,
     className?: string
-): void => {
+): HTMLElement => {
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
     const $next = selected.$node.nextSibling;
 
+    let $wrap: HTMLElement;
     // text node, not in a highlight wrap -> should wrap in a highlight wrap
     if (!isHighlightWrapNode($parent)) {
         className = className || DEFAULT_OPTIONS.style.highlightClassName;
 
-        const $wrap = document.createElement('span');
+        $wrap = document.createElement('span');
         $wrap.classList.add(className);
 
         $wrap.dataset[CAMEL_DATASET_IDENTIFIER] = range.id;
@@ -39,7 +40,7 @@ const wrapHighlight = (
         const $fr = document.createDocumentFragment();
         const parentId = $parent.dataset[CAMEL_DATASET_IDENTIFIER];
         const parentExtraId = $parent.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
-        const $wrap = document.createElement('span');
+        $wrap = document.createElement('span');
         $wrap.classList.add(className);
 
         $wrap.dataset[CAMEL_DATASET_IDENTIFIER] = range.id;
@@ -86,27 +87,28 @@ const wrapHighlight = (
     }
     // completely overlap (with a highlight wrap) -> only add extra id info
     else {
+        $wrap = $parent;
         const dataset = $parent.dataset;
         dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
             ? dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] + ID_DIVISION + range.id
             : range.id;
     }
+    return $wrap;
 };
 
 /**
  * render range into highlight status
  */
-export function render($root: HTMLElement|Document, range: HighlightRange, className?: string): void {
+export function render(
+    $root: HTMLElement|Document,
+    range: HighlightRange,
+    exceptSelectors: Array<string>,
+    className?: string
+): Array<HTMLElement> {
     const {
-        start: {
-            $node: $startNode,
-            offset: startOffset
-        },
-        end: {
-            $node: $endNode,
-            offset: endOffset
-        }
+        start: {$node: $startNode, offset: startOffset},
+        end: {$node: $endNode, offset: endOffset}
     } = range;
-    const nodes = getSelectedNodes($root, $startNode, $endNode, startOffset, endOffset);
-    nodes.forEach(n => wrapHighlight(n, range, className));
+    const nodes = getSelectedNodes($root, $startNode, $endNode, startOffset, endOffset, exceptSelectors);
+    return nodes.map(n => wrapHighlight(n, range, className));
 };

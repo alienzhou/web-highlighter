@@ -10,7 +10,7 @@ const config = {
         new CleanWebpackPlugin([staticDirname], {root: examplePath})
     ],
     output: {
-        filename: 'index.[contenthash].js'
+        filename: 'index.[contenthash:8].js'
     }
 };
 

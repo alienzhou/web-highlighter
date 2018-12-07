@@ -1,6 +1,6 @@
 {
   "name": "highlight",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "web text highlighter",
   "main": "index.ts",
   "scripts": {
