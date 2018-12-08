@@ -13,7 +13,7 @@ export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
 export const DEFAULT_OPTIONS = {
     $root: window.document,
-    useLocalStore: false,
+    exceptSelectors: null,
     style: {
         highlightClassName: 'highlight-mengshou-wrap'
     }

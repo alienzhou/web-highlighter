@@ -1,6 +1,5 @@
 export interface HighlighterOptions {
     $root: HTMLElement;
-    useLocalStore: boolean;
     exceptSelectors: Array<string>;
     style?: {
         highlightClassName?: string;
@@ -21,18 +20,19 @@ export enum SplitType {
 };
 
 export enum ERROR {
-    DOM_TYPE_ERROR = '[DOM] receive wrong node type',
-    DOM_SELECTION_EMPTY = '[DOM] the selection contains no dom node, may be you except them',
-    RANGE_INVALID = '[RANGE] got invalid dom range, can\'t convert to a valid highlight range',
-    RANGE_NODE_INVALID = '[RANGE] start or end node isn\'t a text node, it may occur an error',
-    DB_ID_DUPLICATE_ERROR = '[STORE] unique id conflict',
-    CACHE_SET_ERROR = '[CACHE] cache.data can\'t be set manually, please use .save()',
-    SOURCE_TYPE_ERROR = '[SOURCE] object isn\'t a highlight source instance',
-    HIGHLIGHT_RANGE_FROZEN = '[HIGHLIGHT_RANGE] a highlight range must be frozen before render'
+    DOM_TYPE_ERROR = '[DOM] Receive wrong node type.',
+    DOM_SELECTION_EMPTY = '[DOM] The selection contains no dom node, may be you except them.',
+    RANGE_INVALID = '[RANGE] Got invalid dom range, can\'t convert to a valid highlight range.',
+    RANGE_NODE_INVALID = '[RANGE] Start or end node isn\'t a text node, it may occur an error.',
+    DB_ID_DUPLICATE_ERROR = '[STORE] Unique id conflict.',
+    CACHE_SET_ERROR = '[CACHE] Cache.data can\'t be set manually, please use .save().',
+    SOURCE_TYPE_ERROR = '[SOURCE] Object isn\'t a highlight source instance.',
+    HIGHLIGHT_RANGE_FROZEN = '[HIGHLIGHT_RANGE] A highlight range must be frozen before render.',
+    HIGHLIGHT_SOURCE_NONE_RENDER = '[HIGHLIGHT_SOURCE] This highlight source isn\'t rendered.'
+        + ' May be the exception skips it or the dom structure has changed.'
 };
 
 export enum EventType {
-    INIT = 'highlight:init',
     CREATE = 'selection:create',
     REMOVE = 'selection:remove',
     MODIFY = 'selection:modify',
@@ -65,4 +65,15 @@ export interface DomNode {
 export interface DomPosition {
     top: number;
     left: number;
+}
+
+export interface HighlightPosition {
+    start: {
+        top: number;
+        left: number;
+    };
+    end: {
+        top: number;
+        left: number;
+    }
 }

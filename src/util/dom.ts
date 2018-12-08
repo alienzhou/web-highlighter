@@ -163,6 +163,7 @@ export const getSelectedNodes = (
         let $element = $startNode as Node;
         while ($element) {
             if ($element.nodeType === 1
+                && exceptSelectors
                 && exceptSelectors.some(s => isMatchSelector($element as HTMLElement, s))
             ) {
                 return [];
@@ -188,7 +189,11 @@ export const getSelectedNodes = (
     while (curNode = nodeStack.pop()) {
 
         // do not traverse the excepted node
-        if (curNode.nodeType === 1 && exceptSelectors.some(s => isMatchSelector(curNode as HTMLElement, s))) {
+        if (
+            curNode.nodeType === 1
+            && exceptSelectors
+            && exceptSelectors.some(s => isMatchSelector(curNode as HTMLElement, s))
+        ) {
             continue;
         }
 

@@ -36,7 +36,7 @@ export default class Paint {
         this.$style = $style;
     }
 
-    highlightRange(range: HighlightRange) {
+    highlightRange(range: HighlightRange): Array<HTMLElement> {
         if (!range.frozen) {
             throw ERROR.HIGHLIGHT_RANGE_FROZEN;
         }
@@ -44,9 +44,9 @@ export default class Paint {
         return render($root, range, exceptSelectors, highlightClassName);
     }
 
-    highlightSource(source: HighlightSource) {
+    highlightSource(source: HighlightSource): Array<HTMLElement> {
         const range = source.deSerialize();
-        this.highlightRange(range);
+        return this.highlightRange(range);
     }
 
     removeAllHighlight() {

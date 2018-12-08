@@ -2,12 +2,6 @@ import './index.css';
 import './my.css';
 import Highlighter from '../src/index';
 
-const highlighter = new Highlighter({
-    exceptSelectors: ['.my-remove-tip', 'pre']
-});
-// currently Highlighter provide a easy localStorage
-const store = new Highlighter.LocalStore();
-
 /**
  * create a delete tip
  */
@@ -35,19 +29,49 @@ const switchAuto = auto => {
         $btn.classList.remove('disabled');
         $btn.removeAttribute('disabled');
     }
-}
+};
+
+/**
+ * toggle exception swtich & button status
+ */
+const switchException = status => {
+    if (status === 'on') {
+        highlighter.setOption({
+            exceptSelectors: ['.my-remove-tip', 'pre', 'code']
+        });
+    }
+    else {
+        highlighter.setOption({
+            exceptSelectors: ['.my-remove-tip']
+        });
+    }
+};
 
 /**
  * log
  */
-const log = console.log.bind(console);
+const log = console.log.bind(console, '[highlighter]');
+
+
+const highlighter = new Highlighter();
+// currently Highlighter provide a easy localStorage
+const store = new Highlighter.LocalStore();
+window.highlighter = highlighter;
+
+let exceptionStatus;
+document.querySelectorAll('[name="exception"]').forEach($n => {
+    if ($n.checked) {
+        exceptionStatus = $n.value;
+    }
+});
+switchException(exceptionStatus);
 
 /**
  * retrieve from local store
  */
 store.getAll().then(sources => {
-    log('[from cache]', sources);
-    highlighter.init(sources)
+    log('from cache -', sources);
+    highlighter.fromSource(sources)
 });
 
 /**
@@ -55,30 +79,23 @@ store.getAll().then(sources => {
  */
 highlighter
     .on(Highlighter.event.HOVER, ({id}) => {
-        log('[hover]', id);
+        log('hover -', id);
         highlighter.addClass('highlight-wrap-hover', id);
     })
     .on(Highlighter.event.HOVER_OUT, ({id}) => {
-        log('[hover out]', id);
+        log('hover out -', id);
         highlighter.removeClass('highlight-wrap-hover', id);
     })
     .on(Highlighter.event.CREATE, ({sources}) => {
-        log('[create]', sources);
+        log('create -', sources);
         sources.forEach(s => {
             const position = highlighter.getHighlightPosition(s.id);
             createTag(position.start.top, position.start.left, s.id);
         });
         store.save(sources);
     })
-    .on(Highlighter.event.INIT, ({sources}) => {
-        log('[init]', sources);
-        sources.forEach(s => {
-            const position = highlighter.getHighlightPosition(s.id);
-            createTag(position.start.top, position.start.left, s.id);
-        });
-    })
     .on(Highlighter.event.REMOVE, ({ids}) => {
-        log('[remove]', ids);
+        log('remove -', ids);
         ids.forEach(id => store.remove(id));
     });
 
@@ -96,12 +113,20 @@ document.addEventListener('click', e => {
     // delete highlight
     if ($ele.classList.contains('my-remove-tip')) {
         const id = $ele.dataset.id;
-        log('[click remove-tip]', id);
+        log('*click remove-tip*', id);
         highlighter.removeClass('highlight-wrap-hover', id);
         highlighter.remove(id);
         $ele.parentNode.removeChild($ele);
     }
-    // toggle auto highlighting
+    // toggle exception switch
+    else if ($ele.getAttribute('name') === 'exception') {
+        const val = $ele.value;
+        if (exceptionStatus !== val) {
+            switchException(val);
+            exceptionStatus = val;
+        }
+    }
+    // toggle auto highlighting switch
     else if ($ele.getAttribute('name') === 'auto') {
         const val = $ele.value;
         if (autoStatus !== val) {
@@ -115,7 +140,7 @@ document.addEventListener('click', e => {
         if (selection.isCollapsed) {
             return;
         }
-        highlighter.highlight(selection.getRangeAt(0));
+        highlighter.fromRange(selection.getRangeAt(0));
         window.getSelection().removeAllRanges();
     }
 });
