@@ -7,7 +7,7 @@
 - [x] P0: 记录highlight的页面位置信息，例如top、left
 - [x] P1: 支持手动触发highlight
 - [x] P1: 支持动态设置配置
-- [ ] P0: API调整，配置梳理，事件梳理
+- [x] P0: API调整，配置梳理，事件梳理
 - [ ] P0: 使用xPath记录节点位置
 - [ ] P1: 补充文档
 - [ ] P1: test
