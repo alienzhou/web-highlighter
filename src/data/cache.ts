@@ -4,11 +4,9 @@ import {ERROR} from '../types'
 
 class Cache extends EventEmitter {
     private _data: Map<string, HighlightSource> = new Map();
-    useLocalStore: boolean;
 
-    constructor(useLocalStore: boolean) {
+    constructor() {
         super();
-        this.useLocalStore = useLocalStore;
     }
 
     get data() {
