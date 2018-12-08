@@ -31,9 +31,13 @@ main .highlight-wrap-hover {
 }
 
 .op-panel {
+    padding: 0 5px 5px 8px;
     position: fixed;
-    top: 40px;
-    left: 40px;
+    top: 50px;
+    left: 7px;
+    background: rgba(0, 0, 0, .1);
+    border-radius: 3px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
 }
 
 .op-panel input[type="radio"] {
@@ -52,7 +56,7 @@ main .highlight-wrap-hover {
 
 .op-panel label {
     font-size: 12px;
-    margin-right: 10px;
+    margin-right: 2px;
 }
 
 .op-panel .op-btn {

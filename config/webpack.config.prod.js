@@ -1,3 +1,6 @@
+/**
+ * config for production (lib bundle)
+ */
 const webpack = require('webpack');
 const {distDirname, basePath} = require('./paths.js');
 const CleanWebpackPlugin = require('clean-webpack-plugin');

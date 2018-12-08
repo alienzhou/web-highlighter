@@ -5,17 +5,18 @@ const WebpackDevServer = require('webpack-dev-server');
 const convert = require('./convet-md');
 convert();
 
-const config = require('../config/dev.config.js');
+const config = require('../config/webpack.config.dev.js');
 const serverConfig = require('../config/server.config.js');
+
+WebpackDevServer.addDevServerEntrypoints(config, serverConfig);
 const compiler = webpack(config);
-const PORT = process.env.PORT || 8085;
-const HOST = process.env.HOST || '127.0.0.1';
+const {port, host} = serverConfig;
 
 const devServer = new WebpackDevServer(compiler, serverConfig);
-devServer.listen(PORT, HOST, err => {
+devServer.listen(port, host, err => {
     if (err) {
         return console.log(err);
     }
     console.log('Starting the development server...\n');
-    opn(`http://${HOST}:${PORT}`);
+    opn(`http://${host}:${port}`);
 });
