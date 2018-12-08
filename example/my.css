@@ -31,13 +31,14 @@ main .highlight-wrap-hover {
 }
 
 .op-panel {
-    padding: 0 5px 5px 8px;
+    box-sizing: border-box;
+    padding: 1px 5px 6px 8px;
     position: fixed;
     top: 50px;
-    left: 7px;
+    left: 15px;
     background: rgba(0, 0, 0, .1);
     border-radius: 3px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
+    border: 1px dashed #aaa;
 }
 
 .op-panel input[type="radio"] {
