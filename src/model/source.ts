@@ -7,6 +7,7 @@ class HighlightSource {
     endMeta: DomMeta;
     text: string;
     id: string;
+    __isHighlightSource: {};
 
     constructor(
         startMeta: DomMeta,

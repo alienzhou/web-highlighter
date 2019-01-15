@@ -3,11 +3,16 @@ import {Store, StoreType} from './types';
 import {resolve} from '../../util/defer';
 import {LOCAL_STORE_KEY} from '../../util/const';
 
-class LocalStore implements Store<HighlightSource> {
+type StoreInfo = {
+    hs: HighlightSource,
+    info?: any
+};
+
+class LocalStore implements Store<StoreInfo> {
     type = StoreType.LOCAL;
     key = LOCAL_STORE_KEY;
 
-    storeToJson(): HighlightSource[] {
+    storeToJson(): StoreInfo[] {
         const store = localStorage.getItem(this.key);
         let sources;
         try {
@@ -19,70 +24,80 @@ class LocalStore implements Store<HighlightSource> {
         return sources;
     }
 
-    jsonToStore(sources: HighlightSource[]): void {
-        localStorage.setItem(this.key, JSON.stringify(sources));
+    jsonToStore(stores: StoreInfo[]): void {
+        localStorage.setItem(this.key, JSON.stringify(stores));
     }
 
-    save(data: HighlightSource | HighlightSource[]): Promise<boolean> {
-        const sources: HighlightSource[] = this.storeToJson();
+    save(data: StoreInfo | StoreInfo[]): Promise<boolean> {
+        const stores: StoreInfo[] = this.storeToJson();
         const map = {};
-        sources.forEach((s, idx) => map[s.id] = idx);
+        stores.forEach((store, idx) => map[store.hs.id] = idx);
+
         if (!Array.isArray(data)) {
             data = [data];
         }
-        data.forEach(s => {
-            if (map[s.id] !== undefined) {
-                sources[map[s.id]] = s;
+
+        data.forEach(store => {
+            // update
+            if (map[store.hs.id] !== undefined) {
+                stores[map[store.hs.id]] = store;
             }
+            // append
             else {
-                sources.push(s);
+                stores.push(store);
             }
         })
-        this.jsonToStore(sources);
+        this.jsonToStore(stores);
         return resolve(true);
     }
 
-    forceSave(source: HighlightSource): Promise<boolean> {
-        const sources: HighlightSource[] = this.storeToJson();
-        sources.push(source);
-        this.jsonToStore(sources);
+    forceSave(store: StoreInfo): Promise<boolean> {
+        const stores: StoreInfo[] = this.storeToJson();
+        stores.push(store);
+        this.jsonToStore(stores);
         return resolve(true);
     }
 
     get(id: string) {
         const list = this.storeToJson()
-            .filter(m => m.id === id)
-            .map(s => new HighlightSource(
-                s.startMeta,
-                s.endMeta,
-                s.text,
-                s.id
-            ));
-        return resolve<HighlightSource>(list[0]);
+            .filter(store => store.hs.id === id)
+            .map(store => ({
+                hs: new HighlightSource(
+                    store.hs.startMeta,
+                    store.hs.endMeta,
+                    store.hs.text,
+                    store.hs.id
+                ),
+                info: store.info
+            }));
+        return resolve<StoreInfo>(list[0]);
     }
 
     remove(id: string) {
-        const sources: HighlightSource[] = this.storeToJson();
+        const stores: StoreInfo[] = this.storeToJson();
         let index: number = null;
-        for (let i = 0; i < sources.length; i++) {
-            if (sources[i].id === id) {
+        for (let i = 0; i < stores.length; i++) {
+            if (stores[i].hs.id === id) {
                 index = i;
                 break;
             }
         }
-        sources.splice(index, 1);
-        this.jsonToStore(sources);
+        stores.splice(index, 1);
+        this.jsonToStore(stores);
         return resolve<boolean>(true);
     }
 
     getAll() {
-        return resolve<HighlightSource[]>(
-            this.storeToJson().map(s => new HighlightSource(
-                s.startMeta,
-                s.endMeta,
-                s.text,
-                s.id
-            ))
+        return resolve<StoreInfo[]>(
+            this.storeToJson().map(store => ({
+                hs: new HighlightSource(
+                    store.hs.startMeta,
+                    store.hs.endMeta,
+                    store.hs.text,
+                    store.hs.id
+                ),
+                info: store.info
+            }))
         );
     }
 

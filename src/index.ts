@@ -123,6 +123,7 @@ export default class Highlighter extends EventEmitter {
 
     dispose = (): Highlighter => {
         this.options.$root.removeEventListener('mouseover', this._handleHighlightHover);
+        this.options.$root.removeEventListener('mouseup', this._handleSelection);
         return this;
     }
 

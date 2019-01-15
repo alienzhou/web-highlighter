@@ -5,7 +5,7 @@ export enum StoreType {
 
 export interface Store<T> {
     type: StoreType;
-    save(data: T): Promise<boolean>;
+    save(data: T, info?: any): Promise<boolean>;
     get(id: string): Promise<T>;
     remove(id: string): Promise<boolean>;
     getAll(): Promise<T[]>;
