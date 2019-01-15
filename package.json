@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node script/dev.js",
     "build": "export target=dist && node script/build.js",
-    "build-example": "export target=example && node script/build.js"
+    "build-example": "export target=example && node script/build.js",
+    "serve": "http-server -p 8081 ./dist",
+    "watch": "webpack --config ./config/webpack.config.prod.js --watch",
+    "dev-external": "run-p watch serve"
   },
   "keywords": [
     "text",
@@ -24,6 +27,8 @@
     "clean-webpack-plugin": "^1.0.0",
     "css-loader": "^1.0.1",
     "html-webpack-plugin": "^3.2.0",
+    "http-server": "^0.11.1",
+    "npm-run-all": "^4.1.5",
     "opn": "^5.4.0",
     "showdown": "^1.9.0",
     "style-loader": "^0.23.1",

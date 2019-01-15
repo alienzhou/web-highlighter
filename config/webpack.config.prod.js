@@ -1,3 +1,4 @@
+// cSpell:ignore devtool
 /**
  * config for production (lib bundle)
  */
@@ -12,6 +13,7 @@ const bannerInfo = `highlighter v${version} ${repository}`;
 
 const config = {
     mode: 'production',
+    devtool: 'source-map',
     output: {
         filename: 'highlighter.min.js'
     },
