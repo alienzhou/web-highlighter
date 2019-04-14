@@ -1,5 +1,5 @@
 const path = require('path');
-const basePath = require('./paths.js').basePath;
+const {srcPath, basePath} = require('./paths');
 
 module.exports = {
     entry: [
@@ -18,6 +18,9 @@ module.exports = {
         libraryExport: 'default'
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js'],
+        alias: {
+            '@src': srcPath
+        }
     }
 };

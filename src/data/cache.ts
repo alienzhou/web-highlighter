@@ -1,4 +1,4 @@
-import * as EventEmitter from 'eventemitter3';
+import EventEmitter from '@src/util/event.emitter';
 import HighlightSource from '../model/source';
 import {ERROR} from '../types'
 

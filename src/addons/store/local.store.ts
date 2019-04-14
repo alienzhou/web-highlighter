@@ -1,6 +1,12 @@
-import HighlightSource from '../../model/source';
+/**
+ * highlighter provides an easy alternative implementation for frontend store
+ * you can also implement your own lib (e.g. indexedDB)
+ * or even use a backend store server
+ */
+
+import HighlightSource from '../../model/source/index';
 import {Store, StoreType} from './types';
-import {resolve} from '../../util/defer';
+import {resolve} from '../../util/deferred';
 import {LOCAL_STORE_KEY} from '../../util/const';
 
 type StoreInfo = {
@@ -10,7 +16,11 @@ type StoreInfo = {
 
 class LocalStore implements Store<StoreInfo> {
     type = StoreType.LOCAL;
-    key = LOCAL_STORE_KEY;
+    key = '';
+
+    constructor(id?) {
+        this.key = id !== undefined ? `${LOCAL_STORE_KEY}-${id}` : LOCAL_STORE_KEY;
+    }
 
     storeToJson(): StoreInfo[] {
         const store = localStorage.getItem(this.key);

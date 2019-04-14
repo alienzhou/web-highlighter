@@ -1,15 +1,17 @@
+import Hook from "@src/util/hook";
+
 export interface HighlighterOptions {
     $root: HTMLElement;
     exceptSelectors: Array<string>;
     style?: {
-        highlightClassName?: string;
+        className?: string | Array<string>;
     }
 };
 
 export interface PainterOptions {
-    $root: HTMLElement,
-    highlightClassName?: string,
-    exceptSelectors: Array<string>
+    $root: HTMLElement;
+    className?: string | Array<string>;
+    exceptSelectors: Array<string>;
 };
 
 export enum SplitType {
@@ -37,7 +39,8 @@ export enum EventType {
     REMOVE = 'selection:remove',
     MODIFY = 'selection:modify',
     HOVER = 'selection:hover',
-    HOVER_OUT = 'selection:hover-out'
+    HOVER_OUT = 'selection:hover-out',
+    CLICK = 'selection:click',
 };
 
 export enum SelectedNodeType {
@@ -55,16 +58,12 @@ export interface DomMeta {
     parentTagName: string;
     parentIndex: number;
     textOffset: number;
+    extra?: any;
 }
 
 export interface DomNode {
     $node: Node;
     offset: number;
-}
-
-export interface DomPosition {
-    top: number;
-    left: number;
 }
 
 export interface HighlightPosition {
@@ -75,5 +74,19 @@ export interface HighlightPosition {
     end: {
         top: number;
         left: number;
+    }
+}
+
+export type HookMap = {
+    Render: {
+        UUID: Hook;
+        SelectedNodes: Hook;
+        WrapNode: Hook;
+    };
+    Serialize: {
+        RecordInfo: Hook;
+    };
+    Remove: {
+        UpdateNode: Hook;
     }
 }

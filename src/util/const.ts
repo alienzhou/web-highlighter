@@ -1,8 +1,13 @@
-// cSpell:ignore mengshou
+/**
+ * all constants
+ * cSpell:ignore mengshou
+ */
+
 import camel from './camel';
 export const ID_DIVISION = ';';
 export const LOCAL_STORE_KEY = 'highlight-mengshou';
-export const STYLE_TAG_ID = 'highlight-mengshou-style';
+export const STYLESHEET_ID = 'highlight-mengshou-style';
+export const WRAP_TAG = 'span';
 
 export const DATASET_IDENTIFIER = 'highlight-id';
 export const DATASET_IDENTIFIER_EXTRA = 'highlight-id-extra';
@@ -12,20 +17,20 @@ export const CAMEL_DATASET_IDENTIFIER_EXTRA = camel(DATASET_IDENTIFIER_EXTRA);
 export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
 export const DEFAULT_OPTIONS = {
-    $root: window.document,
+    $root: window.document.documentElement,
     exceptSelectors: null,
     style: {
-        highlightClassName: 'highlight-mengshou-wrap'
+        className: 'highlight-mengshou-wrap'
     }
 };
 
 const styles = DEFAULT_OPTIONS.style;
-export const STYLE_TAG_TEXT = `
-    .${styles.highlightClassName} {
+export const STYLESHEET_TEXT = `
+    .${styles.className} {
         background: #ff9;
         cursor: pointer;
     }
-    .${styles.highlightClassName}.active {
+    .${styles.className}.active {
         background: #ffb;
     }
 `;

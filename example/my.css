@@ -1,3 +1,18 @@
+h1:first-child {
+    color: #3c86c7;
+    padding-bottom: 0;
+}
+
+h1 + blockquote {
+    box-shadow: inset 5px 0 #ddd;
+}
+
+h1 + blockquote p {
+    margin-top: 10px;
+    color: #aaa;
+    margin-bottom: 40px;
+}
+
 main .highlight-wrap-hover {
     background: #f7aaaa;
 }

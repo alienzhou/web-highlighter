@@ -2,3 +2,7 @@ node_modules
 .DS_Store
 example/static
 example/md.html
+dist
+docs/TODO.md
+package-lock.json
+typings
