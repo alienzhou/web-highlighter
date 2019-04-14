@@ -56,6 +56,14 @@ main .highlight-wrap-hover {
     border: 1px dashed #aaa;
 }
 
+.op-panel a {
+    font-size: 14px;
+}
+
+.op-panel a:hover {
+    text-decoration: underline;
+}
+
 .op-panel input[type="radio"] {
     opacity: 1;
     width: auto;
