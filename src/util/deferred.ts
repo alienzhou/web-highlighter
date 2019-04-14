@@ -1,10 +1,10 @@
-interface Defer<T> {
+interface Deferred<T> {
     promise: Promise<T>,
     resolve: Function,
     reject: Function
 };
 
-export default function getDefer<T>(): Defer<T> {
+export default function getDeferred<T>(): Deferred<T> {
     let promise: Promise<T>;
     let resolve: Function;
     let reject: Function;
@@ -20,13 +20,13 @@ export default function getDefer<T>(): Defer<T> {
 };
 
 export const resolve = <T>(data) => {
-    const defer = getDefer<T>();
+    const defer = getDeferred<T>();
     defer.resolve(data);
     return defer.promise;
 };
 
 export const reject = <T>(data) => {
-    const defer = getDefer<T>();
+    const defer = getDeferred<T>();
     defer.reject(data)
     return defer.promise;
 };

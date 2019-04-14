@@ -1,3 +1,4 @@
+<!-- htmlcs-disable -->
 <!DOCTYPE html>
 <html lang="zh-Hans">
     <head>
@@ -18,7 +19,86 @@
     </head>
     <body>
         <main>
-            {{$markdown}}
+            <h1 id="web-highlighter">Web Highlighter</h1>
+<blockquote>
+  <p>a mini text highlighting tool for web</p>
+</blockquote>
+<p>文本高亮。用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；</p>
+<p>同时提供一种可靠的高亮区域的序列化与反序列化方法，用于实现高亮选区的持久化，用以在下次加载页面后还原高亮区域。</p>
+<p>一行代码，开启高亮功能：</p>
+<pre><code class="JavaScript language-JavaScript">(new Highlighter()).run();</code></pre>
+<p>四行代码，实现高亮持久化：</p>
+<pre><code class="JavaScript language-JavaScript">// 实例化
+var highlighter = new Highlighter();
+// 从存储中还原高亮区域
+getStore().then(s =&gt; highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+// 存储高亮区域数据
+highlighter.on(Highlighter.event.CREATE, ({sources}) =&gt; save(sources));
+// 开启自动高亮
+highlighter.run();</code></pre>
+<h2 id="支持能力">支持能力</h2>
+<ul>
+<li>文本类内容高亮</li>
+<li>文本内容取消高亮</li>
+<li>支持高亮选取重合与包含</li>
+<li>提供高亮信息持久化，通过数据还原高亮展示（内置可持久化数据格式的生成与还原）</li>
+<li>提供多个钩子，实现业务定制化</li>
+</ul>
+<h2 id="兼容性">兼容性</h2>
+<ul>
+<li>IE 10、11</li>
+<li>Edge</li>
+<li>Firefox 52+</li>
+<li>Chrome 15+</li>
+<li>Safari 5.1+</li>
+<li>Opera 15+</li>
+</ul>
+<h2 id="安装">安装</h2>
+<h3 id="npm-安装">npm 安装</h3>
+<pre><code class="bash language-bash">npm i web-highlighter</code></pre>
+<h3 id="直接从源码构建">直接从源码构建</h3>
+<pre><code class="bash language-bash"># git clone
+git clone ...
+
+# 使用某一版本
+git checkout v1.0.0
+
+npm i
+npm run build</code></pre>
+<p>然后 <code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD 格式。</p>
+<h2 id="调试">调试</h2>
+<p>外部项目引入 web-highlighter 后，由于都是压缩后的代码，出错时可能不便与调试。因此，build时除了产出最终代码产物，同时会在 <code>dist</code> 下产出 SourceMap ——  <code>web-highlighter.min.js.map</code>，外部程序使用 web-highlighter 时，可以载入该 SourceMap 用以进行源码调试。</p>
+<p>SourceMap 与一些工具的集成方式：</p>
+<ul>
+<li>浏览器中可以直接放在对应服务器目录，直接载入；</li>
+<li>webpack可以使用 <a href="https://webpack.js.org/loaders/source-map-loader/"><code>source-map-loader</code></a></li>
+<li>gulp可以结合使用 <a href="https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply"><code>vinyl-sourcemaps-apply</code></a></li>
+<li>rollup可以考虑使用 <a href="https://github.com/maxdavidson/rollup-plugin-sourcemaps"><code>rollup-plugin-sourcemaps</code></a></li>
+</ul>
+<h2 id="开发">开发</h2>
+<h3 id="启动本地-demo-进行开发">启动本地 DEMO 进行开发</h3>
+<pre><code class="bash language-bash">npm run dev</code></pre>
+<h3 id="外部系统调用调试（构建产出包并提供-http-访问）">外部系统调用调试（构建产出包并提供 HTTP 访问）</h3>
+<pre><code class="bash language-bash">npm run start</code></pre>
+<h2 id="使用">使用</h2>
+<p>引入方式：</p>
+<pre><code class="JavaScript language-JavaScript">// 全局
+var Highlighter = window.Highlighter;
+
+// CommonJS
+var Highlighter = require('highlighter');
+
+// ES Module
+import Highlighter from 'highlighter';</code></pre>
+<pre><code class="JavaScript language-JavaScript">var highlighter = new Highlighter();
+
+// 开启 划词自动高亮
+highlighter.run();</code></pre>
+<h2 id="功能">功能</h2>
+<h3 id="api-功能列表">API 功能列表</h3>
+<p><a href="./docs/API.md">相关文档</a></p>
+<h3 id="暴露的钩子函数">暴露的钩子函数</h3>
+<p><a href="./docs/ADVANCE.md">相关文档</a></p>
         </main>
         <section class="op-panel">
             <div>

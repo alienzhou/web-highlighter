@@ -71,8 +71,24 @@ switchException(exceptionStatus);
  */
 store.getAll().then(sources => {
     log('from cache -', sources);
-    highlighter.fromSource(sources)
+    sources
+        .map(h => h.hs)
+        .forEach(hs => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id));
 });
+
+function getPosition($node) {
+    let offset = {
+        top: 0,
+        left: 0
+    };
+    while ($node) {
+        offset.top += $node.offsetTop;
+        offset.left += $node.offsetLeft;
+        $node = $node.offsetParent;
+    }
+
+    return offset;
+}
 
 /**
  * highlighter event listener
@@ -89,9 +105,10 @@ highlighter
     .on(Highlighter.event.CREATE, ({sources}) => {
         log('create -', sources);
         sources.forEach(s => {
-            const position = highlighter.getHighlightPosition(s.id);
-            createTag(position.start.top, position.start.left, s.id);
+            const position = getPosition(highlighter.getDoms(s.id)[0]);
+            createTag(position.top, position.left, s.id);
         });
+        sources = sources.map(hs => ({hs}));
         store.save(sources);
     })
     .on(Highlighter.event.REMOVE, ({ids}) => {

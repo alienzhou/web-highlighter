@@ -1,0 +1,10 @@
+/.git/
+/.vscode/
+/node/modules/
+.gitignore
+.npmignore
+*.log
+_config.yml
+.gitattributes
+.gitignore
+package-lock.json

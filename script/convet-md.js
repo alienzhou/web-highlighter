@@ -1,15 +1,25 @@
 const showdown = require('showdown');
 const path = require('path');
+const chalk = require('chalk');
 const paths = require('../config/paths');
-const fs = require('fs');
+const fs = require('fs-extra');
+const g = chalk.green;
 
-module.exports = function convertMd2Html() {
-    const md = fs.readFileSync(path.resolve(paths.basePath, 'docs/note.md'), 'utf-8');
+const log = (...args) => console.log.apply(console, [g('[convert]'), ...args.map(s => g(s))]);
+
+module.exports = function () {
+    const mdPath = path.resolve(paths.basePath, 'README.md');
+
+    log(mdPath, '-', 'converting...');
+
+    const md = fs.readFileSync(mdPath, 'utf-8');
     showdown.setFlavor('github');
     const converter = new showdown.Converter();
     const html = converter.makeHtml(md);
-    fs.writeFileSync(path.resolve(paths.examplePath, 'md.html'), html, 'utf-8');
-    console.log('convert md to html success!');
+    const tpl = fs.readFileSync(paths.exampleTplPath, 'utf-8');
+    fs.outputFileSync(paths.exampleMdPath, tpl.replace(/{{\$markdown}}/, html), 'utf-8');
+
+    log(mdPath, '-', 'convert md to html success!');
 }
 
-process.argv[1] === __filename && convertMd2Html();
+process.argv[1] === __filename && module.exports();

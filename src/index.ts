@@ -1,204 +1,150 @@
-import * as EventEmitter from 'eventemitter3';
-import {EventType, HighlighterOptions, ERROR, HighlightPosition} from './types';
-import {DEFAULT_OPTIONS, CAMEL_DATASET_IDENTIFIER} from './util/const';
-import {isHighlightWrapNode, getHighlightDomById, getDomPosition, getAllHighlightDom} from './util/dom';
-import HighlightRange from './model/range';
-import HighlightSource from './model/source';
-import Cache from './data/cache';
-import Paint from './paint';
-import Store from './addons/store/local.store';
-
-const schemeValidate = obj => {
-    if (!obj.startMeta) {
-        return false;
-    }
-    if (!obj.endMeta) {
-        return false;
-    }
-    if (!obj.text) {
-        return false;
-    }
-    if (!obj.id) {
-        return false;
-    }
-    return true;
-};
+import '@src/util/dataset.polyfill';
+import EventEmitter from '@src/util/event.emitter';
+import {EventType, HighlighterOptions, ERROR, DomNode, DomMeta, HookMap} from './types';
+import HighlightRange from '@src/model/range';
+import HighlightSource from '@src/model/source';
+import {isHighlightWrapNode, getHighlightById, getHighlightsByRoot, getHighlightId} from '@src/util/dom';
+import {DEFAULT_OPTIONS} from '@src/util/const';
+import uuid from '@src/util/uuid';
+import Hook from '@src/util/hook';
+import Cache from '@src/data/cache';
+import Painter from '@src/painter';
+import Store from '@src/addons/store/local.store';
 
 export default class Highlighter extends EventEmitter {
     static event = EventType;
     static LocalStore = Store;
-    static buildFromJSON(obj: HighlightSource) {
-        if (schemeValidate(obj)) {
-            return null;
-        }
 
-        const source = new HighlightSource(
-            obj.startMeta,
-            obj.endMeta,
-            obj.text,
-            obj.id
-        );
-        return source;
-    }
-
-    options: HighlighterOptions;
-    paint: Paint;
-    cache: Cache;
     private _hoverId: string;
+    options: HighlighterOptions;
+    hooks: HookMap;
+    painter: Painter;
+    cache: Cache;
 
     constructor(options: HighlighterOptions) {
         super();
-        this.options = {
-            ...DEFAULT_OPTIONS,
-            ...options
-        };
-        this.paint = new Paint({
-            $root: this.options.$root,
-            highlightClassName: this.options.style.highlightClassName,
-            exceptSelectors: this.options.exceptSelectors
-        });
+        this.options = DEFAULT_OPTIONS;
+        // initialize hooks
+        this.hooks = this._getHooks();
+        this.setOption(options)
+        // initialize cache
         this.cache = new Cache();
+        // initialize event listener
         this.options.$root.addEventListener('mouseover', this._handleHighlightHover);
+        this.options.$root.addEventListener('click', this._handleHighlightClick);
     }
 
-    /*================= you should not use it outside =================*/
-    private _highlighFromHRange = (range: HighlightRange): HighlightSource => {
-        const source: HighlightSource = range.serialize();
-        const $wraps = this.paint.highlightRange(range);
+    private _getHooks = () => ({
+        Render: {
+            UUID: new Hook('Render.UUID'),
+            SelectedNodes: new Hook('Render.SelectedNodes'),
+            WrapNode: new Hook('Render.WrapNode')
+        },
+        Serialize: {
+            RecordInfo: new Hook('Serialize.RecordInfo')
+        },
+        Remove: {
+            UpdateNode: new Hook('Remove.UpdateNode')
+        }
+    });
 
+    private _highlighFromHRange = (range: HighlightRange): HighlightSource => {
+        const source: HighlightSource = range.serialize(this.options.$root, this.hooks);
+        const $wraps = this.painter.highlightRange(range);
         if ($wraps.length === 0) {
             console.warn(ERROR.DOM_SELECTION_EMPTY);
             return null;
         }
         this.cache.save(source);
-        this.emit(EventType.CREATE, {sources: [source]});
+        this.emit(EventType.CREATE, {sources: [source], type: 'from-input'}, this);
         return source;
     }
 
+    private _highlighFromHSource(sources: HighlightSource[] | HighlightSource = []) {
+        const renderedSources: Array<HighlightSource> = this.painter.highlightSource(sources);;
+        this.emit(EventType.CREATE, {sources: renderedSources, type: 'from-store'}, this);
+        this.cache.save(sources);
+    }
+
     private _handleSelection = (e?: Event) => {
-        const range = HighlightRange.fromSelection();
-        if (!range) {
-            return;
+        const range = HighlightRange.fromSelection(this.hooks.Render.UUID);
+        if (range) {
+            this._highlighFromHRange(range);
+            HighlightRange.removeDomRange();
         }
-        this._highlighFromHRange(range);
-        HighlightRange.removeDomRange();
     }
 
     private _handleHighlightHover = e => {
         const $target = e.target as HTMLElement;
         if (!isHighlightWrapNode($target)) {
-            // leave highlight
-            if (this._hoverId) {
-                this.emit(EventType.HOVER_OUT, {id: this._hoverId});
-            }
-
+            this._hoverId && this.emit(EventType.HOVER_OUT, {id: this._hoverId}, this, e);
             this._hoverId = null;
             return;
         }
 
-        const id = $target.dataset ? $target.dataset[CAMEL_DATASET_IDENTIFIER] : undefined;
-        // prevent triggering hover in the same highlight
+        const id = getHighlightId($target);
+        // prevent trigger in the same highlight range
         if (this._hoverId === id) {
             return;
         }
-        // move to a continuous wrap, trigger hover out firstly
+
+        // hover another highlight range, need to trigger previous highlight hover out event
         if (this._hoverId) {
-            this.emit(EventType.HOVER_OUT, {id: this._hoverId});
+            this.emit(EventType.HOVER_OUT, {id: this._hoverId}, this, e);
         }
-
         this._hoverId = id;
-        this.emit(EventType.HOVER, {id: this._hoverId});
-    }
-    /*================= you should not use it outside =================*/
-
-    run = (): Highlighter => {
-        this.options.$root.addEventListener('mouseup', this._handleSelection);
-        return this;
+        this.emit(EventType.HOVER, {id: this._hoverId}, this, e);
     }
 
-    stop = (): Highlighter => {
-        this.options.$root.removeEventListener('mouseup', this._handleSelection);
-        return this;
+    private _handleHighlightClick = e => {
+        const $target = e.target as HTMLElement;
+        if (isHighlightWrapNode($target)) {
+            const id = getHighlightId($target);
+            this.emit(EventType.CLICK, {id}, this, e);
+            return;
+        }
     }
 
-    dispose = (): Highlighter => {
+    run = () => this.options.$root.addEventListener('mouseup', this._handleSelection);
+    stop = () => this.options.$root.removeEventListener('mouseup', this._handleSelection);
+    getDoms = (id?: string): Array<HTMLElement> => id ? getHighlightById(this.options.$root, id) : getHighlightsByRoot(this.options.$root);
+    addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.add(className));
+    removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.remove(className));
+    getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
+
+    dispose = () => {
         this.options.$root.removeEventListener('mouseover', this._handleHighlightHover);
         this.options.$root.removeEventListener('mouseup', this._handleSelection);
-        return this;
+        this.options.$root.removeEventListener('click', this._handleHighlightClick);
+        this.removeAll();
     }
 
-    getDoms = (id?: string): Array<HTMLElement> => {
-        return id ? getHighlightDomById(this.options.$root, id) : getAllHighlightDom(this.options.$root);
-    }
-
-    addClass = (className: string, id?: string): Highlighter => {
-        this.getDoms(id).forEach($n => $n.classList.add(className));
-        return this;
-    }
-
-    removeClass = (className: string, id?: string): Highlighter => {
-        this.getDoms(id).forEach($n => $n.classList.remove(className));
-        return this;
-    }
-
-    setOption = (options: HighlighterOptions): Highlighter => {
+    setOption = (options: HighlighterOptions) => {
         this.options = {
             ...this.options,
             ...options
         };
-        this.paint = new Paint({
+        this.painter = new Painter({
             $root: this.options.$root,
-            highlightClassName: this.options.style.highlightClassName,
+            className: this.options.style.className,
             exceptSelectors: this.options.exceptSelectors
-        });
-        return;
-    }
-
-    getHighlightPosition = (id: string): HighlightPosition => {
-        const $wraps = this.getDoms(id);
-        const startPosition = getDomPosition($wraps[0]);
-        const endPosition = getDomPosition($wraps[$wraps.length - 1]);
-        const height = $wraps[$wraps.length - 1].offsetHeight;
-        const width = $wraps[$wraps.length - 1].offsetWidth;
-
-        return {
-            start: {top: startPosition.top, left: startPosition.left},
-            end: {top: endPosition.top + height, left: endPosition.left + width}
-        };
-    }
-
-    fromSource(sources: HighlightSource[] | HighlightSource = []): Highlighter {
-        const list = Array.isArray(sources)
-            ? sources as HighlightSource[]
-            : [sources as HighlightSource];
-
-        const renderedSources: Array<HighlightSource> = [];
-        list.forEach(s => {
-            if (!(s instanceof HighlightSource)) {
-                console.error(ERROR.SOURCE_TYPE_ERROR);
-                return;
-            }
-            const $nodes = this.paint.highlightSource(s);
-            if ($nodes.length > 0) {
-                renderedSources.push(s);
-            }
-            else {
-                console.warn(ERROR.HIGHLIGHT_SOURCE_NONE_RENDER, s);
-            }
-        });
-        this.emit(EventType.CREATE, {sources: renderedSources});
-        this.cache.save(sources);
-        return this;
+        }, this.hooks);
     }
 
     fromRange = (range: Range): HighlightSource => {
-        const hRange = new HighlightRange(
-            range.startContainer,
-            range.endContainer,
-            range.startOffset,
-            range.endOffset,
-            range.toString()
-        );
+        const start: DomNode = {
+            $node: range.startContainer,
+            offset: range.startOffset
+        };
+        const end: DomNode = {
+            $node: range.endContainer,
+            offset: range.endOffset
+        }
+
+        const text = range.toString();
+        let id = this.hooks.Render.UUID.call(start, end, text);
+        id = id !== undefined && id !== null ? id : uuid();
+        const hRange = new HighlightRange(start, end, text, id);
         if (!hRange) {
             console.warn(ERROR.RANGE_INVALID);
             return null;
@@ -206,20 +152,30 @@ export default class Highlighter extends EventEmitter {
         return this._highlighFromHRange(hRange);
     }
 
-    remove(id: string): Highlighter {
+    fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
+        try {
+            const hs = new HighlightSource(start, end, text, id);
+            this._highlighFromHSource(hs);
+            return hs;
+        }
+        catch (err) {
+            console.error(err, id, text, start, end);
+            return null;
+        }
+    }
+
+    remove(id: string) {
         if (!id) {
             return;
         }
-        this.paint.removeHighlight(id);
+        this.painter.removeHighlight(id);
         this.cache.remove(id);
-        this.emit(EventType.REMOVE, {ids: [id]});
-        return this;
+        this.emit(EventType.REMOVE, {ids: [id]}, this);
     }
 
-    removeAll(): Highlighter {
-        this.paint.removeAllHighlight();
+    removeAll() {
+        this.painter.removeAllHighlight();
         const ids = this.cache.removeAll();
-        this.emit(EventType.REMOVE, {ids: ids});
-        return this;
+        this.emit(EventType.REMOVE, {ids: ids}, this);
     }
 }
