@@ -1,5 +1,5 @@
 # Web Highlighter
-> a mini text highlighting tool for web
+> a mini text highlighting tool for web
 
 文本高亮。用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；
 
@@ -28,8 +28,8 @@ highlighter.run();
 
 - 文本类内容高亮
 - 文本内容取消高亮
-- 支持高亮选取重合与包含
-- 提供高亮信息持久化，通过数据还原高亮展示（内置可持久化数据格式的生成与还原）
+- 支持高亮选取重合与包含
+- 提供高亮信息持久化，通过数据还原高亮展示（内置可持久化数据格式的生成与还原）
 - 提供多个钩子，实现业务定制化
 
 ## 兼容性
@@ -66,7 +66,7 @@ npm run build
 
 ## 调试
 
-外部项目引入 web-highlighter 后，由于都是压缩后的代码，出错时可能不便与调试。因此，build时除了产出最终代码产物，同时会在 `dist` 下产出 SourceMap ——  `web-highlighter.min.js.map`，外部程序使用 web-highlighter 时，可以载入该 SourceMap 用以进行源码调试。
+外部项目引入 web-highlighter 后，由于都是压缩后的代码，出错时可能不便与调试。因此，build时除了产出最终代码产物，同时会在 `dist` 下产出 SourceMap ——  `web-highlighter.min.js.map`，外部程序使用 web-highlighter 时，可以载入该 SourceMap 用以进行源码调试。
 
 SourceMap 与一些工具的集成方式：
 

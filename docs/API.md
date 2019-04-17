@@ -14,9 +14,9 @@ var highlighter = new Highlighter({
 
 |配置项|描述|值|默认值|
 |---|---|---|---|
-|`$root`|确定可高亮区域的根元素|`HTMLElement`类型元素|`document.documentElement`|
+|`$root`|确定可高亮区域的根元素|`HTMLElement`类型元素|`document.documentElement`|
 |`exceptSelectors`|不需要高亮的元素|`Array<string>`|`null`|
-|`style.className`|为高亮包裹元素添加的样式类|`Array<string>`|highlight-mengshou-wrap|
+|`style.className`|为高亮包裹元素添加的样式类|`Array<string>`|highlight-mengshou-wrap|
 
 ## API 列表
 
