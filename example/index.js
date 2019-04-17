@@ -1,6 +1,13 @@
 import './index.css';
 import './my.css';
 import Highlighter from '../src/index';
+import LocalStore from './local.store';
+
+const highlighter = new Highlighter({
+    exceptSelectors: ['.my-remove-tip', 'pre', 'code']
+});
+const store = new LocalStore();
+const log = console.log.bind(console, '[highlighter]');
 
 /**
  * create a delete tip
@@ -30,51 +37,6 @@ const switchAuto = auto => {
         $btn.removeAttribute('disabled');
     }
 };
-
-/**
- * toggle exception swtich & button status
- */
-const switchException = status => {
-    if (status === 'on') {
-        highlighter.setOption({
-            exceptSelectors: ['.my-remove-tip', 'pre', 'code']
-        });
-    }
-    else {
-        highlighter.setOption({
-            exceptSelectors: ['.my-remove-tip']
-        });
-    }
-};
-
-/**
- * log
- */
-const log = console.log.bind(console, '[highlighter]');
-
-
-const highlighter = new Highlighter();
-// currently Highlighter provide a easy localStorage
-const store = new Highlighter.LocalStore();
-window.highlighter = highlighter;
-
-let exceptionStatus;
-document.querySelectorAll('[name="exception"]').forEach($n => {
-    if ($n.checked) {
-        exceptionStatus = $n.value;
-    }
-});
-switchException(exceptionStatus);
-
-/**
- * retrieve from local store
- */
-store.getAll().then(sources => {
-    log('from cache -', sources);
-    sources
-        .map(h => h.hs)
-        .forEach(hs => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id));
-});
 
 function getPosition($node) {
     let offset = {
@@ -116,6 +78,14 @@ highlighter
         ids.forEach(id => store.remove(id));
     });
 
+/**
+ * retrieve from local store
+ */
+const storeInfos =  store.getAll();
+storeInfos.forEach(
+    ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id)
+);
+
 let autoStatus;
 document.querySelectorAll('[name="auto"]').forEach($n => {
     if ($n.checked) {
@@ -134,14 +104,6 @@ document.addEventListener('click', e => {
         highlighter.removeClass('highlight-wrap-hover', id);
         highlighter.remove(id);
         $ele.parentNode.removeChild($ele);
-    }
-    // toggle exception switch
-    else if ($ele.getAttribute('name') === 'exception') {
-        const val = $ele.value;
-        if (exceptionStatus !== val) {
-            switchException(val);
-            exceptionStatus = val;
-        }
     }
     // toggle auto highlighting switch
     else if ($ele.getAttribute('name') === 'auto') {

@@ -57,11 +57,21 @@ main .highlight-wrap-hover {
 }
 
 .op-panel a {
-    font-size: 14px;
+    position: absolute;
+    right: 10px;
+    bottom: 12px;
+    height: 18px;
+    width: 18px;
+    opacity: .7;
 }
 
 .op-panel a:hover {
-    text-decoration: underline;
+    opacity: 1;
+}
+
+.op-panel svg {
+    height: 18px;
+    width: 18px;
 }
 
 .op-panel input[type="radio"] {
