@@ -9,11 +9,9 @@ import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
 import Cache from '@src/data/cache';
 import Painter from '@src/painter';
-import Store from '@src/addons/store/local.store';
 
 export default class Highlighter extends EventEmitter {
     static event = EventType;
-    static LocalStore = Store;
 
     private _hoverId: string;
     options: HighlighterOptions;
@@ -107,10 +105,12 @@ export default class Highlighter extends EventEmitter {
 
     run = () => this.options.$root.addEventListener('mouseup', this._handleSelection);
     stop = () => this.options.$root.removeEventListener('mouseup', this._handleSelection);
-    getDoms = (id?: string): Array<HTMLElement> => id ? getHighlightById(this.options.$root, id) : getHighlightsByRoot(this.options.$root);
     addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.add(className));
     removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.remove(className));
     getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
+    getDoms = (id?: string): Array<HTMLElement> => id
+        ? getHighlightById(this.options.$root, id)
+        : getHighlightsByRoot(this.options.$root);
 
     dispose = () => {
         this.options.$root.removeEventListener('mouseover', this._handleHighlightHover);
