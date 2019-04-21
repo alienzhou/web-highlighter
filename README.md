@@ -1,7 +1,10 @@
 # Web Highlighter
-> a mini text highlighting tool for web
 
-文本划词高亮。
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  ![version](https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000)  [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+
+✨A no-runtime dependency lib for text highlight & persistence on any website ✨🖍️
+
+即文本划词高亮。
 
 ![](./docs/img/sample.gif)
 
