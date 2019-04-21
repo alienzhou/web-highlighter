@@ -23,7 +23,7 @@
 <p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <img src="https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000" alt="version" />  <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
 <p>✨A no-runtime dependency lib for text highlight &amp; persistence on any website ✨🖍️</p>
 <blockquote>
-  <p>即文本划词高亮。</p>
+  <p>可持久化的文本划词高亮。</p>
 </blockquote>
 <p><img src="./docs/img/sample.gif" alt="" /></p>
 <p>用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；</p>
@@ -68,7 +68,7 @@ git checkout 0.3.0
 
 npm i
 npm run build</code></pre>
-<p>然后 <code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD 格式。</p>
+<p><code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD。</p>
 <h2 id="使用">使用</h2>
 <p>引入方式：</p>
 <pre><code class="JavaScript language-JavaScript">// 全局
@@ -83,12 +83,16 @@ import Highlighter from 'highlighter';</code></pre>
 
 // 开启 划词自动高亮
 highlighter.run();</code></pre>
-<h2 id="功能">功能</h2>
-<h3 id="api-功能列表">API 功能列表</h3>
-<p><a href="./docs/API.md">相关文档</a></p>
-<h3 id="暴露的钩子函数">暴露的钩子函数</h3>
-<p><a href="./docs/ADVANCE.md">相关文档</a></p>
+<h2 id="功能手册">功能手册</h2>
+<p>对于常见需求，可直接通过配置与 API 方法调用即可实现。针对定制化需求，web-highlighter 还提供了多个钩子函数用以拓展其功能，让开发者拥有更多的控制权。</p>
+<ul>
+<li>API 功能列表：详见 <a href="./docs/API.md">API 介绍相关文档</a>。</li>
+<li>针对特质化需求，可通过暴露的钩子函数灵活组装功能，并集成至 React/Vue 内。相关<a href="./docs/ADVANCE.md">使用文档可参考这里</a>。</li>
+</ul>
 <h2 id="贡献代码">贡献代码</h2>
+<blockquote>
+  <p><a href="https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html">Typescript handbook</a></p>
+</blockquote>
 <h3 id="开发">开发</h3>
 <h4 id="启动本地-demo-进行开发">启动本地 DEMO 进行开发</h4>
 <pre><code class="bash language-bash">npm run start</code></pre>
