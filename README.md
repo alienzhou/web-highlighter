@@ -64,8 +64,8 @@ npm i web-highlighter
 # git clone
 git clone git@github.com:alienzhou/web-highlighter.git
 
-# 使用某一版本
-git checkout 0.3.1
+# 使用某一版本，例如0.3.2
+git checkout v0.3.2
 
 npm i
 npm run build
