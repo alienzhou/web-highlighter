@@ -4,7 +4,7 @@
 
 ✨A no-runtime dependency lib for text highlight & persistence on any website ✨🖍️
 
-> 即文本划词高亮。
+> 可持久化的文本划词高亮。
 
 ![](./docs/img/sample.gif)
 
