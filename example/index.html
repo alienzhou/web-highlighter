@@ -20,10 +20,13 @@
     <body>
         <main>
             <h1 id="web-highlighter">Web Highlighter</h1>
+<p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <img src="https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000" alt="version" />  <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
+<p>✨A no-runtime dependency lib for text highlight &amp; persistence on any website ✨🖍️</p>
 <blockquote>
-  <p>a mini text highlighting tool for web</p>
+  <p>可持久化的文本划词高亮。</p>
 </blockquote>
-<p>文本高亮。用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；</p>
+<p><img src="./docs/img/sample.gif" alt="" /></p>
+<p>用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；</p>
 <p>同时提供一种可靠的高亮区域的序列化与反序列化方法，用于实现高亮选区的持久化，用以在下次加载页面后还原高亮区域。</p>
 <p>一行代码，开启高亮功能：</p>
 <pre><code class="JavaScript language-JavaScript">(new Highlighter()).run();</code></pre>
@@ -58,28 +61,14 @@ highlighter.run();</code></pre>
 <pre><code class="bash language-bash">npm i web-highlighter</code></pre>
 <h3 id="直接从源码构建">直接从源码构建</h3>
 <pre><code class="bash language-bash"># git clone
-git clone ...
+git clone git@github.com:alienzhou/web-highlighter.git
 
 # 使用某一版本
-git checkout v1.0.0
+git checkout 0.3.0
 
 npm i
 npm run build</code></pre>
-<p>然后 <code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD 格式。</p>
-<h2 id="调试">调试</h2>
-<p>外部项目引入 web-highlighter 后，由于都是压缩后的代码，出错时可能不便与调试。因此，build时除了产出最终代码产物，同时会在 <code>dist</code> 下产出 SourceMap ——  <code>web-highlighter.min.js.map</code>，外部程序使用 web-highlighter 时，可以载入该 SourceMap 用以进行源码调试。</p>
-<p>SourceMap 与一些工具的集成方式：</p>
-<ul>
-<li>浏览器中可以直接放在对应服务器目录，直接载入；</li>
-<li>webpack可以使用 <a href="https://webpack.js.org/loaders/source-map-loader/"><code>source-map-loader</code></a></li>
-<li>gulp可以结合使用 <a href="https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply"><code>vinyl-sourcemaps-apply</code></a></li>
-<li>rollup可以考虑使用 <a href="https://github.com/maxdavidson/rollup-plugin-sourcemaps"><code>rollup-plugin-sourcemaps</code></a></li>
-</ul>
-<h2 id="开发">开发</h2>
-<h3 id="启动本地-demo-进行开发">启动本地 DEMO 进行开发</h3>
-<pre><code class="bash language-bash">npm run dev</code></pre>
-<h3 id="外部系统调用调试（构建产出包并提供-http-访问）">外部系统调用调试（构建产出包并提供 HTTP 访问）</h3>
-<pre><code class="bash language-bash">npm run start</code></pre>
+<p><code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD。</p>
 <h2 id="使用">使用</h2>
 <p>引入方式：</p>
 <pre><code class="JavaScript language-JavaScript">// 全局
@@ -94,11 +83,28 @@ import Highlighter from 'highlighter';</code></pre>
 
 // 开启 划词自动高亮
 highlighter.run();</code></pre>
-<h2 id="功能">功能</h2>
-<h3 id="api-功能列表">API 功能列表</h3>
-<p><a href="./docs/API.md">相关文档</a></p>
-<h3 id="暴露的钩子函数">暴露的钩子函数</h3>
-<p><a href="./docs/ADVANCE.md">相关文档</a></p>
+<h2 id="功能手册">功能手册</h2>
+<p>对于常见需求，可直接通过配置与 API 方法调用即可实现。针对定制化需求，web-highlighter 还提供了多个钩子函数用以拓展其功能，让开发者拥有更多的控制权。</p>
+<ul>
+<li>API 功能列表：详见 <a href="./docs/API.md">API 介绍相关文档</a>。</li>
+<li>针对特质化需求，可通过暴露的钩子函数灵活组装功能，并集成至 React/Vue 内。相关<a href="./docs/ADVANCE.md">使用文档可参考这里</a>。</li>
+</ul>
+<h2 id="贡献代码">贡献代码</h2>
+<blockquote>
+  <p><a href="https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html">Typescript handbook</a></p>
+</blockquote>
+<h3 id="开发">开发</h3>
+<h4 id="启动本地-demo-进行开发">启动本地 DEMO 进行开发</h4>
+<pre><code class="bash language-bash">npm run start</code></pre>
+<h4 id="外部系统调用调试（构建产出包并提供-http-访问）">外部系统调用调试（构建产出包并提供 HTTP 访问）</h4>
+<pre><code class="bash language-bash">npm run static</code></pre>
+<h4 id="调试">调试</h4>
+<p>外部项目引入 web-highlighter 后，可以载入 SourceMap 以进行源码调试。</p>
+<ul>
+<li>webpack: <a href="https://webpack.js.org/loaders/source-map-loader/"><code>source-map-loader</code></a></li>
+<li>gulp: <a href="https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply"><code>vinyl-sourcemaps-apply</code></a></li>
+<li>rollup: <a href="https://github.com/maxdavidson/rollup-plugin-sourcemaps"><code>rollup-plugin-sourcemaps</code></a></li>
+</ul>
         </main>
         <section class="op-panel">
             <div>
