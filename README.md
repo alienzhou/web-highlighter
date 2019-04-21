@@ -1,10 +1,10 @@
 # Web Highlighter
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  ![version](https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000)  [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  ![version](https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
 
 ✨A no-runtime dependency lib for text highlight & persistence on any website ✨🖍️
 
-即文本划词高亮。
+> 即文本划词高亮。
 
 ![](./docs/img/sample.gif)
 
@@ -69,7 +69,7 @@ npm i
 npm run build
 ```
 
-然后 `dist/web-highlighter.min.js` 即为最终产出，产出格式为 UMD 格式。
+`dist/web-highlighter.min.js` 即为最终产出，产出格式为 UMD。
 
 ## 使用
 
@@ -93,37 +93,35 @@ var highlighter = new Highlighter();
 highlighter.run();
 ```
 
-## 功能
+## 功能手册
 
-### API 功能列表
+对于常见需求，可直接通过配置与 API 方法调用即可实现。针对定制化需求，web-highlighter 还提供了多个钩子函数用以拓展其功能，让开发者拥有更多的控制权。
 
-[相关文档](./docs/API.md)
+- API 功能列表：详见 [API 介绍相关文档](./docs/API.md)。
+- 针对特质化需求，可通过暴露的钩子函数灵活组装功能，并集成至 React/Vue 内。相关[使用文档可参考这里](./docs/ADVANCE.md)。
 
-### 暴露的钩子函数
+## 贡献代码
 
-[相关文档](./docs/ADVANCE.md)
+> [Typescript handbook](https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html)
 
-## 开发
+### 开发
 
-### 启动本地 DEMO 进行开发
-
-```bash
-npm run dev
-```
-
-### 外部系统调用调试（构建产出包并提供 HTTP 访问）
+#### 启动本地 DEMO 进行开发
 
 ```bash
 npm run start
 ```
 
-## 调试
+#### 外部系统调用调试（构建产出包并提供 HTTP 访问）
 
-外部项目引入 web-highlighter 后，由于都是压缩后的代码，出错时可能不便与调试。因此，build时除了产出最终代码产物，同时会在 `dist` 下产出 SourceMap ——  `web-highlighter.min.js.map`，外部程序使用 web-highlighter 时，可以载入该 SourceMap 用以进行源码调试。
+```bash
+npm run static
+```
 
-SourceMap 与一些工具的集成方式：
+#### 调试
 
-- 浏览器中可以直接放在对应服务器目录，直接载入；
-- webpack可以使用 [`source-map-loader`](https://webpack.js.org/loaders/source-map-loader/)
-- gulp可以结合使用 [`vinyl-sourcemaps-apply`](https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply)
-- rollup可以考虑使用 [`rollup-plugin-sourcemaps`](https://github.com/maxdavidson/rollup-plugin-sourcemaps)
+外部项目引入 web-highlighter 后，可以载入 SourceMap 以进行源码调试。
+
+- webpack: [`source-map-loader`](https://webpack.js.org/loaders/source-map-loader/)
+- gulp: [`vinyl-sourcemaps-apply`](https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply)
+- rollup: [`rollup-plugin-sourcemaps`](https://github.com/maxdavidson/rollup-plugin-sourcemaps)
