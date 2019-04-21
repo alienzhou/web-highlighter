@@ -5,6 +5,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="keywords" content="highlighter,tool,lib,website,frontend">
+        <meta name="description" content="Web Highlighter is a mini tool for highlighting website text. This page shows what it is and how to use it.">
         <style>
             main {
                 max-width: 760px;
@@ -15,14 +17,14 @@
                 max-width: 100%;
             }
         </style>
-        <title>Highlighter: a mini tool for highlighting website text</title>
+        <title>Web Highlighter: a mini tool for highlighting website text</title>
     </head>
     <body>
         <main>
-            <h1>Web Highlighter</h1>
-            <p><img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png" alt="" /></p>
+            <h1 id="js-title" style="display: none">Web Highlighter</h1>
+            <p><img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png" alt="Web Highlighter" /></p>
 <p>✨A no-runtime dependency lib for text highlight &amp; persistence on any website ✨🖍️</p>
-<p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <img src="https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000" alt="version" />  <a href="https://travis-ci.org/alienzhou/web-highlighter"><img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="" /></a> <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
+<p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <a href="https://github.com/alienzhou/web-highlighter"><img src="https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000" alt="version" /></a>  <a href="https://travis-ci.org/alienzhou/web-highlighter"><img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="" /></a> <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
 <blockquote>
   <p>与页面结构非耦合、支持持久化的文本划词高亮库。</p>
 </blockquote>
@@ -44,8 +46,9 @@ highlighter.run();</code></pre>
 <ul>
 <li>文本类内容高亮</li>
 <li>文本内容取消高亮</li>
-<li>支持高亮选取重合与包含</li>
-<li>提供高亮信息持久化，通过数据还原高亮展示（内置可持久化数据格式的生成与还原）</li>
+<li>高亮选取重合与包含</li>
+<li>提供高亮选区序列化能力，可将其持久化至服务端</li>
+<li>提供下次访问时高亮选区还原功能，可通过持久化数据还原高亮展示</li>
 <li>提供多个钩子，实现业务定制化</li>
 </ul>
 <h2 id="兼容性">兼容性</h2>
@@ -70,7 +73,7 @@ git checkout 0.3.0
 npm i
 npm run build</code></pre>
 <p><code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD。</p>
-<h2 id="使用">使用</h2>
+<h2 id="快速使用">快速使用</h2>
 <p>引入方式：</p>
 <pre><code class="JavaScript language-JavaScript">// 全局
 var Highlighter = window.Highlighter;
@@ -82,7 +85,7 @@ var Highlighter = require('highlighter');
 import Highlighter from 'highlighter';</code></pre>
 <pre><code class="JavaScript language-JavaScript">var highlighter = new Highlighter();
 
-// 开启 划词自动高亮
+// 开启自动“划词高亮”
 highlighter.run();</code></pre>
 <h2 id="功能手册">功能手册</h2>
 <p>对于常见需求，可直接通过配置与 API 方法调用即可实现。针对定制化需求，web-highlighter 还提供了多个钩子函数用以拓展其功能，让开发者拥有更多的控制权。</p>
@@ -107,6 +110,14 @@ highlighter.run();</code></pre>
 <li>rollup: <a href="https://github.com/maxdavidson/rollup-plugin-sourcemaps"><code>rollup-plugin-sourcemaps</code></a></li>
 </ul>
         </main>
+        <script>
+            void function () {
+                var img = document.getElementsByTagName('main')[0].getElementsByTagName('img')[0];
+                img.onerror = function() {
+                    document.getElementById('js-title').setAttribute('style', 'display: block');
+                };
+            }();
+        </script>
         <section class="op-panel">
             <div>
                 <label class="op-name">自动高亮：</label>
