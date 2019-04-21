@@ -19,6 +19,7 @@
     </head>
     <body>
         <main>
+            <h1>Web Highlighter</h1>
             {{$markdown}}
         </main>
         <section class="op-panel">

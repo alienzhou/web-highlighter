@@ -37,6 +37,36 @@ const isMatchSelector = ($node: HTMLElement, selector: string): boolean => {
 }
 
 /**
+ * If start node and end node is the same, don't need to tranvers the dom tree.
+ */
+function getNodesIfSameStartEnd(
+    $startNode: Text,
+    startOffset: number,
+    endOffset: number,
+    exceptSelectors: Array<string>
+) {
+    let $element = $startNode as Node;
+    while ($element) {
+        if ($element.nodeType === 1
+            && exceptSelectors
+            && exceptSelectors.some(s => isMatchSelector($element as HTMLElement, s))
+        ) {
+            return [];
+        }
+        $element = $element.parentNode;
+    }
+
+    $startNode.splitText(startOffset);
+    let passedNode = $startNode.nextSibling as Text;
+    passedNode.splitText(endOffset - startOffset);
+    return [{
+        $node: passedNode,
+        type: SelectedNodeType.text,
+        splitType: SplitType.both
+    }];
+}
+
+/**
  * get all the dom nodes between the start and end node
  */
 export const getSelectedNodes = (
@@ -52,26 +82,7 @@ export const getSelectedNodes = (
 
     // split current node when the start-node and end-node is the same
     if ($startNode === $endNode && $startNode instanceof Text) {
-
-        let $element = $startNode as Node;
-        while ($element) {
-            if ($element.nodeType === 1
-                && exceptSelectors
-                && exceptSelectors.some(s => isMatchSelector($element as HTMLElement, s))
-            ) {
-                return [];
-            }
-            $element = $element.parentNode;
-        }
-
-        $startNode.splitText(startOffset);
-        let passedNode = $startNode.nextSibling as Text;
-        passedNode.splitText(endOffset - startOffset);
-        return [{
-            $node: passedNode,
-            type: SelectedNodeType.text,
-            splitType: SplitType.both
-        }];
+        return getNodesIfSameStartEnd($startNode, startOffset, endOffset, exceptSelectors);
     }
 
     const nodeStack: Array<HTMLElement | Document | ChildNode | Text> = [$root];
@@ -142,6 +153,113 @@ function addClass($el: HTMLElement, className?: string | Array<string>): HTMLEle
 }
 
 /**
+ * Wrap a common wrapper.
+ */
+function wrapNewNode(
+    selected: SelectedNode,
+    range: HighlightRange,
+    className: string | Array<string>
+): HTMLElement {
+    let $wrap: HTMLElement;
+    $wrap = document.createElement(WRAP_TAG);
+    addClass($wrap, className);
+
+    $wrap.appendChild(selected.$node.cloneNode(false));
+    selected.$node.parentNode.replaceChild($wrap, selected.$node);
+
+    $wrap.setAttribute(`data-${DATASET_IDENTIFIER}`, range.id);
+    $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, selected.splitType);
+    $wrap.setAttribute(`data-${DATASET_IDENTIFIER_EXTRA}`, '');
+
+    return $wrap;
+}
+
+/**
+ * Split and wrapper each one.
+ */
+function wrapPartialNode(
+    selected: SelectedNode,
+    range: HighlightRange,
+    className: string | Array<string>
+): HTMLElement {
+    let $wrap: HTMLElement = document.createElement(WRAP_TAG);
+
+    const $parent = selected.$node.parentNode as HTMLElement;
+    const $prev = selected.$node.previousSibling;
+    const $next = selected.$node.nextSibling;
+    const $fr = document.createDocumentFragment();
+    const parentId = $parent.dataset[CAMEL_DATASET_IDENTIFIER];
+    const parentExtraId = $parent.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
+    const extraInfo = parentExtraId ? parentId + ID_DIVISION + parentExtraId : parentId;
+
+    $wrap.setAttribute(`data-${DATASET_IDENTIFIER}`, range.id);
+    $wrap.setAttribute(`data-${DATASET_IDENTIFIER_EXTRA}`, extraInfo);
+    $wrap.appendChild(selected.$node.cloneNode(false));
+
+    let headSplit = false;
+    let tailSplit = false;
+    let splitType: SplitType;
+
+    if ($prev) {
+        const $span = $parent.cloneNode(false);
+        $span.textContent = $prev.textContent;
+        $fr.appendChild($span);
+        headSplit = true;
+    }
+
+    addClass($wrap, className);
+    $fr.appendChild($wrap);
+
+    if ($next) {
+        const $span = $parent.cloneNode(false);
+        $span.textContent = $next.textContent;
+        $fr.appendChild($span);
+        tailSplit = true;
+    }
+
+    if (headSplit && tailSplit) {
+        splitType = SplitType.both;
+    }
+    else if (headSplit) {
+        splitType = SplitType.head;
+    }
+    else if (tailSplit) {
+        splitType = SplitType.tail;
+    }
+    else {
+        splitType = SplitType.none;
+    }
+
+    $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, splitType);
+    $parent.parentNode.replaceChild($fr, $parent);
+
+    return $wrap;
+}
+
+/**
+ * Just update id info (no wrapper updated).
+ */
+function wrapOverlapNode(
+    selected: SelectedNode,
+    range: HighlightRange,
+    className: string | Array<string>
+): HTMLElement {
+    const $parent = selected.$node.parentNode as HTMLElement;
+    let $wrap: HTMLElement = $parent;
+
+    addClass($wrap, className);
+
+    const dataset = $parent.dataset;
+    const formerId = dataset[CAMEL_DATASET_IDENTIFIER];
+    dataset[CAMEL_DATASET_IDENTIFIER] = range.id;
+    dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
+        ? formerId + ID_DIVISION + dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
+        : formerId;
+
+    return $wrap;
+}
+
+/**
  * wrap a dom node with highlight wrapper
  * 
  * Because of supporting the highlight-overlapping,
@@ -163,75 +281,15 @@ export const wrapHighlight = (
     let $wrap: HTMLElement;
     // text node, not in a highlight wrapper -> should be wrapped in a highlight wrapper
     if (!isHighlightWrapNode($parent)) {
-        $wrap = document.createElement(WRAP_TAG);
-        addClass($wrap, className);
-
-        $wrap.appendChild(selected.$node.cloneNode(false));
-        selected.$node.parentNode.replaceChild($wrap, selected.$node);
-
-        $wrap.setAttribute(`data-${DATASET_IDENTIFIER}`, range.id);
-        $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, selected.splitType);
-        $wrap.setAttribute(`data-${DATASET_IDENTIFIER_EXTRA}`, '');
+        $wrap = wrapNewNode(selected, range, className);
     }
     // text node, in a highlight wrap -> should split the existing highlight wrapper
     else if (isHighlightWrapNode($parent) && ($prev || $next)) {
-        const $fr = document.createDocumentFragment();
-        const parentId = $parent.dataset[CAMEL_DATASET_IDENTIFIER];
-        const parentExtraId = $parent.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
-        $wrap = document.createElement(WRAP_TAG);
-
-        const extraInfo = parentExtraId ? parentId + ID_DIVISION + parentExtraId : parentId;
-        $wrap.setAttribute(`data-${DATASET_IDENTIFIER}`, range.id);
-        $wrap.setAttribute(`data-${DATASET_IDENTIFIER_EXTRA}`, extraInfo);
-        $wrap.appendChild(selected.$node.cloneNode(false));
-
-        let headSplit = false;
-        let tailSplit = false;
-        let splitType: SplitType;
-
-        if ($prev) {
-            const $span = $parent.cloneNode(false);
-            $span.textContent = $prev.textContent;
-            $fr.appendChild($span);
-            headSplit = true;
-        }
-
-        addClass($wrap, className);
-        $fr.appendChild($wrap);
-
-        if ($next) {
-            const $span = $parent.cloneNode(false);
-            $span.textContent = $next.textContent;
-            $fr.appendChild($span);
-            tailSplit = true;
-        }
-
-        if (headSplit && tailSplit) {
-            splitType = SplitType.both;
-        }
-        else if (headSplit) {
-            splitType = SplitType.head;
-        }
-        else if (tailSplit) {
-            splitType = SplitType.tail;
-        }
-        else {
-            splitType = SplitType.none;
-        }
-
-        $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, splitType);
-        $parent.parentNode.replaceChild($fr, $parent);
+        $wrap = wrapPartialNode(selected, range, className);
     }
     // completely overlap (with a highlight wrap) -> only add extra id info
     else {
-        $wrap = $parent;
-        addClass($wrap, className);
-        const dataset = $parent.dataset;
-        const formerId = dataset[CAMEL_DATASET_IDENTIFIER];
-        dataset[CAMEL_DATASET_IDENTIFIER] = range.id;
-        dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
-            ? formerId + ID_DIVISION + dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
-            : formerId;
+        $wrap = wrapOverlapNode(selected, range, className);
     }
     return $wrap;
 };
