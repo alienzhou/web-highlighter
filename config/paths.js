@@ -7,7 +7,7 @@ const examplePath = path.resolve(basePath, 'example');
 const staticPath = path.resolve(examplePath, staticDirname);
 const distPath = path.resolve(basePath, distDirname);
 const exampleMdPath = path.resolve(examplePath, 'index.html');
-const exampleTplPath = path.resolve(examplePath, 'index.tpl');
+const exampleTplPath = path.resolve(examplePath, 'tpl.html');
 
 module.exports = {
     basePath,
