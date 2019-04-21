@@ -1,10 +1,11 @@
-# Web Highlighter
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  ![version](https://img.shields.io/badge/version-0.3.1-blue.svg?cacheSeconds=2592000)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+![](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png)
 
 ✨A no-runtime dependency lib for text highlight & persistence on any website ✨🖍️
 
-> 可持久化的文本划词高亮。
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  ![version](https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+
+> 与页面结构非耦合、支持持久化的文本划词高亮库。
 
 ![](./docs/img/sample.gif)
 
@@ -35,8 +36,9 @@ highlighter.run();
 
 - 文本类内容高亮
 - 文本内容取消高亮
-- 支持高亮选取重合与包含
-- 提供高亮信息持久化，通过数据还原高亮展示（内置可持久化数据格式的生成与还原）
+- 高亮选取重合与包含
+- 提供高亮选区序列化能力，可将其持久化至服务端
+- 提供下次访问时高亮选区还原功能，可通过持久化数据还原高亮展示
 - 提供多个钩子，实现业务定制化
 
 ## 兼容性
@@ -71,7 +73,7 @@ npm run build
 
 `dist/web-highlighter.min.js` 即为最终产出，产出格式为 UMD。
 
-## 使用
+## 快速使用
 
 引入方式：
 
@@ -89,7 +91,7 @@ import Highlighter from 'highlighter';
 ```JavaScript
 var highlighter = new Highlighter();
 
-// 开启 划词自动高亮
+// 开启自动“划词高亮”
 highlighter.run();
 ```
 
