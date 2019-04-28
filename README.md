@@ -8,16 +8,16 @@ English | 简体中文
 
 ## Background
 
-It's from an idea: highlight texts on websites and save the highlighted areas just like what you do in PDFs.
+It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDFs.
 
-If you have ever visited [medium.com](http://medium.com), you must known the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a 
-shining background color. Besides, the highlighted areas will be saved and recovered when you visit next time. It's like the simple demo bellow.
+If you have ever visited [medium.com](http://medium.com), you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a 
+shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
 
 ![](./docs/img/sample.gif)
 
- This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.
+This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.
 
-For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used in my production. 
+For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production. 
 
 ## Install
 
@@ -221,25 +221,25 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 - `EventType.REMOVE`: a highlighted area is removed
 
 
-Different event has different `data`:
+Different event has different `data`. Attributes below:
 
 #### `EventType.CLICK`
 
 |name|description|type|
 |---|---|---|
-|`id`|a list of the highlight id|Array|
+|`id`|the highlight id|string|
 
 ### `EventType.HOVER`
 
 |name|description|type|
 |---|---|---|
-|`id`|a list of the highlight id|Array|
+|`id`|the highlight id|string|
 
 ### `EventType.HOVER_OUT`
 
 |name|description|type|
 |---|---|---|
-|`id`|a list of the highlight id|Array|
+|`id`|the highlight id|string|
 
 ### `EventType.CREATE`
 
