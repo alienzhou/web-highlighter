@@ -229,19 +229,19 @@ Different event has different `data`. Attributes below:
 |---|---|---|
 |`id`|the highlight id|string|
 
-### `EventType.HOVER`
+#### `EventType.HOVER`
 
 |name|description|type|
 |---|---|---|
 |`id`|the highlight id|string|
 
-### `EventType.HOVER_OUT`
+#### `EventType.HOVER_OUT`
 
 |name|description|type|
 |---|---|---|
 |`id`|the highlight id|string|
 
-### `EventType.CREATE`
+#### `EventType.CREATE`
 
 > no parameter `e`
 
@@ -254,8 +254,7 @@ Different event has different `data`. Attributes below:
 
 `type` has two values: from-input and from-store. The former shows that a highlighted area is created because of user's selection. The latter means it from a storage.
 
-
-### `EventType.REMOVE`
+#### `EventType.REMOVE`
 
 > no parameter `e`
 
