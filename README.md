@@ -195,7 +195,7 @@ If you have a wrap node, it can return the unique highlight id for you.
 
 ### `Event Listener`
 
-web-highlighter use listeners to handle then events.
+web-highlighter use listeners to handle the events.
 
 e.g.
 
