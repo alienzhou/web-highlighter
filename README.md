@@ -27,7 +27,7 @@ npm i web-highlighter
 
 ## Usage
 
-Only two lines, highlight the selection.
+Only two lines, highlighted when texts are selected.
 
 ```JavaScript
 import Highlighter from 'highlighter';
