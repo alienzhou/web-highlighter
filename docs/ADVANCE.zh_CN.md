@@ -1,5 +1,7 @@
 # 内部工作流程与钩子
 
+[English](./ADVANCE.md) | 简体中文
+
 这一部分将会介绍
 
 - web-highlighter 是如何创建与清除高亮选区的
