@@ -126,7 +126,7 @@ export default class Painter {
             // there are bugs in IE11, so use a more reliable function
             normalizeSiblingText($prev, true);
             normalizeSiblingText($next, false);
-            hooks.Remove.UpdateNode.call(id, $s, 'remove');
+            hooks.Remove.UpdateNodes.call(id, $s, 'remove');
         });
 
         $idToUpdate.forEach($s => {
@@ -134,13 +134,13 @@ export default class Painter {
             const ids = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA].split(ID_DIVISION);
             dataset[CAMEL_DATASET_IDENTIFIER] = ids.shift();
             dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = ids.join(ID_DIVISION);
-            hooks.Remove.UpdateNode.call(id, $s, 'id-update');
+            hooks.Remove.UpdateNodes.call(id, $s, 'id-update');
         });
 
         $extraToUpdate.forEach($s => {
             const extraIds = $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
             $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = extraIds.replace(reg, '');
-            hooks.Remove.UpdateNode.call(id, $s, 'extra-update');
+            hooks.Remove.UpdateNodes.call(id, $s, 'extra-update');
         });
     }
 
