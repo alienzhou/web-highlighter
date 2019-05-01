@@ -3,7 +3,7 @@
 This part shows you
 
 - how web-highlighter creates a new highlighted area and how it removes thems
-- when each hook will be called and its usage
+- when each hook is called and its usage
 
 ## Workflow
 
