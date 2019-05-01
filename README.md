@@ -4,7 +4,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
 
-English | 简体中文
+English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md)
 
 ## Background
 
@@ -75,6 +75,7 @@ highlighter
 
 // retrieve data from store, and display highlights on the website
 store.getAll().forEach(
+    // hs is the same data saved by 'store.save(sources)'
     ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id)
 );
 
@@ -156,7 +157,7 @@ if (selection.isCollapsed) {
 
 Mostly, you use this api to highlight text by the persisted infomation stored from backend.
 
-These four values are from the `HighlightSource` object. `HighlightSource` object is a specific object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node. This structure is called `HighlightSource` in web-highlighter.
+These four values are from the `HighlightSource` object. `HighlightSource` object is a special object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node. This structure is called `HighlightSource` in web-highlighter.
 
 Four attributes' meanings:
 
@@ -206,11 +207,11 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 });
 ```
 
-`callback` will receive three parameters:
+The callback function will receive three parameters:
 
 - data `any`: event data
-- inst `Highligher`: highlighter instance
-- e `Event`: some event is triggered by the browser, web-highlighter will expose it
+- inst `Highligher`: current Highligher instance
+- e `Event`: some event is triggered by the browser (such as click), web-highlighter will expose it
 
 `Highlighter.event` is `EventType` type. It contains：
 
@@ -247,12 +248,12 @@ Different event has different `data`. Attributes below:
 
 |name|description|type|
 |---|---|---|
-|`source`|`HighlightSource` object|Array|
+|`source`|`HighlightSource` object|Array<HighlightSource>|
 |`type`|the reason for creating|string|
 
-`source` is a `HighlightSource` object. It is a specific object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node.
+`source` is a `HighlightSource` object. It is an object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to use a data structure which can be serialized (`JSON.stringify()`) to represent a dom node in browsers. `HighlightSource` is the data structure designed for this.
 
-`type` has two values: from-input and from-store. The former shows that a highlighted area is created because of user's selection. The latter means it from a storage.
+`type` explains why a highlighted area is be created. Now `type` has two possible values: `from-input` and `from-store`. `from-input` shows that a highlighted area is created because of user's selection. `from-store` means it from a storage.
 
 #### `EventType.REMOVE`
 
@@ -260,11 +261,11 @@ Different event has different `data`. Attributes below:
 
 |name|description|type|
 |---|---|---|
-|`ids`|a list of the highlight id|Array|
+|`ids`|a list of the highlight id|Array<string>|
 
 ## Compatibility
 
-It depends on Selection API.
+> It depends on [Selection API](https://caniuse.com/#search=selection%20api).
 
 - IE 10、11
 - Edge
@@ -277,7 +278,7 @@ It depends on Selection API.
 
 It provides some hooks for you so that the highlighting behaviour can be controlled better by your own.
 
-To learn more about the hooks, please read [this doc](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
+To learn more about the hooks, read [this doc](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
 
 ## License
 
