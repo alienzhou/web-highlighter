@@ -1,5 +1,7 @@
 # Internal workflows and hooks
 
+English | [简体中文](./ADVANCE.zh_CN.md)
+
 This part shows you
 
 - how web-highlighter creates a new highlighted area and how it removes thems
