@@ -13,7 +13,7 @@ It's from an idea: highlight texts on the website and save the highlighted areas
 If you have ever visited [medium.com](http://medium.com), you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a 
 shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
 
-![](./docs/img/sample.gif)
+![](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/sample.gif)
 
 This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.
 
