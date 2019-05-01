@@ -1,103 +1,95 @@
-# Advance
+# Internal workflows and hooks
 
-对象间关系：
+This part shows you
 
-```text
-  (UserAgent)   |   (Highlighter lib)
-                |
-                |    Storage
-                |      ⇅
-                |    HighlightSource: pure type json
-                |      ⇅
-Range/Selection → →  HighlightRange: json with dom node
-                |      ↓
-                |    Paint: Highlighter.Paint
-                |      ↓
-                |    highlight in webpage
-```
+- how web-highlighter creates a new highlighted area and how it removes thems
+- when each hook will be called and its usage
 
-## 高亮选区创建流程
+## Workflow - Creating highlighted areas
 
-![高亮选区创建流程](./img/create-flow.png)
+![create highlighted areas](./img/create-flow.jpg)
 
-## 高亮选区删除流程
+## Workflow - Removing highlighted areas
 
-![高亮选区删除流程](./img/remove-flow.png)
+![removie highlighted areas](./img/remove-flow.jpg)
 
-## 钩子
-
-使用样例：
+## Hooks - Use sample
 
 ```JavaScript
-var highlighter = new Highlighter();
+// UUID hook
+const highlighter = new Highlighter();
 highlighter.hooks.Render.UUID.tap(function (start, end, text) {
-    // 生成 id
+    // do something to generate your own id
     return id;
 });
 ```
 
+## Hooks - List
+
 ### Render.UUID
 
-操作UUID（选区id）的生成。
+Hook into the process of generating a unique id.
 
-接受参数：
+**arguements:**
 
-- start: 起始节点的信息
-- end: 终止节点的信息
-- text: 文本内容
+- start: DOM info of the start node
+- end: DOM info of the end node
+- text: text content in the highlighted area
 
-返回值：
+**return value needed:**
 
-生成的选区 id
+- A new unique id.
 
-### Render.SelectedNodes
+## Render.SelectedNodes
 
-操作高亮选区所包含的所有文本节点
+Process all the text nodes in the highlighted area and return a new list by using this hook.
 
-接受参数：
+**arguements:**
 
-- id: 高亮id
-- selectedNodes: 当前高亮被选择的所有文本节点
+- id: id of the highlighted area
+- selectedNodes: all the text nodes in the highlighted area
 
-返回值：
+**return value needed:**
 
-- 需要被高亮包裹的所有文本节点
+- the text nodes need to be wrapped
 
-### Render.WrapNode
+## Render.WrapNode
 
-操作高亮包裹后的元素
+Process the wrapping elements.
 
-接受参数：
+**arguements:**
 
-- id: 高亮id
-- node: 高亮包裹的节点
+- id: id of the highlighted area
+- node: the wrapping elements
 
-返回值：
+**return value needed:**
 
-- 高亮包裹的节点
+- the wrapping elements
 
-### Serialize.RecordInfo
+## Serialize.RecordInfo
 
-为选区序列化时的持久化数据生成额外信息
+Add or modify some extra info when serialize the `HighlightRange` object.
 
-接受参数：
+**arguements:**
 
-- start: 起始节点的元数据
-- end: 终止节点的元数据
-- root: 选区根元素
+- start: meta info of the start node
+- end: meta info of the end node
+- root: the root element
 
-返回值：
+**return value needed:**
 
-- 持久化信息中的额外数据
+- extra info: it will be added to the `extra` field in the `HighlightSource` object
 
-### Remove.UpdateNode
+### Remove.UpdateNodes
 
-删除选区时，对更新的节点进行操作
+Process the affected wrapping elements when remove highlighted areas.
 
-接受参数：
+**arguements:**
 
-- id: 高亮id
-- node: 需要更新的节点
-- type: 更新的类型 (remove|id-update|extra-update)
+- id: id of the highlighted area
+- nodes: the affected wrapping elements
+- type: affected type or state, one of `remove`, `id-update` and `extra-update`
 
-无返回值
+**return value needed:**
+
+- `void`
