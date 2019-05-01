@@ -42,7 +42,7 @@ export default class Highlighter extends EventEmitter {
             RecordInfo: new Hook('Serialize.RecordInfo')
         },
         Remove: {
-            UpdateNode: new Hook('Remove.UpdateNode')
+            UpdateNodes: new Hook('Remove.UpdateNodes')
         }
     });
 

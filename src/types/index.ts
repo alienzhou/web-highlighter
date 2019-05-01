@@ -87,6 +87,6 @@ export type HookMap = {
         RecordInfo: Hook;
     };
     Remove: {
-        UpdateNode: Hook;
+        UpdateNodes: Hook;
     }
 }
