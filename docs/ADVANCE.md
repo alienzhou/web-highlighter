@@ -2,7 +2,7 @@
 
 English | [简体中文](./ADVANCE.zh_CN.md)
 
-This part shows you
+This part shows
 
 - how web-highlighter creates a new highlighted area and how it removes thems
 - when each hook is called and its usage
