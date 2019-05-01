@@ -23,35 +23,243 @@
         <main>
             <h1 id="js-title" style="display: none">Web Highlighter</h1>
             <p><img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png" alt="Web Highlighter" /></p>
-<p>✨A no-runtime dependency lib for text highlighting &amp; persistence on any website ✨🖍️</p>
+<p>✨A no-runtime dependency lib for highlighting-note &amp; persistence on any website ✨🖍️</p>
 <p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <a href="https://github.com/alienzhou/web-highlighter"><img src="https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000" alt="version" /></a>  <a href="https://travis-ci.org/alienzhou/web-highlighter"><img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="" /></a> <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
-<blockquote>
-  <p>与页面结构非耦合、支持持久化的文本划词高亮库。</p>
-</blockquote>
-<p><img src="./docs/img/sample.gif" alt="" /></p>
-<p>用于实现非耦合的文本区域高亮功能（例如在文本阅读器、博客文章页面、小说阅读页面）；</p>
-<p>同时提供一种可靠的高亮区域的序列化与反序列化方法，用于实现高亮选区的持久化，用以在下次加载页面后还原高亮区域。</p>
-<p>一行代码，开启高亮功能：</p>
-<pre><code class="JavaScript language-JavaScript">(new Highlighter()).run();</code></pre>
-<p>四行代码，实现高亮持久化：</p>
-<pre><code class="JavaScript language-JavaScript">// 实例化
-var highlighter = new Highlighter();
-// 从存储中还原高亮区域
-getStore().then(s =&gt; highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
-// 存储高亮区域数据
+<p>English | <a href="https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md">简体中文</a></p>
+<h2 id="background">Background</h2>
+<p>It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDFs.</p>
+<p>If you have ever visited <a href="http://medium.com">medium.com</a>, you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a <br />
+shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time.</p>
+<p>This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.</p>
+<p>For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production. </p>
+<h2 id="install">Install</h2>
+<pre><code class="bash language-bash">npm i web-highlighter</code></pre>
+<h2 id="usage">Usage</h2>
+<p>Only two lines, highlighted when texts are selected.</p>
+<pre><code class="JavaScript language-JavaScript">import Highlighter from 'highlighter';
+(new Highlighter()).run();</code></pre>
+<p>If you need persistence, four lines make it.</p>
+<pre><code class="JavaScript language-JavaScript">import Highlighter from 'highlighter';
+// 1. initailize
+const highlighter = new Highlighter();
+// 2. retrieve data from backend, then highlight it on the page
+get().then(s =&gt; highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+// 3. listen for highlight creating, then save to backend
 highlighter.on(Highlighter.event.CREATE, ({sources}) =&gt; save(sources));
-// 开启自动高亮
+// 4. auto highlight
 highlighter.run();</code></pre>
-<h2 id="支持能力">支持能力</h2>
+<h2 id="example">Example</h2>
+<p>A more complex example</p>
+<pre><code class="JavaScript language-JavaScript">// won't highlight pre&amp;code elements
+const highlighter = new Highlighter({
+    exceptSelectors: ['pre', 'code']
+});
+
+// add some listeners to handle interaction, such as hover
+highlighter
+    .on('selection:hover', ({id}) =&gt; {
+        // display different bg color when hover
+        highlighter.addClass('highlight-wrap-hover', id);
+    })
+    .on('selection:hover-out', ({id}) =&gt; {
+        highlighter.removeClass('highlight-wrap-hover', id);
+    })
+    .on('selection:create', ({sources}) =&gt; {
+        sources = sources.map(hs =&gt; ({hs}));
+        // save to backend
+        store.save(sources);
+    });
+
+// retrieve data from store, and display highlights on the website
+store.getAll().forEach(
+    // hs is the same data saved by 'store.save(sources)'
+    ({hs}) =&gt; highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id)
+);
+
+// auto-highlight selections
+highlighter.run()</code></pre>
+<p>Besides, there is an example in this repo (in <code>example</code> folder). To play with it, you just need ——</p>
+<p>Firstly enter the repository and run</p>
+<pre><code class="bash language-bash">npm i</code></pre>
+<p>Then start the example</p>
+<pre><code>npm start</code></pre>
+<p>Finially visit <a href="http://127.0.0.1:8085/">http://127.0.0.1:8085/</a></p>
+<h2 id="api">API</h2>
+<h3 id="highlighter--new-highlighteropts"><code>highlighter = new Highlighter([opts])</code></h3>
+<p>Create a new <code>highlighter</code> instance.</p>
+<p><code>opts</code> will be merged into the default options (shown bellow).</p>
+<pre><code class="JavaScript language-JavaScript">{
+    $root: document.documentElement,    // root element for addEventlistener / DFS / ...
+    exceptSelectors: null,              // if an element matches the selector, it won't be highlighted
+    style: {
+        className: 'highlight-wrap'     // the classname for wrap element
+    }
+}</code></pre>
+<p><code>exceptSelectors</code> needs <code>null</code> or <code>Array&lt;string&gt;</code>. It suports id selectors, class selectors and tag selectors.</p>
+<p>For example, to skip h1 and <code>.title</code> elements:</p>
+<pre><code class="JavaScript language-JavaScript">var highlighter = new Highlighter({
+    exceptSelectors: ['h1', '.title']
+});</code></pre>
+<h3 id="highlighterrun"><code>highlighter.run()</code></h3>
+<p>Start auto-highlighting. When the user select a text segement, a highlighting will be added to the text automatically.</p>
+<h3 id="highlighterstop"><code>highlighter.stop()</code></h3>
+<p>It will stop the auto-highlighting.</p>
+<h3 id="highlighterdispose"><code>highlighter.dispose()</code></h3>
+<p>When you don't want the highlighter anymore, remember to call it first. It will remove some listeners and do some cleanup.</p>
+<h3 id="highlighterfromrangerange"><code>highlighter.fromRange(range)</code></h3>
+<p>You can pass a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Range"><code>Range</code></a> object to it and then it will be highlighted. You can use <code>window.getSelection().getRangeAt(0)</code> to get a range object or use <code>document.createRange()</code> to create a new range.</p>
+<p>Use it as bellow:</p>
+<pre><code class="JavaScript language-JavaScript">const selection = window.getSelection();
+if (selection.isCollapsed) {
+    highlighter.fromRange(selection.getRangeAt(0));
+}</code></pre>
+<h3 id="highlighterfromstorestart-end-text-id"><code>highlighter.fromStore(start, end, text, id)</code></h3>
+<p>Mostly, you use this api to highlight text by the persisted infomation stored from backend.</p>
+<p>These four values are from the <code>HighlightSource</code> object. <code>HighlightSource</code> object is a special object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node. This structure is called <code>HighlightSource</code> in web-highlighter.</p>
+<p>Four attributes' meanings:</p>
 <ul>
-<li>文本类内容高亮</li>
-<li>文本内容取消高亮</li>
-<li>高亮选取重合与包含</li>
-<li>提供高亮选区序列化能力，可将其持久化至服务端</li>
-<li>提供下次访问时高亮选区还原功能，可通过持久化数据还原高亮展示</li>
-<li>提供多个钩子，实现业务定制化</li>
+<li>start <code>Object</code>:    meta info about the beginning element</li>
+<li>end   <code>Object</code>:    meata info about then end element</li>
+<li>text  <code>string</code>:    text content</li>
+<li>id    <code>string</code>:    unique id</li>
 </ul>
-<h2 id="兼容性">兼容性</h2>
+<h3 id="highlighterremoveid"><code>highlighter.remove(id)</code></h3>
+<p>Remove (clean) a highlighted area by it's unique id. The id will be generated by web-highlighter by default. You can also add a hook for your own rule. <a href="https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md">Hooks doc here</a>.</p>
+<h3 id="highlighterremoveall"><code>highlighter.removeAll()</code></h3>
+<p>Remove all highlighted areas belonging to the root.</p>
+<h3 id="highlighteraddclassclassname-id"><code>highlighter.addClass(classname, id)</code></h3>
+<p>Add a classname for highlighted areas (wrap elements) by unique id. You can change a highlighted area's style by using this api.</p>
+<h3 id="highlighterremoveclassclassname-id"><code>highlighter.removeClass(classname, id)</code></h3>
+<p>Remove the classname by unique id. It's <code>highlighter.addClass</code>'s inverse operation.</p>
+<h3 id="highlightergetdomsid"><code>highlighter.getDoms([id])</code></h3>
+<p>Get all the wrap nodes in a highlighted area. A highlighted area may contain many segments. It will return all the dom nodes wrapping these segements.</p>
+<p>If the <code>id</code> is not passed, it will return all the areas' wrap nodes.</p>
+<h3 id="highlightergetidbydomnode"><code>highlighter.getIdByDom(node)</code></h3>
+<p>If you have a wrap node, it can return the unique highlight id for you.</p>
+<h3 id="event-listener"><code>Event Listener</code></h3>
+<p>web-highlighter use listeners to handle the events.</p>
+<p>e.g.</p>
+<pre><code class="JavaScript language-JavaScript">var highlighter = new Highlighter();
+highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
+    // ...
+});</code></pre>
+<p>The callback function will receive three parameters:</p>
+<ul>
+<li>data <code>any</code>: event data</li>
+<li>inst <code>Highligher</code>: current Highligher instance</li>
+<li>e <code>Event</code>: some event is triggered by the browser (such as click), web-highlighter will expose it</li>
+</ul>
+<p><code>Highlighter.event</code> is <code>EventType</code> type. It contains：</p>
+<ul>
+<li><code>EventType.CLICK</code>: click the highlighted area</li>
+<li><code>EventType.HOVER</code>: mouse enter the highlighted area</li>
+<li><code>EventType.HOVER_OUT</code>: mouse leave the highlighted area</li>
+<li><code>EventType.CREATE</code>: a highlighted area is created</li>
+<li><code>EventType.REMOVE</code>: a highlighted area is removed</li>
+</ul>
+<p>Different event has different <code>data</code>. Attributes below:</p>
+<h4 id="eventtypeclick"><code>EventType.CLICK</code></h4>
+<table>
+<thead>
+<tr>
+<th id="name">name</th>
+<th id="description">description</th>
+<th id="type">type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>the highlight id</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="eventtypehover"><code>EventType.HOVER</code></h4>
+<table>
+<thead>
+<tr>
+<th id="name">name</th>
+<th id="description">description</th>
+<th id="type">type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>the highlight id</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="eventtypehover_out"><code>EventType.HOVER_OUT</code></h4>
+<table>
+<thead>
+<tr>
+<th id="name">name</th>
+<th id="description">description</th>
+<th id="type">type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>the highlight id</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="eventtypecreate"><code>EventType.CREATE</code></h4>
+<blockquote>
+  <p>no parameter <code>e</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th id="name">name</th>
+<th id="description">description</th>
+<th id="type">type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td><code>HighlightSource</code> object</td>
+<td>Array<HighlightSource></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>the reason for creating</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<p><code>source</code> is a <code>HighlightSource</code> object. It is an object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to use a data structure which can be serialized (<code>JSON.stringify()</code>) to represent a dom node in browsers. <code>HighlightSource</code> is the data structure designed for this.</p>
+<p><code>type</code> explains why a highlighted area is be created. Now <code>type</code> has two possible values: <code>from-input</code> and <code>from-store</code>. <code>from-input</code> shows that a highlighted area is created because of user's selection. <code>from-store</code> means it from a storage.</p>
+<h4 id="eventtyperemove"><code>EventType.REMOVE</code></h4>
+<blockquote>
+  <p>no parameter <code>e</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th id="name">name</th>
+<th id="description">description</th>
+<th id="type">type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ids</code></td>
+<td>a list of the highlight id</td>
+<td>Array<string></td>
+</tr>
+</tbody>
+</table>
+<h2 id="compatibility">Compatibility</h2>
+<blockquote>
+  <p>It depends on <a href="https://caniuse.com/#search=selection%20api">Selection API</a>.</p>
+</blockquote>
 <ul>
 <li>IE 10、11</li>
 <li>Edge</li>
@@ -60,55 +268,11 @@ highlighter.run();</code></pre>
 <li>Safari 5.1+</li>
 <li>Opera 15+</li>
 </ul>
-<h2 id="安装">安装</h2>
-<h3 id="npm-安装">npm 安装</h3>
-<pre><code class="bash language-bash">npm i web-highlighter</code></pre>
-<h3 id="直接从源码构建">直接从源码构建</h3>
-<pre><code class="bash language-bash"># git clone
-git clone git@github.com:alienzhou/web-highlighter.git
-
-# 使用某一版本，例如0.3.2
-git checkout v0.3.2
-
-npm i
-npm run build</code></pre>
-<p><code>dist/web-highlighter.min.js</code> 即为最终产出，产出格式为 UMD。</p>
-<h2 id="快速使用">快速使用</h2>
-<p>引入方式：</p>
-<pre><code class="JavaScript language-JavaScript">// 全局
-var Highlighter = window.Highlighter;
-
-// CommonJS
-var Highlighter = require('highlighter');
-
-// ES Module
-import Highlighter from 'highlighter';</code></pre>
-<pre><code class="JavaScript language-JavaScript">var highlighter = new Highlighter();
-
-// 开启自动“划词高亮”
-highlighter.run();</code></pre>
-<h2 id="功能手册">功能手册</h2>
-<p>对于常见需求，可直接通过配置与 API 方法调用即可实现。针对定制化需求，web-highlighter 还提供了多个钩子函数用以拓展其功能，让开发者拥有更多的控制权。</p>
-<ul>
-<li>API 功能列表：详见 <a href="./docs/API.md">API 介绍相关文档</a>。</li>
-<li>针对特质化需求，可通过暴露的钩子函数灵活组装功能，并集成至 React/Vue 内。相关<a href="./docs/ADVANCE.md">使用文档可参考这里</a>。</li>
-</ul>
-<h2 id="贡献代码">贡献代码</h2>
-<blockquote>
-  <p><a href="https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html">Typescript handbook</a></p>
-</blockquote>
-<h3 id="开发">开发</h3>
-<h4 id="启动本地-demo-进行开发">启动本地 DEMO 进行开发</h4>
-<pre><code class="bash language-bash">npm run start</code></pre>
-<h4 id="外部系统调用调试（构建产出包并提供-http-访问）">外部系统调用调试（构建产出包并提供 HTTP 访问）</h4>
-<pre><code class="bash language-bash">npm run static</code></pre>
-<h4 id="调试">调试</h4>
-<p>外部项目引入 web-highlighter 后，可以载入 SourceMap 以进行源码调试。</p>
-<ul>
-<li>webpack: <a href="https://webpack.js.org/loaders/source-map-loader/"><code>source-map-loader</code></a></li>
-<li>gulp: <a href="https://github.com/gulp-sourcemaps/vinyl-sourcemaps-apply"><code>vinyl-sourcemaps-apply</code></a></li>
-<li>rollup: <a href="https://github.com/maxdavidson/rollup-plugin-sourcemaps"><code>rollup-plugin-sourcemaps</code></a></li>
-</ul>
+<h2 id="advance">Advance</h2>
+<p>It provides some hooks for you so that the highlighting behaviour can be controlled better by your own.</p>
+<p>To learn more about the hooks, read <a href="https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md">this doc</a>.</p>
+<h2 id="license">License</h2>
+<p>MIT</p>
         </main>
         <script>
             void function () {
@@ -129,5 +293,5 @@ highlighter.run();</code></pre>
                 <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1555513182711" class="icon" style="" viewBox="0 0 1049 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1456" xmlns:xlink="http://www.w3.org/1999/xlink" width="131.125" height="128"><defs><style type="text/css"></style></defs><path d="M524.979332 0C234.676191 0 0 234.676191 0 524.979332c0 232.068678 150.366597 428.501342 358.967656 498.035028 26.075132 5.215026 35.636014-11.299224 35.636014-25.205961 0-12.168395-0.869171-53.888607-0.869171-97.347161-146.020741 31.290159-176.441729-62.580318-176.441729-62.580318-23.467619-60.841976-58.234462-76.487055-58.234463-76.487055-47.804409-32.15933 3.476684-32.15933 3.476685-32.15933 53.019436 3.476684 80.83291 53.888607 80.83291 53.888607 46.935238 79.963739 122.553122 57.365291 152.97411 43.458554 4.345855-33.897672 18.252593-57.365291 33.028501-70.402857-116.468925-12.168395-239.022047-57.365291-239.022047-259.012982 0-57.365291 20.860106-104.300529 53.888607-140.805715-5.215026-13.037566-23.467619-66.926173 5.215027-139.067372 0 0 44.327725-13.906737 144.282399 53.888607 41.720212-11.299224 86.917108-17.383422 131.244833-17.383422s89.524621 6.084198 131.244833 17.383422C756.178839 203.386032 800.506564 217.29277 800.506564 217.29277c28.682646 72.1412 10.430053 126.029806 5.215026 139.067372 33.897672 36.505185 53.888607 83.440424 53.888607 140.805715 0 201.64769-122.553122 245.975415-239.891218 259.012982 19.121764 16.514251 35.636014 47.804409 35.636015 97.347161 0 70.402857-0.869171 126.898978-0.869172 144.282399 0 13.906737 9.560882 30.420988 35.636015 25.205961 208.601059-69.533686 358.967656-265.96635 358.967655-498.035028C1049.958663 234.676191 814.413301 0 524.979332 0z" fill="#191717" p-id="1457"></path><path d="M199.040177 753.571326c-0.869171 2.607513-5.215026 3.476684-8.691711 1.738342s-6.084198-5.215026-4.345855-7.82254c0.869171-2.607513 5.215026-3.476684 8.691711-1.738342s5.215026 5.215026 4.345855 7.82254z m-6.953369-4.345856M219.900283 777.038945c-2.607513 2.607513-7.82254 0.869171-10.430053-2.607514-3.476684-3.476684-4.345855-8.691711-1.738342-11.299224 2.607513-2.607513 6.953369-0.869171 10.430053 2.607514 3.476684 4.345855 4.345855 9.560882 1.738342 11.299224z m-5.215026-5.215027M240.760389 807.459932c-3.476684 2.607513-8.691711 0-11.299224-4.345855-3.476684-4.345855-3.476684-10.430053 0-12.168395 3.476684-2.607513 8.691711 0 11.299224 4.345855 3.476684 4.345855 3.476684 9.560882 0 12.168395z m0 0M269.443034 837.011749c-2.607513 3.476684-8.691711 2.607513-13.906737-1.738342-4.345855-4.345855-6.084198-10.430053-2.607513-13.037566 2.607513-3.476684 8.691711-2.607513 13.906737 1.738342 4.345855 3.476684 5.215026 9.560882 2.607513 13.037566z m0 0M308.555733 853.526c-0.869171 4.345855-6.953369 6.084198-13.037566 4.345855-6.084198-1.738342-9.560882-6.953369-8.691711-10.430053 0.869171-4.345855 6.953369-6.084198 13.037566-4.345855 6.084198 1.738342 9.560882 6.084198 8.691711 10.430053z m0 0M351.145116 857.002684c0 4.345855-5.215026 7.82254-11.299224 7.82254-6.084198 0-11.299224-3.476684-11.299224-7.82254s5.215026-7.82254 11.299224-7.82254c6.084198 0 11.299224 3.476684 11.299224 7.82254z m0 0M391.126986 850.049315c0.869171 4.345855-3.476684 8.691711-9.560882 9.560882-6.084198 0.869171-11.299224-1.738342-12.168395-6.084197-0.869171-4.345855 3.476684-8.691711 9.560881-9.560882 6.084198-0.869171 11.299224 1.738342 12.168396 6.084197z m0 0" fill="#191717" p-id="1458"></path></svg>
             </a>
         </section>
-    <script type="text/javascript" src="index.d2bfd153.js"></script></body>
+    <script type="text/javascript" src="index.76096284.js"></script></body>
 </html>
