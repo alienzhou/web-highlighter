@@ -5,11 +5,13 @@ This part shows you
 - how web-highlighter creates a new highlighted area and how it removes thems
 - when each hook will be called and its usage
 
-## Workflow - Creating highlighted areas
+## Workflow
+
+### Creating highlighted areas
 
 ![create highlighted areas](./img/create-flow.jpg)
 
-## Workflow - Removing highlighted areas
+### Removing highlighted areas
 
 ![removie highlighted areas](./img/remove-flow.jpg)
 
@@ -26,7 +28,7 @@ highlighter.hooks.Render.UUID.tap(function (start, end, text) {
 
 ## Hooks - List
 
-### Render.UUID
+### `Render.UUID`
 
 Hook into the process of generating a unique id.
 
@@ -40,7 +42,7 @@ Hook into the process of generating a unique id.
 
 - A new unique id.
 
-## Render.SelectedNodes
+### `Render.SelectedNodes`
 
 Process all the text nodes in the highlighted area and return a new list by using this hook.
 
@@ -53,7 +55,7 @@ Process all the text nodes in the highlighted area and return a new list by usin
 
 - the text nodes need to be wrapped
 
-## Render.WrapNode
+### `Render.WrapNode`
 
 Process the wrapping elements.
 
@@ -66,7 +68,7 @@ Process the wrapping elements.
 
 - the wrapping elements
 
-## Serialize.RecordInfo
+### `Serialize.RecordInfo`
 
 Add or modify some extra info when serialize the `HighlightRange` object.
 
@@ -80,7 +82,7 @@ Add or modify some extra info when serialize the `HighlightRange` object.
 
 - extra info: it will be added to the `extra` field in the `HighlightSource` object
 
-### Remove.UpdateNodes
+### `Remove.UpdateNodes`
 
 Process the affected wrapping elements when remove highlighted areas.
 

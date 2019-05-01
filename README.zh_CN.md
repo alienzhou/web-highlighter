@@ -166,7 +166,7 @@ if (selection.isCollapsed) {
 
 ### `highlighter.remove(id)`
 
-清除指定 id 的高亮区域。该 id 默认会由 web-highlighter 在创建高亮区域使生成。你也课可以通过添加钩子来应用你自己的 id 生成规则。钩子相关文档可以[看这里](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)
+清除指定 id 的高亮区域。该 id 默认会由 web-highlighter 在创建高亮区域使生成。你也课可以通过添加钩子来应用你自己的 id 生成规则。钩子相关文档可以[看这里](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
 
 ### `highlighter.removeAll()`
 
