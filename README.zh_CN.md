@@ -2,7 +2,7 @@
 
 ✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 [English](https://github.com/alienzhou/web-highlighter/blob/master/README.md) | 简体中文
 
@@ -30,14 +30,14 @@ npm i web-highlighter
 两行代码，即可开启文本选中时的自动高亮功能。
 
 ```JavaScript
-import Highlighter from 'highlighter';
+import Highlighter from 'web-highlighter';
 (new Highlighter()).run();
 ```
 
 四行代码，实现高亮区域持久化。
 
 ```JavaScript
-import Highlighter from 'highlighter';
+import Highlighter from 'web-highlighter';
 // 1. 实例化
 const highlighter = new Highlighter();
 // 2. 从后端获取高亮信息，还原至网页
