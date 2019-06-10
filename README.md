@@ -2,7 +2,7 @@
 
 ✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gizp size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)   
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gizp size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md)
 
@@ -10,14 +10,13 @@ English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/maste
 
 It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDFs.
 
-If you have ever visited [medium.com](http://medium.com), you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a 
-shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
+If you have ever visited [medium.com](http://medium.com), you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
 
 ![](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/sample.gif)
 
 This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.
 
-For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production. 
+For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.
 
 ## Install
 
@@ -30,14 +29,14 @@ npm i web-highlighter
 Only two lines, highlighted when texts are selected.
 
 ```JavaScript
-import Highlighter from 'highlighter';
+import Highlighter from 'web-highlighter';
 (new Highlighter()).run();
 ```
 
 If you need persistence, four lines make it.
 
 ```JavaScript
-import Highlighter from 'highlighter';
+import Highlighter from 'web-highlighter';
 // 1. initailize
 const highlighter = new Highlighter();
 // 2. retrieve data from backend, then highlight it on the page
