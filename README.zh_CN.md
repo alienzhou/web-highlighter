@@ -1,4 +1,4 @@
-![Web Highlighter](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png)
+![Web Highlighter](./docs/img/logo.png)
 
 ✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
 
