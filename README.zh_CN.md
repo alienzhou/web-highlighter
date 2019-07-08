@@ -136,7 +136,7 @@ var highlighter = new Highlighter({
 
 ### `highlighter.dispose()`
 
-当你不再需要使用高亮功能时，需要先使用改动能来移除一些事件监听，回收一些资源。
+当你不再需要使用高亮功能时，需要先使用该方法来移除一些事件监听，回收一些资源。
 
 ### `highlighter.fromRange(range)`
 
@@ -146,7 +146,7 @@ var highlighter = new Highlighter({
 
 ```JavaScript
 const selection = window.getSelection();
-if (selection.isCollapsed) {
+if (!selection.isCollapsed) {
     highlighter.fromRange(selection.getRangeAt(0));
 }
 ```
@@ -155,7 +155,7 @@ if (selection.isCollapsed) {
 
 大多数情况下，这个 API 用于通过后端的持久化信息还原出文本高亮效果。
 
-其中四个所需的参数来源于 `HighlightSource` 对象。`HighlightSource` 对象是一个特殊的对象，当高亮笔记被添加时会被创建。为了能在后端实现数据持久化，它需要找到一种能表示 dom 节点的数据结构。这个结构在w eb-highlighter 内被称为`HighlightSource`。
+其中四个所需的参数来源于 `HighlightSource` 对象。`HighlightSource` 对象是一个特殊的对象，当高亮笔记被添加时会被创建。为了能在后端实现数据持久化，它需要找到一种能表示 dom 节点的数据结构。这个结构在 web-highlighter 内被称为`HighlightSource`。
 
 四个参数的含义如下：
 
@@ -166,7 +166,7 @@ if (selection.isCollapsed) {
 
 ### `highlighter.remove(id)`
 
-清除指定 id 的高亮区域。该 id 默认会由 web-highlighter 在创建高亮区域使生成。你也课可以通过添加钩子来应用你自己的 id 生成规则。钩子相关文档可以[看这里](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
+清除指定 id 的高亮区域。该 id 默认会由 web-highlighter 在创建高亮区域使生成。你也可以通过添加钩子来应用你自己的 id 生成规则。钩子相关文档可以[看这里](./docs/ADVANCE.zh_CN.md)。
 
 ### `highlighter.removeAll()`
 
@@ -248,7 +248,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 `source` 是一个 `HighlightSource` 对象。该对象在高亮区域被创建时，会由 web-highlighter 创建并传给回调函数。为了能够在后端（数据库中）进行高亮数据的持久化，需要使用一个可以被序列化（`JSON.stringify()`）的数据结构来表示浏览器中的 DOM 节点。`HighlightSource` 就是 web-highlighter 提供的来用于持久化的数据对象。
 
-`type` 用来告知开发者高亮区域被创建的原因。目前 `type` 包含两种可能的值：`from-input` 和 `from-store`。`from-store` 表明该高亮区域是通过用户操作（用户划词的选区）创建的；`from-store` 则表示该高亮区域是通过持久化的 `HighlightSource` 中的数据还原出来的。
+`type` 用来告知开发者高亮区域被创建的原因。目前 `type` 包含两种可能的值：`from-input` 和 `from-store`。`from-input` 表明该高亮区域是通过用户操作（用户划词的选区）创建的；`from-store` 则表示该高亮区域是通过持久化的 `HighlightSource` 中的数据还原出来的。
 
 #### `EventType.REMOVE`
 
@@ -273,7 +273,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 为了便于开发者更好地控制相关的高亮行为，web-highlighter 提供一些内部的钩子。
 
-想了解内部钩子及其使用方式，可以阅读[这篇文档](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
+想了解内部钩子及其使用方式，可以阅读[这篇文档](./docs/ADVANCE.zh_CN.md)。
 
 ## 许可证
 
