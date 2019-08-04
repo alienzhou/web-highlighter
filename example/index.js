@@ -79,6 +79,13 @@ highlighter
     });
 
 /**
+ * attach hooks
+ */
+highlighter.hooks.Render.SelectedNodes.tap(
+    (id, selectedNodes)  => selectedNodes.filter(n => n.$node.textContent)
+);
+
+/**
  * retrieve from local store
  */
 const storeInfos =  store.getAll();
