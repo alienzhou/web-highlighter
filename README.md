@@ -100,7 +100,7 @@ Finially visit http://127.0.0.1:8085/
 
 ---
 
-Another real product built with web-highlighter (the highlighting area on the left):
+Another real product built with web-highlighter (for the highlighting area on the left):
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
