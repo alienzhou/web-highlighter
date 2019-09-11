@@ -97,6 +97,12 @@ npm start
 
 最后访问 http://127.0.0.1:8085/ 即可。
 
+---
+
+另一个使用 web-highlighter 开发的实际产品的例子（用于左侧高亮部分）：
+
+![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
+
 
 ## API
 
