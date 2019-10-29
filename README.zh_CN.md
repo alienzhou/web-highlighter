@@ -43,7 +43,7 @@ import Highlighter from 'web-highlighter';
 const highlighter = new Highlighter();
 
 // 2. 从后端获取高亮信息，还原至网页
-get().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+getRemoteData().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
 
 // 3. 监听高亮笔记创建事件，并将信息存至后端
 highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
