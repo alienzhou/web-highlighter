@@ -37,12 +37,16 @@ If you need persistence, four lines make it.
 
 ```JavaScript
 import Highlighter from 'web-highlighter';
+
 // 1. initailize
 const highlighter = new Highlighter();
+
 // 2. retrieve data from backend, then highlight it on the page
 get().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+
 // 3. listen for highlight creating, then save to backend
 highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
+
 // 4. auto highlight
 highlighter.run();
 ```
@@ -52,6 +56,8 @@ highlighter.run();
 A more complex example
 
 ```JavaScript
+import Highlighter from 'web-highlighter';
+
 // won't highlight pre&code elements
 const highlighter = new Highlighter({
     exceptSelectors: ['pre', 'code']
@@ -64,6 +70,7 @@ highlighter
         highlighter.addClass('highlight-wrap-hover', id);
     })
     .on('selection:hover-out', ({id}) => {
+        // remove the hover effect when leaving
         highlighter.removeClass('highlight-wrap-hover', id);
     })
     .on('selection:create', ({sources}) => {
