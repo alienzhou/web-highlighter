@@ -38,12 +38,16 @@ import Highlighter from 'web-highlighter';
 
 ```JavaScript
 import Highlighter from 'web-highlighter';
+
 // 1. 实例化
 const highlighter = new Highlighter();
+
 // 2. 从后端获取高亮信息，还原至网页
 get().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+
 // 3. 监听高亮笔记创建事件，并将信息存至后端
 highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
+
 // 4. 开启自动划词高亮
 highlighter.run();
 ```
@@ -53,6 +57,8 @@ highlighter.run();
 一个更复杂的使用示例。
 
 ```JavaScript
+import Highlighter from 'web-highlighter';
+
 // 不高亮 pre&code 元素
 const highlighter = new Highlighter({
     exceptSelectors: ['pre', 'code']
@@ -65,6 +71,7 @@ highlighter
         highlighter.addClass('highlight-wrap-hover', id);
     })
     .on('selection:hover-out', ({id}) => {
+        // 鼠标离开时清除悬停样式
         highlighter.removeClass('highlight-wrap-hover', id);
     })
     .on('selection:create', ({sources}) => {
