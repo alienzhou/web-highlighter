@@ -39,7 +39,7 @@ export const getHighlightsByRoot = ($roots: HTMLElement | Array<HTMLElement>): A
     const $wraps = [];
     for (let i = 0; i < $roots.length; i++) {
         const $list = $roots[i].querySelectorAll(`${WRAP_TAG}[data-${DATASET_IDENTIFIER}]`);
-        $wraps.concat($list);
+        $wraps.push.apply($wraps, $list);
     }
     return $wraps;
 }
