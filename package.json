@@ -1,6 +1,6 @@
 {
   "name": "web-highlighter",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "✨A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️",
   "main": "dist/web-highlighter.min.js",
   "browser": "dist/web-highlighter.min.js",
@@ -13,7 +13,8 @@
     "static": "run-p watch serve",
     "typings": "tsc -d --declarationDir typings",
     "start": "node script/dev.js",
-    "build": "export target=dist && node script/build.js"
+    "build": "export target=dist && node script/build.js",
+    "release": "npm run build && npm publish"
   },
   "homepage": "https://alienzhou.github.io/web-highlighter",
   "repository": {
