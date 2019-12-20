@@ -17,7 +17,7 @@ export const CAMEL_DATASET_IDENTIFIER_EXTRA = camel(DATASET_IDENTIFIER_EXTRA);
 export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
 export const DEFAULT_OPTIONS = {
-    $root: window.document.documentElement,
+    $root: window.document || window.document.documentElement,
     exceptSelectors: null,
     style: {
         className: 'highlight-mengshou-wrap'

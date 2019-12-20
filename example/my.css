@@ -101,3 +101,19 @@ main .highlight-wrap-hover {
 .op-panel .op-btn.disabled {
     cursor: not-allowed;
 }
+
+@media screen and (max-width: 1150px) {
+    main {
+        padding: 0 15px;
+        overflow-x: hidden;
+    }
+
+    .op-panel {
+        right: 5vw;
+        bottom: 5vh;
+        left: auto;
+        top: auto;
+        background-color: rgba(0, 0, 0, .9);
+        color: #fff;
+    }
+}

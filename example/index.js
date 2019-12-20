@@ -56,6 +56,9 @@ function getPosition($node) {
  * highlighter event listener
  */
 highlighter
+    .on(Highlighter.event.CLICK, ({id}) => {
+        log('click -', id);
+    })
     .on(Highlighter.event.HOVER, ({id}) => {
         log('hover -', id);
         highlighter.addClass('highlight-wrap-hover', id);
@@ -140,7 +143,7 @@ document.addEventListener('mouseover', e => {
         highlighter.removeClass('highlight-wrap-hover');
         highlighter.addClass('highlight-wrap-hover', hoveredTipId);
     }
-    else if (!$ele.classList.contains('my-remove-tip')) {
+    else if (!$ele.classList.contains('my-remove-tip') && !$ele.classList.contains('highlight-mengshou-wrap')) {
         highlighter.removeClass('highlight-wrap-hover', hoveredTipId);
         hoveredTipId = null;
     }
