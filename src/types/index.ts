@@ -1,7 +1,9 @@
 import Hook from "@src/util/hook";
 
+export type RootElement = Document | HTMLElement;
+
 export interface HighlighterOptions {
-    $root: HTMLElement;
+    $root: RootElement;
     exceptSelectors: Array<string>;
     style?: {
         className?: string | Array<string>;
@@ -9,7 +11,7 @@ export interface HighlighterOptions {
 };
 
 export interface PainterOptions {
-    $root: HTMLElement;
+    $root: RootElement;
     className?: string | Array<string>;
     exceptSelectors: Array<string>;
 };
@@ -22,25 +24,25 @@ export enum SplitType {
 };
 
 export enum ERROR {
-    DOM_TYPE_ERROR = '[DOM] Receive wrong node type.',
-    DOM_SELECTION_EMPTY = '[DOM] The selection contains no dom node, may be you except them.',
-    RANGE_INVALID = '[RANGE] Got invalid dom range, can\'t convert to a valid highlight range.',
-    RANGE_NODE_INVALID = '[RANGE] Start or end node isn\'t a text node, it may occur an error.',
-    DB_ID_DUPLICATE_ERROR = '[STORE] Unique id conflict.',
-    CACHE_SET_ERROR = '[CACHE] Cache.data can\'t be set manually, please use .save().',
-    SOURCE_TYPE_ERROR = '[SOURCE] Object isn\'t a highlight source instance.',
-    HIGHLIGHT_RANGE_FROZEN = '[HIGHLIGHT_RANGE] A highlight range must be frozen before render.',
-    HIGHLIGHT_SOURCE_NONE_RENDER = '[HIGHLIGHT_SOURCE] This highlight source isn\'t rendered.'
-        + ' May be the exception skips it or the dom structure has changed.'
+    DOM_TYPE_ERROR                  = '[DOM] Receive wrong node type.',
+    DOM_SELECTION_EMPTY             = '[DOM] The selection contains no dom node, may be you except them.',
+    RANGE_INVALID                   = '[RANGE] Got invalid dom range, can\'t convert to a valid highlight range.',
+    RANGE_NODE_INVALID              = '[RANGE] Start or end node isn\'t a text node, it may occur an error.',
+    DB_ID_DUPLICATE_ERROR           = '[STORE] Unique id conflict.',
+    CACHE_SET_ERROR                 = '[CACHE] Cache.data can\'t be set manually, please use .save().',
+    SOURCE_TYPE_ERROR               = '[SOURCE] Object isn\'t a highlight source instance.',
+    HIGHLIGHT_RANGE_FROZEN          = '[HIGHLIGHT_RANGE] A highlight range must be frozen before render.',
+    HIGHLIGHT_SOURCE_NONE_RENDER    = '[HIGHLIGHT_SOURCE] This highlight source isn\'t rendered.'
+                                        + ' May be the exception skips it or the dom structure has changed.'
 };
 
 export enum EventType {
-    CREATE = 'selection:create',
-    REMOVE = 'selection:remove',
-    MODIFY = 'selection:modify',
-    HOVER = 'selection:hover',
-    HOVER_OUT = 'selection:hover-out',
-    CLICK = 'selection:click',
+    CREATE      = 'selection:create',
+    REMOVE      = 'selection:remove',
+    MODIFY      = 'selection:modify',
+    HOVER       = 'selection:hover',
+    HOVER_OUT   = 'selection:hover-out',
+    CLICK       = 'selection:click',
 };
 
 export enum SelectedNodeType {
@@ -89,4 +91,18 @@ export type HookMap = {
     Remove: {
         UpdateNodes: Hook;
     }
+}
+
+export enum UserInputEvent {
+    touchend    = 'touchend',
+    mouseup     = 'mouseup',
+    touchstart  = 'touchstart',
+    click       = 'click',
+    mouseover   = 'mouseover',
+}
+
+export interface IInteraction {
+    PointerEnd: UserInputEvent;
+    PointerTap: UserInputEvent;
+    PointerOver: UserInputEvent;
 }

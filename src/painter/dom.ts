@@ -1,6 +1,10 @@
 import HighlightRange from '../model/range';
 import {SplitType, SelectedNode, DomNode, SelectedNodeType} from '../types';
-import {isHighlightWrapNode} from '../util/dom';
+import {
+    hasClass,
+    addClass as addElementClass,
+    isHighlightWrapNode
+} from '../util/dom';
 import {
     WRAP_TAG,
     ID_DIVISION,
@@ -24,7 +28,7 @@ const isMatchSelector = ($node: HTMLElement, selector: string): boolean => {
     }
     if (/^\./.test(selector)) {
         const className = selector.replace(/^\./, '');
-        return $node && $node.classList.contains(className);
+        return $node && hasClass($node, className);
     }
     else if (/^#/.test(selector)) {
         const id = selector.replace(/^#/, '');
@@ -148,7 +152,7 @@ export const getSelectedNodes = (
 function addClass($el: HTMLElement, className?: string | Array<string>): HTMLElement  {
     let classNames = Array.isArray(className) ? className : [className];
     classNames = classNames.length === 0 ? [DEFAULT_OPTIONS.style.className] : classNames;
-    classNames.forEach(c => $el.classList.add(c));
+    classNames.forEach(c => addElementClass($el, c));
     return $el;
 }
 

@@ -3,6 +3,7 @@
  * @author zhouhongxuan@baidu.com
  */
 
+import {RootElement} from '../types';
 import {
     WRAP_TAG,
     ID_DIVISION,
@@ -31,7 +32,7 @@ export const getHighlightId = ($node: HTMLElement): string => {
 /**
  * get all highlight wrapping nodes nodes from a root node
  */
-export const getHighlightsByRoot = ($roots: HTMLElement | Array<HTMLElement>): Array<HTMLElement> => {
+export const getHighlightsByRoot = ($roots: RootElement | Array<RootElement>): Array<HTMLElement> => {
     if (!Array.isArray($roots)) {
         $roots = [$roots];
     }
@@ -47,7 +48,7 @@ export const getHighlightsByRoot = ($roots: HTMLElement | Array<HTMLElement>): A
 /**
  * get all highlight wrapping nodes by highlight id from a root node
  */
-export const getHighlightById = ($root: HTMLElement, id: String): Array<HTMLElement> => {
+export const getHighlightById = ($root: RootElement, id: String): Array<HTMLElement> => {
     const $highlights = [];
     const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
     const $list = $root.querySelectorAll(`${WRAP_TAG}[data-${DATASET_IDENTIFIER}]`);
@@ -71,4 +72,29 @@ export const forEach = ($nodes: NodeList, cb: Function): void => {
     for (let i = 0; i < $nodes.length; i++) {
         cb($nodes[i], i, $nodes);
     }
+};
+
+/**
+ * maybe be need some polyfill methods later
+ * provide unified dom methods for compatibility
+ */
+export const addEventListener = ($el: RootElement, evt: string, fn: EventListenerOrEventListenerObject): Function => {
+    $el.addEventListener(evt, fn);
+    return () => removeEventListener($el, evt, fn);
+};
+
+export const removeEventListener = ($el: RootElement, evt: string, fn: EventListenerOrEventListenerObject): void => {
+    $el.removeEventListener(evt, fn);
+};
+
+export const addClass = ($el: HTMLElement, className: string): void => {
+    $el.classList.add(className);
+};
+
+export const removeClass = ($el: HTMLElement, className: string): void => {
+    $el.classList.remove(className);
+};
+
+export const hasClass = ($el: HTMLElement, className: string): boolean => {
+    return $el.classList.contains(className);
 };

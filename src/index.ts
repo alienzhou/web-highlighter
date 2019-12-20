@@ -1,14 +1,31 @@
 import '@src/util/dataset.polyfill';
 import EventEmitter from '@src/util/event.emitter';
-import {EventType, HighlighterOptions, ERROR, DomNode, DomMeta, HookMap} from './types';
 import HighlightRange from '@src/model/range';
 import HighlightSource from '@src/model/source';
-import {isHighlightWrapNode, getHighlightById, getHighlightsByRoot, getHighlightId} from '@src/util/dom';
-import {DEFAULT_OPTIONS} from '@src/util/const';
 import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
+import event from '@src/util/interaction';
 import Cache from '@src/data/cache';
 import Painter from '@src/painter';
+import {DEFAULT_OPTIONS} from '@src/util/const';
+import {
+    ERROR,
+    DomNode,
+    DomMeta,
+    HookMap,
+    EventType,
+    HighlighterOptions
+} from './types';
+import {
+    addClass,
+    removeClass,
+    isHighlightWrapNode,
+    getHighlightById,
+    getHighlightsByRoot,
+    getHighlightId,
+    addEventListener,
+    removeEventListener
+} from '@src/util/dom';
 
 export default class Highlighter extends EventEmitter {
     static event = EventType;
@@ -22,14 +39,12 @@ export default class Highlighter extends EventEmitter {
     constructor(options: HighlighterOptions) {
         super();
         this.options = DEFAULT_OPTIONS;
-        // initialize hooks
-        this.hooks = this._getHooks();
-        this.setOption(options)
-        // initialize cache
-        this.cache = new Cache();
-        // initialize event listener
-        this.options.$root.addEventListener('mouseover', this._handleHighlightHover);
-        this.options.$root.addEventListener('click', this._handleHighlightClick);
+        this.hooks = this._getHooks(); // initialize hooks
+        this.setOption(options);
+        this.cache = new Cache(); // initialize cache
+        const $root = this.options.$root;
+        addEventListener($root, event.PointerOver, this._handleHighlightHover); // initialize event listener
+        addEventListener($root, event.PointerTap, this._handleHighlightClick); // initialize event listener
     }
 
     private _getHooks = () => ({
@@ -94,28 +109,30 @@ export default class Highlighter extends EventEmitter {
         this.emit(EventType.HOVER, {id: this._hoverId}, this, e);
     }
 
-    private _handleHighlightClick = e => {
+    private _handleHighlightClick = (e): void => {
         const $target = e.target as HTMLElement;
         if (isHighlightWrapNode($target)) {
             const id = getHighlightId($target);
             this.emit(EventType.CLICK, {id}, this, e);
-            return;
         }
     }
 
-    run = () => this.options.$root.addEventListener('mouseup', this._handleSelection);
-    stop = () => this.options.$root.removeEventListener('mouseup', this._handleSelection);
-    addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.add(className));
-    removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => $n.classList.remove(className));
+    run = () => addEventListener(this.options.$root, event.PointerEnd, this._handleSelection);
+    stop = () => removeEventListener(this.options.$root, event.PointerEnd, this._handleSelection);
+
+    addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => addClass($n, className));
+    removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => removeClass($n, className));
+
     getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
     getDoms = (id?: string): Array<HTMLElement> => id
         ? getHighlightById(this.options.$root, id)
         : getHighlightsByRoot(this.options.$root);
 
     dispose = () => {
-        this.options.$root.removeEventListener('mouseover', this._handleHighlightHover);
-        this.options.$root.removeEventListener('mouseup', this._handleSelection);
-        this.options.$root.removeEventListener('click', this._handleHighlightClick);
+        const $root = this.options.$root;
+        removeEventListener($root, event.PointerOver, this._handleHighlightHover);
+        removeEventListener($root, event.PointerEnd, this._handleSelection);
+        removeEventListener($root, event.PointerTap, this._handleHighlightClick);
         this.removeAll();
     }
 
