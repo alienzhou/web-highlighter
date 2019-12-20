@@ -24,33 +24,39 @@
             <h1 id="js-title" style="display: none">Web Highlighter</h1>
             <p><img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png" alt="Web Highlighter" /></p>
 <p>✨A no-runtime dependency lib for highlighting-note &amp; persistence on any website ✨🖍️</p>
-<p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <a href="https://github.com/alienzhou/web-highlighter"><img src="https://img.shields.io/badge/version-0.3.2-blue.svg?cacheSeconds=2592000" alt="version" /></a>  <a href="https://travis-ci.org/alienzhou/web-highlighter"><img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="" /></a> <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a>   </p>
+<p><a href="https://www.npmjs.com/package/web-highlighter"><img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" /></a>  <a href="https://github.com/alienzhou/web-highlighter"><img src="https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000" alt="version" /></a>  <a href="https://travis-ci.org/alienzhou/web-highlighter"><img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="" /></a> <a href="https://unpkg.com/web-highlighter"><img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="gizp size" /></a>  <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master"><img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="codebeat badge" /></a> <a href="https://opensource.org/licenses/mit-license.php"><img src="https://badges.frapsoft.com/os/mit/mit.svg?v=103" alt="MIT Licence" /></a></p>
 <p>English | <a href="https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md">简体中文</a></p>
 <h2 id="background">Background</h2>
 <p>It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDFs.</p>
-<p>If you have ever visited <a href="http://medium.com">medium.com</a>, you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a <br />
-shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time.</p>
+<p>If you have ever visited <a href="http://medium.com">medium.com</a>, you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.</p>
+<p><img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/sample.gif" alt="" /></p>
 <p>This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.</p>
-<p>For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production. </p>
+<p>For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.</p>
 <h2 id="install">Install</h2>
 <pre><code class="bash language-bash">npm i web-highlighter</code></pre>
 <h2 id="usage">Usage</h2>
 <p>Only two lines, highlighted when texts are selected.</p>
-<pre><code class="JavaScript language-JavaScript">import Highlighter from 'highlighter';
+<pre><code class="JavaScript language-JavaScript">import Highlighter from 'web-highlighter';
 (new Highlighter()).run();</code></pre>
 <p>If you need persistence, four lines make it.</p>
-<pre><code class="JavaScript language-JavaScript">import Highlighter from 'highlighter';
+<pre><code class="JavaScript language-JavaScript">import Highlighter from 'web-highlighter';
+
 // 1. initailize
 const highlighter = new Highlighter();
+
 // 2. retrieve data from backend, then highlight it on the page
-get().then(s =&gt; highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+getRemoteData().then(s =&gt; highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+
 // 3. listen for highlight creating, then save to backend
 highlighter.on(Highlighter.event.CREATE, ({sources}) =&gt; save(sources));
+
 // 4. auto highlight
 highlighter.run();</code></pre>
 <h2 id="example">Example</h2>
 <p>A more complex example</p>
-<pre><code class="JavaScript language-JavaScript">// won't highlight pre&amp;code elements
+<pre><code class="JavaScript language-JavaScript">import Highlighter from 'web-highlighter';
+
+// won't highlight pre&amp;code elements
 const highlighter = new Highlighter({
     exceptSelectors: ['pre', 'code']
 });
@@ -62,6 +68,7 @@ highlighter
         highlighter.addClass('highlight-wrap-hover', id);
     })
     .on('selection:hover-out', ({id}) =&gt; {
+        // remove the hover effect when leaving
         highlighter.removeClass('highlight-wrap-hover', id);
     })
     .on('selection:create', ({sources}) =&gt; {
@@ -84,6 +91,9 @@ highlighter.run()</code></pre>
 <p>Then start the example</p>
 <pre><code>npm start</code></pre>
 <p>Finially visit <a href="http://127.0.0.1:8085/">http://127.0.0.1:8085/</a></p>
+<hr />
+<p>Another real product built with web-highlighter (for the highlighting area on the left):</p>
+<p><img src="https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif" alt="product sample" /></p>
 <h2 id="api">API</h2>
 <h3 id="highlighter--new-highlighteropts"><code>highlighter = new Highlighter([opts])</code></h3>
 <p>Create a new <code>highlighter</code> instance.</p>
@@ -293,5 +303,5 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
                 <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1555513182711" class="icon" style="" viewBox="0 0 1049 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1456" xmlns:xlink="http://www.w3.org/1999/xlink" width="131.125" height="128"><defs><style type="text/css"></style></defs><path d="M524.979332 0C234.676191 0 0 234.676191 0 524.979332c0 232.068678 150.366597 428.501342 358.967656 498.035028 26.075132 5.215026 35.636014-11.299224 35.636014-25.205961 0-12.168395-0.869171-53.888607-0.869171-97.347161-146.020741 31.290159-176.441729-62.580318-176.441729-62.580318-23.467619-60.841976-58.234462-76.487055-58.234463-76.487055-47.804409-32.15933 3.476684-32.15933 3.476685-32.15933 53.019436 3.476684 80.83291 53.888607 80.83291 53.888607 46.935238 79.963739 122.553122 57.365291 152.97411 43.458554 4.345855-33.897672 18.252593-57.365291 33.028501-70.402857-116.468925-12.168395-239.022047-57.365291-239.022047-259.012982 0-57.365291 20.860106-104.300529 53.888607-140.805715-5.215026-13.037566-23.467619-66.926173 5.215027-139.067372 0 0 44.327725-13.906737 144.282399 53.888607 41.720212-11.299224 86.917108-17.383422 131.244833-17.383422s89.524621 6.084198 131.244833 17.383422C756.178839 203.386032 800.506564 217.29277 800.506564 217.29277c28.682646 72.1412 10.430053 126.029806 5.215026 139.067372 33.897672 36.505185 53.888607 83.440424 53.888607 140.805715 0 201.64769-122.553122 245.975415-239.891218 259.012982 19.121764 16.514251 35.636014 47.804409 35.636015 97.347161 0 70.402857-0.869171 126.898978-0.869172 144.282399 0 13.906737 9.560882 30.420988 35.636015 25.205961 208.601059-69.533686 358.967656-265.96635 358.967655-498.035028C1049.958663 234.676191 814.413301 0 524.979332 0z" fill="#191717" p-id="1457"></path><path d="M199.040177 753.571326c-0.869171 2.607513-5.215026 3.476684-8.691711 1.738342s-6.084198-5.215026-4.345855-7.82254c0.869171-2.607513 5.215026-3.476684 8.691711-1.738342s5.215026 5.215026 4.345855 7.82254z m-6.953369-4.345856M219.900283 777.038945c-2.607513 2.607513-7.82254 0.869171-10.430053-2.607514-3.476684-3.476684-4.345855-8.691711-1.738342-11.299224 2.607513-2.607513 6.953369-0.869171 10.430053 2.607514 3.476684 4.345855 4.345855 9.560882 1.738342 11.299224z m-5.215026-5.215027M240.760389 807.459932c-3.476684 2.607513-8.691711 0-11.299224-4.345855-3.476684-4.345855-3.476684-10.430053 0-12.168395 3.476684-2.607513 8.691711 0 11.299224 4.345855 3.476684 4.345855 3.476684 9.560882 0 12.168395z m0 0M269.443034 837.011749c-2.607513 3.476684-8.691711 2.607513-13.906737-1.738342-4.345855-4.345855-6.084198-10.430053-2.607513-13.037566 2.607513-3.476684 8.691711-2.607513 13.906737 1.738342 4.345855 3.476684 5.215026 9.560882 2.607513 13.037566z m0 0M308.555733 853.526c-0.869171 4.345855-6.953369 6.084198-13.037566 4.345855-6.084198-1.738342-9.560882-6.953369-8.691711-10.430053 0.869171-4.345855 6.953369-6.084198 13.037566-4.345855 6.084198 1.738342 9.560882 6.084198 8.691711 10.430053z m0 0M351.145116 857.002684c0 4.345855-5.215026 7.82254-11.299224 7.82254-6.084198 0-11.299224-3.476684-11.299224-7.82254s5.215026-7.82254 11.299224-7.82254c6.084198 0 11.299224 3.476684 11.299224 7.82254z m0 0M391.126986 850.049315c0.869171 4.345855-3.476684 8.691711-9.560882 9.560882-6.084198 0.869171-11.299224-1.738342-12.168395-6.084197-0.869171-4.345855 3.476684-8.691711 9.560881-9.560882 6.084198-0.869171 11.299224 1.738342 12.168396 6.084197z m0 0" fill="#191717" p-id="1458"></path></svg>
             </a>
         </section>
-    <script type="text/javascript" src="index.76096284.js"></script></body>
+    <script type="text/javascript" src="index.85a91afd.js"></script></body>
 </html>
