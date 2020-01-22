@@ -2,7 +2,7 @@
 
 ✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter)  [![version](https://img.shields.io/badge/version-0.3.3-blue.svg?cacheSeconds=2592000)](https://github.com/alienzhou/web-highlighter)  [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter) [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gzip size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![install size](https://packagephobia.now.sh/badge?p=web-highlighter)](https://packagephobia.now.sh/result?p=web-highlighter) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 [English](https://github.com/alienzhou/web-highlighter/blob/master/README.md) | 简体中文
 
@@ -133,7 +133,7 @@ npm start
 配置说明:
 
 | 参数名 | 类型 | 描述 | 是否必须 | 默认值 |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | $root | `Document | HTMLElement` | 高亮区域的根容器元素 | 否 | `document` |
 | exceptSelectors | `Array<string>` | 过滤器，符合的元素将不会被高亮 | 否 | `null` |
 | wrapTag | `string` | 用于包裹高亮文本的 HTML 标签名 | 否 | `span` |
@@ -142,8 +142,8 @@ npm start
 `style` 属性配置:
 
 | 参数名 | 类型 | 描述 | 是否必须 | 默认值 |
-|---|---|---|---|---|---|
-| className | `string` | 高亮包裹元素的 classname | 否 | `highlight-mengshou-wrap` |
+|---|---|---|---|---|
+| className | `string` | 高亮包裹元素的 className | 否 | `highlight-mengshou-wrap` |
 
 `exceptSelectors` 为 `null` 或 `Array<string>`。 支持 ID 选择器、类选择器和标签选择器。例如，想要忽略标签为 h1 和 classname 为 `.title` 的元素：
 
@@ -233,14 +233,14 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 回调函数接受三个参数：
 
 - data `any`: 事件触发时的具体数据
-- inst `Highligher`: 当前 Highligher 类的实例
+- inst `Highlighter`: 当前 Highlighter 类的实例
 - e `Event`: 某些事件会有浏览器触发（例如点击）, web-highlighter 会将浏览器原生 event 对象暴露出来
 
 `Highlighter.event` 是内部的 `EventType` 类型. 它包含了如下这些事件：
 
 - `EventType.CLICK`: 点击高亮区域
-- `EventType.HOVER`: 鼠标移至高亮区域，类似 mouseenter
-- `EventType.HOVER_OUT`: 鼠标移出高亮区域，类似 mouseleave
+- `EventType.HOVER`: 鼠标移至高亮区域，类似 mouse enter
+- `EventType.HOVER_OUT`: 鼠标移出高亮区域，类似 mouse leave
 - `EventType.CREATE`: 高亮区域被创建
 - `EventType.REMOVE`: 高亮区域被清除
 
