@@ -309,4 +309,4 @@ To learn more about the hooks, read [this doc](https://github.com/alienzhou/web-
 
 ## License
 
-MIT
+[MIT](./LICENCE)
