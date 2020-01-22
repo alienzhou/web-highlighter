@@ -2,19 +2,19 @@
 
 ✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
 
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter) [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gizp size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![install size](https://packagephobia.now.sh/badge?p=web-highlighter)](https://packagephobia.now.sh/result?p=web-highlighter) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter) [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gzip size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![install size](https://packagephobia.now.sh/badge?p=web-highlighter)](https://packagephobia.now.sh/result?p=web-highlighter) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md)
 
 ## Background
 
-It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDFs.
+It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDF.
 
-If you have ever visited [medium.com](http://medium.com), you must know the feature of higlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
+If you have ever visited [medium.com](http://medium.com), you must know the feature of highlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
 
 ![](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/sample.gif)
 
-This is a usefull feature for readers. If you're a developer, you may want your website support it and attract more visitings. If you're a user (like me), you may want a browser-plugin to do this.
+This is a useful feature for readers. If you're a developer, you may want your website support it and attract more visits. If you're a user (like me), you may want a browser-plugin to do this.
 
 For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.
 
@@ -38,7 +38,7 @@ If you need persistence, four lines make it.
 ```JavaScript
 import Highlighter from 'web-highlighter';
 
-// 1. initailize
+// 1. initialize
 const highlighter = new Highlighter();
 
 // 2. retrieve data from backend, then highlight it on the page
@@ -103,7 +103,7 @@ Then start the example
 npm start
 ```
 
-Finially visit http://127.0.0.1:8085/
+Finally visit http://127.0.0.1:8085/
 
 ---
 
@@ -133,7 +133,7 @@ Create a new `highlighter` instance.
 All options:
 
 | name | type | description | required | default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | $root | `Document | HTMLElement` | the container to enable highlighting | No | `document` |
 | exceptSelectors | `Array<string>` | if an element matches the selector, it won't be highlighted | No | `null` |
 | wrapTag | `string` | the html tag used to wrap highlighted texts | No | `span` |
@@ -142,8 +142,8 @@ All options:
 `style` field options:
 
 | name | type | description | required | default |
-|---|---|---|---|---|---|
-| className | `string` | the classname for wrap element | No | `highlight-mengshou-wrap` |
+|---|---|---|---|---|
+| className | `string` | the className for wrap element | No | `highlight-mengshou-wrap` |
 
 `exceptSelectors` needs `null` or `Array<string>`. It supports id selectors, class selectors and tag selectors. For example, to skip h1 and `.title` elements:
 
@@ -180,14 +180,14 @@ if (selection.isCollapsed) {
 
 ### `highlighter.fromStore(start, end, text, id)`
 
-Mostly, you use this api to highlight text by the persisted infomation stored from backend.
+Mostly, you use this api to highlight text by the persisted information stored from backend.
 
 These four values are from the `HighlightSource` object. `HighlightSource` object is a special object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node. This structure is called `HighlightSource` in web-highlighter.
 
 Four attributes' meanings:
 
 - start `Object`:    meta info about the beginning element
-- end   `Object`:    meata info about then end element
+- end   `Object`:    meta info about then end element
 - text  `string`:    text content
 - id    `string`:    unique id
 
@@ -199,18 +199,18 @@ Remove (clean) a highlighted area by it's unique id. The id will be generated by
 
 Remove all highlighted areas belonging to the root.
 
-### `highlighter.addClass(classname, id)`
+### `highlighter.addClass(className, id)`
 
-Add a classname for highlighted areas (wrap elements) by unique id. You can change a highlighted area's style by using this api.
+Add a className for highlighted areas (wrap elements) by unique id. You can change a highlighted area's style by using this api.
 
 
-### `highlighter.removeClass(classname, id)`
+### `highlighter.removeClass(className, id)`
 
-Remove the classname by unique id. It's `highlighter.addClass`'s inverse operation.
+Remove the className by unique id. It's `highlighter.addClass`'s inverse operation.
 
 ### `highlighter.getDoms([id])`
 
-Get all the wrap nodes in a highlighted area. A highlighted area may contain many segments. It will return all the dom nodes wrapping these segements.
+Get all the wrap nodes in a highlighted area. A highlighted area may contain many segments. It will return all the dom nodes wrapping these segments.
 
 If the `id` is not passed, it will return all the areas' wrap nodes.
 
@@ -235,7 +235,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 The callback function will receive three parameters:
 
 - data `any`: event data
-- inst `Highligher`: current Highligher instance
+- inst `Highlighter`: current Highlighter instance
 - e `Event`: some event is triggered by the browser (such as click), web-highlighter will expose it
 
 `Highlighter.event` is `EventType` type. It contains：
