@@ -125,8 +125,8 @@ export default class Highlighter extends EventEmitter {
 
     getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
     getDoms = (id?: string): Array<HTMLElement> => id
-        ? getHighlightById(this.options.$root, id)
-        : getHighlightsByRoot(this.options.$root);
+        ? getHighlightById(this.options.$root, id, this.options.wrapTag)
+        : getHighlightsByRoot(this.options.$root, this.options.wrapTag);
 
     dispose = () => {
         const $root = this.options.$root;
@@ -143,6 +143,7 @@ export default class Highlighter extends EventEmitter {
         };
         this.painter = new Painter({
             $root: this.options.$root,
+            wrapTag: this.options.wrapTag,
             className: this.options.style.className,
             exceptSelectors: this.options.exceptSelectors
         }, this.hooks);

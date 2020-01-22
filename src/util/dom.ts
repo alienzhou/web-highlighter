@@ -5,7 +5,6 @@
 
 import {RootElement} from '../types';
 import {
-    WRAP_TAG,
     ID_DIVISION,
     DATASET_IDENTIFIER,
     CAMEL_DATASET_IDENTIFIER,
@@ -32,14 +31,17 @@ export const getHighlightId = ($node: HTMLElement): string => {
 /**
  * get all highlight wrapping nodes nodes from a root node
  */
-export const getHighlightsByRoot = ($roots: RootElement | Array<RootElement>): Array<HTMLElement> => {
+export const getHighlightsByRoot = (
+    $roots: RootElement | Array<RootElement>,
+    wrapTag: string
+): Array<HTMLElement> => {
     if (!Array.isArray($roots)) {
         $roots = [$roots];
     }
 
     const $wraps = [];
     for (let i = 0; i < $roots.length; i++) {
-        const $list = $roots[i].querySelectorAll(`${WRAP_TAG}[data-${DATASET_IDENTIFIER}]`);
+        const $list = $roots[i].querySelectorAll(`${wrapTag}[data-${DATASET_IDENTIFIER}]`);
         $wraps.push.apply($wraps, $list);
     }
     return $wraps;
@@ -48,10 +50,14 @@ export const getHighlightsByRoot = ($roots: RootElement | Array<RootElement>): A
 /**
  * get all highlight wrapping nodes by highlight id from a root node
  */
-export const getHighlightById = ($root: RootElement, id: String): Array<HTMLElement> => {
+export const getHighlightById = (
+    $root: RootElement,
+    id: String,
+    wrapTag: string
+): Array<HTMLElement> => {
     const $highlights = [];
     const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
-    const $list = $root.querySelectorAll(`${WRAP_TAG}[data-${DATASET_IDENTIFIER}]`);
+    const $list = $root.querySelectorAll(`${wrapTag}[data-${DATASET_IDENTIFIER}]`);
     for (let k = 0; k < $list.length; k++) {
         const $n = $list[k] as HTMLElement;
         const nid = $n.dataset[CAMEL_DATASET_IDENTIFIER];

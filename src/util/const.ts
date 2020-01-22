@@ -7,7 +7,6 @@ import camel from './camel';
 export const ID_DIVISION = ';';
 export const LOCAL_STORE_KEY = 'highlight-mengshou';
 export const STYLESHEET_ID = 'highlight-mengshou-style';
-export const WRAP_TAG = 'span';
 
 export const DATASET_IDENTIFIER = 'highlight-id';
 export const DATASET_IDENTIFIER_EXTRA = 'highlight-id-extra';
@@ -16,9 +15,11 @@ export const CAMEL_DATASET_IDENTIFIER = camel(DATASET_IDENTIFIER);
 export const CAMEL_DATASET_IDENTIFIER_EXTRA = camel(DATASET_IDENTIFIER_EXTRA);
 export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
+const DEFAULT_WRAP_TAG = 'span';
 export const DEFAULT_OPTIONS = {
     $root: window.document || window.document.documentElement,
     exceptSelectors: null,
+    wrapTag: DEFAULT_WRAP_TAG,
     style: {
         className: 'highlight-mengshou-wrap'
     }
