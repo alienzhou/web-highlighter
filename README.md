@@ -121,17 +121,31 @@ Create a new `highlighter` instance.
 
 ```JavaScript
 {
-    $root: document.documentElement,    // root element for addEventlistener / DFS / ...
-    exceptSelectors: null,              // if an element matches the selector, it won't be highlighted
+    $root: document.documentElement,
+    exceptSelectors: null,
+    wrapTag: 'span',
     style: {
-        className: 'highlight-wrap'     // the classname for wrap element
+        className: 'highlight-mengshou-wrap'
     }
 }
 ```
 
-`exceptSelectors` needs `null` or `Array<string>`. It suports id selectors, class selectors and tag selectors.
+All options:
 
-For example, to skip h1 and `.title` elements:
+| name | type | description | required | default |
+|---|---|---|---|---|---|
+| $root | `Document | HTMLElement` | the container to enable highlighting | No | `document` |
+| exceptSelectors | `Array<string>` | if an element matches the selector, it won't be highlighted | No | `null` |
+| wrapTag | `string` | the html tag used to wrap highlighted texts | No | `span` |
+| style | `Object` | control highlighted areas style | No | details below |
+
+`style` field options:
+
+| name | type | description | required | default |
+|---|---|---|---|---|---|
+| className | `string` | the classname for wrap element | No | `highlight-mengshou-wrap` |
+
+`exceptSelectors` needs `null` or `Array<string>`. It supports id selectors, class selectors and tag selectors. For example, to skip h1 and `.title` elements:
 
 ```JavaScript
 var highlighter = new Highlighter({
@@ -141,7 +155,7 @@ var highlighter = new Highlighter({
 
 ### `highlighter.run()`
 
-Start auto-highlighting. When the user select a text segement, a highlighting will be added to the text automatically.
+Start auto-highlighting. When the user select a text segment, a highlighting will be added to the text automatically.
 
 ### `highlighter.stop()`
 
@@ -284,6 +298,8 @@ Different event has different `data`. Attributes below:
 - Chrome 15+
 - Safari 5.1+
 - Opera 15+
+
+_**Mobile supports:**_ automatically detect whether mobile devices and use touch events when on mobile devices.
 
 ## Advance
 

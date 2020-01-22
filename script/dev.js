@@ -1,4 +1,4 @@
-const opn = require('opn');
+const opn = require('better-opn');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 

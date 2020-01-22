@@ -11,7 +11,6 @@ import {getHighlightsByRoot, forEach} from '@src/util/dom';
 import {ERROR, PainterOptions, HookMap} from '@src/types';
 import {initDefaultStylesheet} from './style';
 import {
-    WRAP_TAG,
     ID_DIVISION,
     DATASET_IDENTIFIER,
     CAMEL_DATASET_IDENTIFIER,
@@ -27,6 +26,7 @@ export default class Painter {
     constructor(options: PainterOptions, hooks: HookMap) {
         this.options = {
             $root: options.$root,
+            wrapTag: options.wrapTag,
             exceptSelectors: options.exceptSelectors,
             className: options.className
         };
@@ -50,7 +50,7 @@ export default class Painter {
         }
 
         return $selectedNodes.map(n => {
-            let $node = wrapHighlight(n, range, className);
+            let $node = wrapHighlight(n, range, className, this.options.wrapTag);
             if (!hooks.Render.WrapNode.isEmpty()) {
                 $node = hooks.Render.WrapNode.call(range.id, $node);
             }
@@ -90,7 +90,8 @@ export default class Painter {
         const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
 
         const hooks = this.hooks;
-        const $spans = document.querySelectorAll(`${WRAP_TAG}[data-${DATASET_IDENTIFIER}]`) as NodeListOf<HTMLElement>;
+        const wrapTag = this.options.wrapTag;
+        const $spans = document.querySelectorAll(`${wrapTag}[data-${DATASET_IDENTIFIER}]`) as NodeListOf<HTMLElement>;
 
         // nodes to remove
         const $toRemove: HTMLElement[] = [];
@@ -145,7 +146,8 @@ export default class Painter {
     }
 
     removeAllHighlight() {
-        const $spans = getHighlightsByRoot(this.options.$root);
+        const {wrapTag, $root} = this.options;
+        const $spans = getHighlightsByRoot($root, wrapTag);
         $spans.forEach($s => {
             const $parent = $s.parentNode;
             const $fr = document.createDocumentFragment();

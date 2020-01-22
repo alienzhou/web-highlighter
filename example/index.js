@@ -4,6 +4,7 @@ import Highlighter from '../src/index';
 import LocalStore from './local.store';
 
 const highlighter = new Highlighter({
+    wrapTag: 'i',
     exceptSelectors: ['.my-remove-tip', 'pre', 'code']
 });
 const store = new LocalStore();

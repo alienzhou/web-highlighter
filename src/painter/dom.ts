@@ -6,7 +6,6 @@ import {
     isHighlightWrapNode
 } from '../util/dom';
 import {
-    WRAP_TAG,
     ID_DIVISION,
     DEFAULT_OPTIONS,
     CAMEL_DATASET_IDENTIFIER,
@@ -162,10 +161,11 @@ function addClass($el: HTMLElement, className?: string | Array<string>): HTMLEle
 function wrapNewNode(
     selected: SelectedNode,
     range: HighlightRange,
-    className: string | Array<string>
+    className: string | Array<string>,
+    wrapTag: string
 ): HTMLElement {
     let $wrap: HTMLElement;
-    $wrap = document.createElement(WRAP_TAG);
+    $wrap = document.createElement(wrapTag);
     addClass($wrap, className);
 
     $wrap.appendChild(selected.$node.cloneNode(false));
@@ -184,9 +184,10 @@ function wrapNewNode(
 function wrapPartialNode(
     selected: SelectedNode,
     range: HighlightRange,
-    className: string | Array<string>
+    className: string | Array<string>,
+    wrapTag: string
 ): HTMLElement {
-    let $wrap: HTMLElement = document.createElement(WRAP_TAG);
+    let $wrap: HTMLElement = document.createElement(wrapTag);
 
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
@@ -276,7 +277,8 @@ function wrapOverlapNode(
 export const wrapHighlight = (
     selected: SelectedNode,
     range: HighlightRange,
-    className?: string | Array<string>
+    className: string | Array<string>,
+    wrapTag: string
 ): HTMLElement => {
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
@@ -285,11 +287,11 @@ export const wrapHighlight = (
     let $wrap: HTMLElement;
     // text node, not in a highlight wrapper -> should be wrapped in a highlight wrapper
     if (!isHighlightWrapNode($parent)) {
-        $wrap = wrapNewNode(selected, range, className);
+        $wrap = wrapNewNode(selected, range, className, wrapTag);
     }
     // text node, in a highlight wrap -> should split the existing highlight wrapper
     else if (isHighlightWrapNode($parent) && ($prev || $next)) {
-        $wrap = wrapPartialNode(selected, range, className);
+        $wrap = wrapPartialNode(selected, range, className, wrapTag);
     }
     // completely overlap (with a highlight wrap) -> only add extra id info
     else {

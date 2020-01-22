@@ -121,17 +121,31 @@ npm start
 
 ```JavaScript
 {
-    $root: document.documentElement,    // 根元素，用于 addEventlistener / DFS / ...
-    exceptSelectors: null,              // 当元素符合选择器条件时，则不会被高亮
+    $root: document.documentElement,
+    exceptSelectors: null,
+    wrapTag: 'span',
     style: {
-        className: 'highlight-wrap'     // 实现高亮的本质是为其包裹 span，该配置用于设置 span 的classname
+        className: 'highlight-mengshou-wrap'
     }
 }
 ```
 
-`exceptSelectors` 为 `null` 或 `Array<string>`。 支持 ID 选择器、类选择器和标签选择器.
+配置说明:
 
-例如，想要忽略标签为 h1 和 classname 为 `.title` 的元素：
+| 参数名 | 类型 | 描述 | 是否必须 | 默认值 |
+|---|---|---|---|---|---|
+| $root | `Document | HTMLElement` | 高亮区域的根容器元素 | 否 | `document` |
+| exceptSelectors | `Array<string>` | 过滤器，符合的元素将不会被高亮 | 否 | `null` |
+| wrapTag | `string` | 用于包裹高亮文本的 HTML 标签名 | 否 | `span` |
+| style | `Object` | 用于控制高亮区域的样式 | 否 | 详见下方 |
+
+`style` 属性配置:
+
+| 参数名 | 类型 | 描述 | 是否必须 | 默认值 |
+|---|---|---|---|---|---|
+| className | `string` | 高亮包裹元素的 classname | 否 | `highlight-mengshou-wrap` |
+
+`exceptSelectors` 为 `null` 或 `Array<string>`。 支持 ID 选择器、类选择器和标签选择器。例如，想要忽略标签为 h1 和 classname 为 `.title` 的元素：
 
 ```JavaScript
 var highlighter = new Highlighter({
@@ -281,6 +295,8 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 - Chrome 15+
 - Safari 5.1+
 - Opera 15+
+
+_**移动端支持：**_ 如果检测为移动端，则会自动使用相应的事件监听来替代 PC 端事件。
 
 ## 更多使用方式
 
