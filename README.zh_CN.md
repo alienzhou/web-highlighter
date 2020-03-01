@@ -110,6 +110,11 @@ npm start
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
+## 工作原理
+
+web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selection%20api) 来读取被选择的文本范围。然后选区的信息会被转换为一个可序列化的数据结构，以便于能够发送并存储在后端。当用户再次访问你的页面时，这些存储的数据被返回然后在你的页面上进行反序列化。数据结构本身是技术栈无关的。所以你可以用在任意技术栈构建的页面上（例如 React、Vue、Angular 或者 jQuery 等等）。
+
+想要了解更多实现细节，可以阅读[这片文章](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/)。
 
 ## API
 

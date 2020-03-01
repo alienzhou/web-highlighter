@@ -111,6 +111,12 @@ Another real product built with web-highlighter (for the highlighting area on th
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
+## How it works
+
+It will read the selected range by [`Selection API`](https://caniuse.com/#search=selection%20api). Then the information of the range will be converted to a serializable data structure so that it can be store in backend. When users visit your page next time, these data will be returned and deserialized in your page. The data structure is tech stack independent. So you can use on any 'static' pages made with React / Vue / Angular / jQuery and others.
+
+For more details, please read [this article (in Chinese)](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/).
+
 ## API
 
 ### `highlighter = new Highlighter([opts])`
