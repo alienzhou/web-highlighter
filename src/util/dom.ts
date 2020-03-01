@@ -1,6 +1,5 @@
 /**
  * @file dom 操作相关的通用工具类
- * @author zhouhongxuan@baidu.com
  */
 
 import {RootElement} from '../types';
