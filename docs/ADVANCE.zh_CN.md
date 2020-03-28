@@ -70,6 +70,18 @@ highlighter.hooks.Render.UUID.tap(function (start, end, text) {
 
 - 高亮包裹的节点
 
+### `Serialize.Restore`
+
+自定义你的还原（反序列化）方法。当你使用这个钩子时，`HighlightSource` 实例会调用你注册的方法来计算高亮选区的首尾节点信息。
+
+**参数:**
+
+- hs: 当前的 `HighlightSource` 实例
+
+**所需的返回值:**
+
+- 一个数组对象: 数组的第一个元素是选区开始的节点信息，第二个元素是结束的节点信息
+
 ### `Serialize.RecordInfo`
 
 为选区序列化时的持久化数据生成额外信息

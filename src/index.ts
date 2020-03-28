@@ -54,6 +54,7 @@ export default class Highlighter extends EventEmitter {
             WrapNode: new Hook('Render.WrapNode')
         },
         Serialize: {
+            Restore: new Hook('Serialize.Restore'),
             RecordInfo: new Hook('Serialize.RecordInfo')
         },
         Remove: {
@@ -170,9 +171,9 @@ export default class Highlighter extends EventEmitter {
         return this._highlighFromHRange(hRange);
     }
 
-    fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
+    fromStore = (start: DomMeta, end: DomMeta, text: string, id: string, extra?: unknown): HighlightSource => {
         try {
-            const hs = new HighlightSource(start, end, text, id);
+            const hs = new HighlightSource(start, end, text, id, extra);
             this._highlighFromHSource(hs);
             return hs;
         }

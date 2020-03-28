@@ -47,21 +47,6 @@ class LocalStore {
         this.jsonToStore(stores);
     }
 
-    get(id) {
-        const list = this.storeToJson()
-            .filter(store => store.hs.id === id)
-            .map(store => ({
-                hs: new HighlightSource(
-                    store.hs.startMeta,
-                    store.hs.endMeta,
-                    store.hs.text,
-                    store.hs.id
-                ),
-                info: store.info
-            }));
-        return list[0];
-    }
-
     remove(id) {
         const stores = this.storeToJson();
         let index = null;

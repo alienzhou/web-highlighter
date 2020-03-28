@@ -69,7 +69,7 @@ export default class Painter {
                 console.error(ERROR.SOURCE_TYPE_ERROR);
                 return;
             }
-            const range = s.deSerialize(this.options.$root);
+            const range = s.deSerialize(this.options.$root, this.hooks);
             const $nodes = this.highlightRange(range);
             if ($nodes.length > 0) {
                 renderedSources.push(s);

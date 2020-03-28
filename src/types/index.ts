@@ -88,6 +88,7 @@ export type HookMap = {
         WrapNode: Hook;
     };
     Serialize: {
+        Restore: Hook;
         RecordInfo: Hook;
     };
     Remove: {
