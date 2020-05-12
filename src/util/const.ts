@@ -35,3 +35,6 @@ export const STYLESHEET_TEXT = `
         background: #ffb;
     }
 `;
+
+export const ROOT_IDX = -2;
+export const UNKNOWN_IDX = -1;
