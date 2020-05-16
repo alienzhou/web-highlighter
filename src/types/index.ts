@@ -47,6 +47,11 @@ export enum EventType {
     CLICK       = 'selection:click',
 };
 
+export enum CreateFrom {
+    STORE = 'from-store',
+    INPUT = 'from-input',
+};
+
 export enum SelectedNodeType {
     text = 'text',
     span = 'span'

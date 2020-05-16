@@ -16,22 +16,21 @@ export const CAMEL_DATASET_IDENTIFIER_EXTRA = camel(DATASET_IDENTIFIER_EXTRA);
 export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
 const DEFAULT_WRAP_TAG = 'span';
-export const DEFAULT_OPTIONS = {
-    $root: window.document || window.document.documentElement,
+export const getDefaultOptions = () => ({
+    $root: document || document.documentElement,
     exceptSelectors: null,
     wrapTag: DEFAULT_WRAP_TAG,
     style: {
         className: 'highlight-mengshou-wrap'
     }
-};
+});
 
-const styles = DEFAULT_OPTIONS.style;
-export const STYLESHEET_TEXT = `
-    .${styles.className} {
+export const getStylesheet = () => `
+    .${getDefaultOptions().style.className} {
         background: #ff9;
         cursor: pointer;
     }
-    .${styles.className}.active {
+    .${getDefaultOptions().style.className}.active {
         background: #ffb;
     }
 `;
