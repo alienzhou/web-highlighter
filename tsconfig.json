@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "sourceMap": true,
         "lib": [
             "dom",
@@ -11,5 +12,8 @@
         "paths": {
             "@src/*": ["./src/*"]
         }
-    }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }
