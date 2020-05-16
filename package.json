@@ -6,6 +6,7 @@
   "browser": "dist/web-highlighter.min.js",
   "scripts": {
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**.spec.ts",
+    "coverage": "nyc -r lcov -e .ts -x \"test/**/*.ts\" npm run test",
     "serve-example": "http-server example/static",
     "serve": "http-server -p 8081 ./dist",
     "watch": "webpack --config ./config/webpack.config.prod.js --watch",
