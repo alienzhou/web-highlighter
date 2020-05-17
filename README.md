@@ -1,7 +1,7 @@
 <div>
     <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
     <p align="center">
-        <strong>✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️</strong>
+        <strong>✨ A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️</strong>
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
@@ -143,7 +143,7 @@ For more details, please read [this article (in Chinese)](https://www.alienzhou.
 
 ## APIs
 
-### Options
+### 1. Options
 
 ```JavaScript
 const highlighter = new Highlighter([opts])
@@ -188,7 +188,7 @@ var highlighter = new Highlighter({
 });
 ```
 
-### Static Methods
+### 2. Static Methods
 
 #### `Highlighter.isHighlightSource(source)`
 
@@ -198,7 +198,7 @@ If the `source` is a highlight source object, it will return `true`, vice verse.
 
 If the `$node` is a highlight wrapper dom node, it will return `true`, vice verse.
 
-### Instance Methods
+### 3. Instance Methods
 
 #### `highlighter.run()`
 
@@ -266,7 +266,7 @@ If the `id` is not passed, it will return all the areas' wrap nodes.
 
 If you have a wrap node, it can return the unique highlight id for you.
 
-### `Event Listener`
+### 4. Event Listener
 
 web-highlighter use listeners to handle the events.
 
@@ -335,7 +335,7 @@ Different event has different `data`. Attributes below:
 |---|---|---|
 |`ids`|a list of the highlight id|Array<string>|
 
-### Hooks
+### 5. Hooks
 
 Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
 
