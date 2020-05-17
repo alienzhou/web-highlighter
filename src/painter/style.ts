@@ -10,7 +10,7 @@ export function initDefaultStylesheet () {
     if (!$style) {
         const $cssNode = document.createTextNode(getStylesheet());
         $style = document.createElement('style');
-        $style.id = this.styleId;
+        $style.id = styleId;
         $style.appendChild($cssNode);
         document.head.appendChild($style);
     }
