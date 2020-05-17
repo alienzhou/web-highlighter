@@ -4,6 +4,7 @@
  */
 
 import camel from './camel';
+import EventEmitter from './event.emitter';
 export const ID_DIVISION = ';';
 export const LOCAL_STORE_KEY = 'highlight-mengshou';
 export const STYLESHEET_ID = 'highlight-mengshou-style';
@@ -20,6 +21,7 @@ export const getDefaultOptions = () => ({
     $root: document || document.documentElement,
     exceptSelectors: null,
     wrapTag: DEFAULT_WRAP_TAG,
+    verbose: false,
     style: {
         className: 'highlight-mengshou-wrap'
     }
@@ -37,3 +39,5 @@ export const getStylesheet = () => `
 
 export const ROOT_IDX = -2;
 export const UNKNOWN_IDX = -1;
+export const INTERNAL_ERROR_EVENT = 'error';
+export const eventEmitter = new EventEmitter();

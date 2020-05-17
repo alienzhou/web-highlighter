@@ -3,9 +3,10 @@ import Hook from "@src/util/hook";
 export type RootElement = Document | HTMLElement;
 
 export interface HighlighterOptions {
-    $root: RootElement;
-    exceptSelectors: Array<string>;
-    wrapTag: string;
+    $root?: RootElement;
+    exceptSelectors?: Array<string>;
+    wrapTag?: string;
+    verbose?: boolean;
     style?: {
         className?: string | Array<string>;
     }
@@ -34,6 +35,7 @@ export enum ERROR {
     CACHE_SET_ERROR                 = '[CACHE] Cache.data can\'t be set manually, please use .save().',
     SOURCE_TYPE_ERROR               = '[SOURCE] Object isn\'t a highlight source instance.',
     HIGHLIGHT_RANGE_FROZEN          = '[HIGHLIGHT_RANGE] A highlight range must be frozen before render.',
+    HIGHLIGHT_SOURCE_RECREATE       = '[HIGHLIGHT_SOURCE] Recreate highlights from sources error.',
     HIGHLIGHT_SOURCE_NONE_RENDER    = '[HIGHLIGHT_SOURCE] This highlight source isn\'t rendered.'
                                         + ' May be the exception skips it or the dom structure has changed.'
 };

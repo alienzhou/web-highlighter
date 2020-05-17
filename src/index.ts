@@ -7,7 +7,11 @@ import Hook from '@src/util/hook';
 import getInteraction from '@src/util/interaction';
 import Cache from '@src/data/cache';
 import Painter from '@src/painter';
-import { getDefaultOptions } from '@src/util/const';
+import {
+    eventEmitter,
+    getDefaultOptions,
+    INTERNAL_ERROR_EVENT
+} from '@src/util/const';
 import {
     ERROR,
     DomNode,
@@ -33,6 +37,7 @@ export default class Highlighter extends EventEmitter {
     static isHighlightSource = (d: any) => {
         return !!d.__isHighlightSource;
     }
+    static isHighlightWrapNode = isHighlightWrapNode;
 
     private _hoverId: string;
     private event = getInteraction();
@@ -50,9 +55,10 @@ export default class Highlighter extends EventEmitter {
         const $root = this.options.$root;
         addEventListener($root, this.event.PointerOver, this._handleHighlightHover); // initialize event listener
         addEventListener($root, this.event.PointerTap, this._handleHighlightClick); // initialize event listener
+        eventEmitter.on(INTERNAL_ERROR_EVENT, this._handleError);
     }
 
-    private _getHooks = () => ({
+    private _getHooks = (): HookMap => ({
         Render: {
             UUID: new Hook('Render.UUID'),
             SelectedNodes: new Hook('Render.SelectedNodes'),
@@ -66,11 +72,13 @@ export default class Highlighter extends EventEmitter {
         }
     });
 
-    private _highlighFromHRange = (range: HighlightRange): HighlightSource => {
+    private _highlightFromHRange = (range: HighlightRange): HighlightSource => {
         const source: HighlightSource = range.serialize(this.options.$root, this.hooks);
         const $wraps = this.painter.highlightRange(range);
         if ($wraps.length === 0) {
-            console.warn(ERROR.DOM_SELECTION_EMPTY);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.DOM_SELECTION_EMPTY
+            });
             return null;
         }
         this.cache.save(source);
@@ -78,7 +86,7 @@ export default class Highlighter extends EventEmitter {
         return source;
     }
 
-    private _highlighFromHSource(sources: HighlightSource[] | HighlightSource = []) {
+    private _highlightFromHSource(sources: HighlightSource[] | HighlightSource = []) {
         const renderedSources: Array<HighlightSource> = this.painter.highlightSource(sources);;
         this.emit(EventType.CREATE, {sources: renderedSources, type: CreateFrom.STORE}, this);
         this.cache.save(sources);
@@ -87,7 +95,7 @@ export default class Highlighter extends EventEmitter {
     private _handleSelection = (e?: Event) => {
         const range = HighlightRange.fromSelection(this.hooks.Render.UUID);
         if (range) {
-            this._highlighFromHRange(range);
+            this._highlightFromHRange(range);
             HighlightRange.removeDomRange();
         }
     }
@@ -112,6 +120,12 @@ export default class Highlighter extends EventEmitter {
         }
         this._hoverId = id;
         this.emit(EventType.HOVER, {id: this._hoverId}, this, e);
+    }
+
+    private _handleError = (type: string, detail?) => {
+        if(this.options.verbose) {
+            console.warn(type);
+        }
     }
 
     private _handleHighlightClick = (e): void => {
@@ -169,20 +183,25 @@ export default class Highlighter extends EventEmitter {
         id = id !== undefined && id !== null ? id : uuid();
         const hRange = new HighlightRange(start, end, text, id);
         if (!hRange) {
-            console.warn(ERROR.RANGE_INVALID);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.RANGE_INVALID
+            });
             return null;
         }
-        return this._highlighFromHRange(hRange);
+        return this._highlightFromHRange(hRange);
     }
 
     fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
         try {
             const hs = new HighlightSource(start, end, text, id);
-            this._highlighFromHSource(hs);
+            this._highlightFromHSource(hs);
             return hs;
         }
         catch (err) {
-            console.error(err, id, text, start, end);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
+                detail: { err, id, text, start, end }
+            });
             return null;
         }
     }
@@ -191,9 +210,12 @@ export default class Highlighter extends EventEmitter {
         if (!id) {
             return;
         }
-        this.painter.removeHighlight(id);
+        const doseExist = this.painter.removeHighlight(id);
         this.cache.remove(id);
-        this.emit(EventType.REMOVE, {ids: [id]}, this);
+        // only emit REMOVE event when highlight exist
+        if (doseExist) {
+            this.emit(EventType.REMOVE, {ids: [id]}, this);
+        }
     }
 
     removeAll() {
