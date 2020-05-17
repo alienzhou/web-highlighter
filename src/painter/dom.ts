@@ -7,7 +7,7 @@ import {
 } from '../util/dom';
 import {
     ID_DIVISION,
-    DEFAULT_OPTIONS,
+    getDefaultOptions,
     CAMEL_DATASET_IDENTIFIER,
     CAMEL_DATASET_IDENTIFIER_EXTRA,
     DATASET_IDENTIFIER,
@@ -150,7 +150,7 @@ export const getSelectedNodes = (
 
 function addClass($el: HTMLElement, className?: string | Array<string>): HTMLElement  {
     let classNames = Array.isArray(className) ? className : [className];
-    classNames = classNames.length === 0 ? [DEFAULT_OPTIONS.style.className] : classNames;
+    classNames = classNames.length === 0 ? [getDefaultOptions().style.className] : classNames;
     classNames.forEach(c => addElementClass($el, c));
     return $el;
 }

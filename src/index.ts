@@ -1,19 +1,24 @@
-import '@src/util/dataset.polyfill';
+// import '@src/util/dataset.polyfill';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import HighlightSource from '@src/model/source';
 import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
-import event from '@src/util/interaction';
+import getInteraction from '@src/util/interaction';
 import Cache from '@src/data/cache';
 import Painter from '@src/painter';
-import {DEFAULT_OPTIONS} from '@src/util/const';
+import {
+    eventEmitter,
+    getDefaultOptions,
+    INTERNAL_ERROR_EVENT
+} from '@src/util/const';
 import {
     ERROR,
     DomNode,
     DomMeta,
     HookMap,
     EventType,
+    CreateFrom,
     HighlighterOptions
 } from './types';
 import {
@@ -29,25 +34,31 @@ import {
 
 export default class Highlighter extends EventEmitter {
     static event = EventType;
+    static isHighlightSource = (d: any) => {
+        return !!d.__isHighlightSource;
+    }
+    static isHighlightWrapNode = isHighlightWrapNode;
 
     private _hoverId: string;
+    private event = getInteraction();
     options: HighlighterOptions;
     hooks: HookMap;
     painter: Painter;
     cache: Cache;
 
-    constructor(options: HighlighterOptions) {
+    constructor(options?: HighlighterOptions) {
         super();
-        this.options = DEFAULT_OPTIONS;
+        this.options = getDefaultOptions();
         this.hooks = this._getHooks(); // initialize hooks
         this.setOption(options);
         this.cache = new Cache(); // initialize cache
         const $root = this.options.$root;
-        addEventListener($root, event.PointerOver, this._handleHighlightHover); // initialize event listener
-        addEventListener($root, event.PointerTap, this._handleHighlightClick); // initialize event listener
+        addEventListener($root, this.event.PointerOver, this._handleHighlightHover); // initialize event listener
+        addEventListener($root, this.event.PointerTap, this._handleHighlightClick); // initialize event listener
+        eventEmitter.on(INTERNAL_ERROR_EVENT, this._handleError);
     }
 
-    private _getHooks = () => ({
+    private _getHooks = (): HookMap => ({
         Render: {
             UUID: new Hook('Render.UUID'),
             SelectedNodes: new Hook('Render.SelectedNodes'),
@@ -61,28 +72,30 @@ export default class Highlighter extends EventEmitter {
         }
     });
 
-    private _highlighFromHRange = (range: HighlightRange): HighlightSource => {
+    private _highlightFromHRange = (range: HighlightRange): HighlightSource => {
         const source: HighlightSource = range.serialize(this.options.$root, this.hooks);
         const $wraps = this.painter.highlightRange(range);
         if ($wraps.length === 0) {
-            console.warn(ERROR.DOM_SELECTION_EMPTY);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.DOM_SELECTION_EMPTY
+            });
             return null;
         }
         this.cache.save(source);
-        this.emit(EventType.CREATE, {sources: [source], type: 'from-input'}, this);
+        this.emit(EventType.CREATE, {sources: [source], type: CreateFrom.INPUT}, this);
         return source;
     }
 
-    private _highlighFromHSource(sources: HighlightSource[] | HighlightSource = []) {
+    private _highlightFromHSource(sources: HighlightSource[] | HighlightSource = []) {
         const renderedSources: Array<HighlightSource> = this.painter.highlightSource(sources);;
-        this.emit(EventType.CREATE, {sources: renderedSources, type: 'from-store'}, this);
+        this.emit(EventType.CREATE, {sources: renderedSources, type: CreateFrom.STORE}, this);
         this.cache.save(sources);
     }
 
     private _handleSelection = (e?: Event) => {
         const range = HighlightRange.fromSelection(this.hooks.Render.UUID);
         if (range) {
-            this._highlighFromHRange(range);
+            this._highlightFromHRange(range);
             HighlightRange.removeDomRange();
         }
     }
@@ -109,6 +122,12 @@ export default class Highlighter extends EventEmitter {
         this.emit(EventType.HOVER, {id: this._hoverId}, this, e);
     }
 
+    private _handleError = (type: string, detail?) => {
+        if(this.options.verbose) {
+            console.warn(type);
+        }
+    }
+
     private _handleHighlightClick = (e): void => {
         const $target = e.target as HTMLElement;
         if (isHighlightWrapNode($target)) {
@@ -117,8 +136,8 @@ export default class Highlighter extends EventEmitter {
         }
     }
 
-    run = () => addEventListener(this.options.$root, event.PointerEnd, this._handleSelection);
-    stop = () => removeEventListener(this.options.$root, event.PointerEnd, this._handleSelection);
+    run = () => addEventListener(this.options.$root, this.event.PointerEnd, this._handleSelection);
+    stop = () => removeEventListener(this.options.$root, this.event.PointerEnd, this._handleSelection);
 
     addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => addClass($n, className));
     removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => removeClass($n, className));
@@ -130,13 +149,13 @@ export default class Highlighter extends EventEmitter {
 
     dispose = () => {
         const $root = this.options.$root;
-        removeEventListener($root, event.PointerOver, this._handleHighlightHover);
-        removeEventListener($root, event.PointerEnd, this._handleSelection);
-        removeEventListener($root, event.PointerTap, this._handleHighlightClick);
+        removeEventListener($root, this.event.PointerOver, this._handleHighlightHover);
+        removeEventListener($root, this.event.PointerEnd, this._handleSelection);
+        removeEventListener($root, this.event.PointerTap, this._handleHighlightClick);
         this.removeAll();
     }
 
-    setOption = (options: HighlighterOptions) => {
+    setOption = (options?: HighlighterOptions) => {
         this.options = {
             ...this.options,
             ...options
@@ -164,20 +183,25 @@ export default class Highlighter extends EventEmitter {
         id = id !== undefined && id !== null ? id : uuid();
         const hRange = new HighlightRange(start, end, text, id);
         if (!hRange) {
-            console.warn(ERROR.RANGE_INVALID);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.RANGE_INVALID
+            });
             return null;
         }
-        return this._highlighFromHRange(hRange);
+        return this._highlightFromHRange(hRange);
     }
 
     fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
         try {
             const hs = new HighlightSource(start, end, text, id);
-            this._highlighFromHSource(hs);
+            this._highlightFromHSource(hs);
             return hs;
         }
         catch (err) {
-            console.error(err, id, text, start, end);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
+                detail: { err, id, text, start, end }
+            });
             return null;
         }
     }
@@ -186,9 +210,12 @@ export default class Highlighter extends EventEmitter {
         if (!id) {
             return;
         }
-        this.painter.removeHighlight(id);
+        const doseExist = this.painter.removeHighlight(id);
         this.cache.remove(id);
-        this.emit(EventType.REMOVE, {ids: [id]}, this);
+        // only emit REMOVE event when highlight exist
+        if (doseExist) {
+            this.emit(EventType.REMOVE, {ids: [id]}, this);
+        }
     }
 
     removeAll() {

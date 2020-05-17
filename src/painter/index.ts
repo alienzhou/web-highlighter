@@ -12,7 +12,9 @@ import {ERROR, PainterOptions, HookMap} from '@src/types';
 import {initDefaultStylesheet} from './style';
 import {
     ID_DIVISION,
+    eventEmitter,
     DATASET_IDENTIFIER,
+    INTERNAL_ERROR_EVENT,
     CAMEL_DATASET_IDENTIFIER,
     CAMEL_DATASET_IDENTIFIER_EXTRA
 } from '../util/const';
@@ -46,7 +48,7 @@ export default class Painter {
 
         let $selectedNodes = getSelectedNodes($root, range.start, range.end, exceptSelectors);
         if (!hooks.Render.SelectedNodes.isEmpty()) {
-            $selectedNodes = hooks.Render.SelectedNodes.call(range.id, $selectedNodes);
+            $selectedNodes = hooks.Render.SelectedNodes.call(range.id, $selectedNodes) || [];
         }
 
         return $selectedNodes.map(n => {
@@ -66,7 +68,9 @@ export default class Painter {
         const renderedSources: Array<HighlightSource> = [];
         list.forEach(s => {
             if (!(s instanceof HighlightSource)) {
-                console.error(ERROR.SOURCE_TYPE_ERROR);
+                eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                    type: ERROR.SOURCE_TYPE_ERROR
+                });
                 return;
             }
             const range = s.deSerialize(this.options.$root);
@@ -75,7 +79,10 @@ export default class Painter {
                 renderedSources.push(s);
             }
             else {
-                console.warn(ERROR.HIGHLIGHT_SOURCE_NONE_RENDER, s);
+                eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                    type: ERROR.HIGHLIGHT_SOURCE_NONE_RENDER,
+                    detail: s
+                });
             }
         });
 
@@ -85,7 +92,8 @@ export default class Painter {
 
     /* =========================== clean =========================== */
     // id: target id - highlight with this id should be clean
-    removeHighlight(id: string) {
+    // if there is no highlight for this id, it will return false, vice versa
+    removeHighlight(id: string): boolean {
         // whether extra ids contains the target id
         const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
 
@@ -143,6 +151,8 @@ export default class Painter {
             $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = extraIds.replace(reg, '');
             hooks.Remove.UpdateNodes.call(id, $s, 'extra-update');
         });
+
+        return $toRemove.length + $idToUpdate.length + $extraToUpdate.length !== 0
     }
 
     removeAllHighlight() {
