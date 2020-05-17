@@ -1,10 +1,11 @@
 import {DomNode} from '@src//types';
 import HighlightSource from './index';
+import {ROOT_IDX} from '@src/util/const';
 
 /**
- * Because of supporting highligting a same area (range overlapping), 
+ * Because of supporting highlighting a same area (range overlapping), 
  * Highlighter will calculate which text-node and how much offset it actually be,
- * baseed on the origin website dom node and the text offset.
+ * based on the origin website dom node and the text offset.
  * 
  * @param {Node} $parent element node in the origin website dom tree
  * @param {number} offset text offset in the origin website dom tree
@@ -52,8 +53,11 @@ export const queryElementNode = (
     hs: HighlightSource,
     $root: HTMLElement | Document
 ): {start: Node, end: Node} => {
-    return {
-        start: $root.getElementsByTagName(hs.startMeta.parentTagName)[hs.startMeta.parentIndex],
-        end: $root.getElementsByTagName(hs.endMeta.parentTagName)[hs.endMeta.parentIndex],
-    };
+    const start = hs.startMeta.parentIndex === ROOT_IDX
+        ? $root
+        : $root.getElementsByTagName(hs.startMeta.parentTagName)[hs.startMeta.parentIndex];
+    const end = hs.endMeta.parentIndex === ROOT_IDX
+        ? $root
+        : $root.getElementsByTagName(hs.endMeta.parentTagName)[hs.endMeta.parentIndex];
+    return { start, end };
 };
