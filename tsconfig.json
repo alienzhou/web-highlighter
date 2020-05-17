@@ -8,6 +8,7 @@
         ],
         "target": "es5",
         "downlevelIteration": true,
+        "resolveJsonModule": true,
         "baseUrl": ".",
         "paths": {
             "@src/*": ["./src/*"]

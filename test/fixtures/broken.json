@@ -1,0 +1,32 @@
+[
+    {
+        "startMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 0
+        },
+        "endMeta": {
+            "parentTagName": "CODE",
+            "parentIndex": 0,
+            "textOffset": 5
+        },
+        "text": "It's a broken source",
+        "id": "238bec32-693c-4e59-afe6-670f1a644ca2",
+        "__isHighlightSource": {}
+    },
+    {
+        "startMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 0
+        },
+        "endMeta": {
+            "parentTagName": "CODE",
+            "parentIndex": 0,
+            "textOffset": 5
+        },
+        "text": "It's a broken source",
+        "id": "238bec32-693c-4e59-afe6-670f1a644ca2",
+        "__isHighlightSource": {}
+    }
+]
