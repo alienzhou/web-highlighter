@@ -77,6 +77,8 @@ Customize your own restoring method. When you tap this hook, the `HighlightSourc
 **arguments:**
 
 - hs: the current `HighlightSource` instance
+- start: a [DomNode type](https://github.com/alienzhou/web-highlighter/blob/master/src/types/index.ts#L75-L78) object which record the start info
+- end: a [DomNode type](https://github.com/alienzhou/web-highlighter/blob/master/src/types/index.ts#L75-L78) object which record the end info
 
 **return value needed:**
 
