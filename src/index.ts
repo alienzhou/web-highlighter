@@ -26,6 +26,7 @@ import {
     removeClass,
     isHighlightWrapNode,
     getHighlightById,
+    getExtraHighlightId,
     getHighlightsByRoot,
     getHighlightId,
     addEventListener,
@@ -144,6 +145,7 @@ export default class Highlighter extends EventEmitter {
     removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => removeClass($n, className));
 
     getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
+    getExtraIdByDom = ($node: HTMLElement): string[] => getExtraHighlightId($node);
     getDoms = (id?: string): Array<HTMLElement> => id
         ? getHighlightById(this.options.$root, id, this.options.wrapTag)
         : getHighlightsByRoot(this.options.$root, this.options.wrapTag);
