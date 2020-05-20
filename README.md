@@ -266,6 +266,10 @@ If the `id` is not passed, it will return all the areas' wrap nodes.
 
 If you have a wrap node, it can return the unique highlight id for you.
 
+#### `highlighter.getExtraIdByDom(node)`
+
+If you have a wrap node, it can return the extra unique highlight id for you.
+
 ### 4. Event Listener
 
 web-highlighter use listeners to handle the events.
