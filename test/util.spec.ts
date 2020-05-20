@@ -4,6 +4,7 @@ import HighlightSource from '../src/model/source/index';
 import sources from './fixtures/source.json';
 import Cache from '../src/data/cache';
 import Hook from '../src/util/hook';
+import EventEmitter from '../src/util/event.emitter';
 import { initDefaultStylesheet } from '../src/painter/style';
 import sinon from 'sinon';
 
@@ -161,6 +162,46 @@ describe('Else Utils', function () {
         it('should not throw error when removing a non-exist function', () => {
             const hook = new Hook();
             expect(() => hook.remove(() => {})).not.to.be.throw();
+        });
+    });
+
+    describe('EventEmitter', () => {
+        it('should call the callback when event emit', () => {
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const event = new EventEmitter();
+            event.on('test', spy);
+            event.emit('test');
+
+            expect(spy.calledOnce).to.be.true;
+        });
+
+        it('should not call the callback when another event emit', () => {
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const event = new EventEmitter();
+            event.on('test', spy);
+            event.emit('test-2');
+
+            expect(spy.callCount).to.be.equal(0);
+        });
+
+        it('should not call the callback after calling .off', () => {
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const event = new EventEmitter();
+            event.on('test', spy);
+            event.off('test', spy);
+            event.emit('test');
+
+            expect(spy.callCount).to.be.equal(0);
+        });
+
+        it('should not have effects when event name is not exist', () => {
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const event = new EventEmitter();
+            event.on('test', spy);
+            event.off('test-1', spy);
+            event.emit('test');
+
+            expect(spy.calledOnce).to.be.true;
         });
     });
 });
