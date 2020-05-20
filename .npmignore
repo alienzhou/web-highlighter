@@ -6,5 +6,6 @@
 *.log
 _config.yml
 .gitattributes
-.gitignore
 package-lock.json
+.nyc_output
+coverage
