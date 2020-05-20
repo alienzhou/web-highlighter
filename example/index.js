@@ -83,11 +83,42 @@ highlighter
     });
 
 /**
- * attach hooks
+ * avoid re-highlighting the existing selection
  */
-highlighter.hooks.Render.SelectedNodes.tap(
-    (id, selectedNodes) => selectedNodes.filter(n => n.$node.textContent)
-);
+function getIds(selected) {
+    if (!selected || !selected.$node || !selected.$node.parentNode) {
+        return [];
+    }
+    return [
+        highlighter.getIdByDom(selected.$node.parentNode),
+        ...highlighter.getExtraIdByDom(selected.$node.parentNode)
+    ].filter(i => i)
+}
+function getIntersection(arrA, arrB) {
+    const record = {};
+    const intersection = [];
+    arrA.forEach(i => record[i] = true);
+    arrB.forEach(i => record[i] && intersection.push(i) && (record[i] = false));
+    return intersection;
+}
+highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
+    selectedNodes = selectedNodes.filter(n => n.$node.textContent);
+    if (selectedNodes.length === 0) {
+        return [];
+    }
+
+    const candidates = selectedNodes.slice(1).reduce(
+        (left, selected) => getIntersection(left, getIds(selected)),
+        getIds(selectedNodes[0])
+    );
+    for (let i = 0; i < candidates.length; i++) {
+        if (highlighter.getDoms(candidates[i]).length === selectedNodes.length) {
+            return [];
+        }
+    }
+
+    return selectedNodes;
+});
 
 highlighter.hooks.Serialize.Restore.tap(
     source =>  log('Serialize.Restore hook -', source)
