@@ -1,0 +1,47 @@
+[
+    {
+        "startMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 0
+        },
+        "endMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 17
+        },
+        "text": "It's from an idea",
+        "id": "cbfcf177-4a0e-4deb-9f00-66e247ee5363",
+        "__isHighlightSource": {}
+    },
+    {
+        "startMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 10
+        },
+        "endMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 34
+        },
+        "text": "an idea: highlight texts",
+        "id": "69a33f5e-60f5-4b5d-9f9c-18151a24bf95",
+        "__isHighlightSource": {}
+    },
+    {
+        "startMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 8
+        },
+        "endMeta": {
+            "parentTagName": "P",
+            "parentIndex": 0,
+            "textOffset": 26
+        },
+        "text": "m an idea: highlig",
+        "id": "14206065-205f-4c6d-8f80-1e022a6695a3",
+        "__isHighlightSource": {}
+    }
+]

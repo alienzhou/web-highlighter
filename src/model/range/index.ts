@@ -10,6 +10,7 @@ import {getDomRange, removeSelection} from './selection';
 import Hook from '@src/util/hook';
 import uuid from '@src/util/uuid';
 import {getDomMeta} from './dom';
+import { eventEmitter, INTERNAL_ERROR_EVENT } from '@src/util/const';
 
 class HighlightRange {
     start: DomNode;
@@ -50,7 +51,9 @@ class HighlightRange {
         frozen: boolean = false
     ) {
         if (start.$node.nodeType !== 3 || end.$node.nodeType !== 3) {
-            console.warn(ERROR.RANGE_NODE_INVALID);
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.RANGE_NODE_INVALID
+            });
         }
 
         this.start = start;

@@ -2,7 +2,7 @@
  * some dom operations about HighlightRange
  */
 
-import {CAMEL_DATASET_IDENTIFIER} from '@src/util/const';
+import {CAMEL_DATASET_IDENTIFIER, ROOT_IDX, UNKNOWN_IDX} from '@src/util/const';
 import {DomMeta} from '@src/types';
 
 const countGlobalNodeIndex = ($node: Node, $root: Document | HTMLElement): number => {
@@ -13,7 +13,7 @@ const countGlobalNodeIndex = ($node: Node, $root: Document | HTMLElement): numbe
             return i;
         }
     }
-    return -1;
+    return UNKNOWN_IDX;
 };
 
 /**
@@ -65,7 +65,9 @@ const getOriginParent = ($node: Text | HTMLElement): HTMLElement => {
 
 export const getDomMeta = ($node: Text | HTMLElement, offset: number, $root: Document | HTMLElement): DomMeta => {
     const $originParent = getOriginParent($node);
-    const index = countGlobalNodeIndex($originParent, $root);
+    const index = $originParent === $root
+        ? ROOT_IDX
+        : countGlobalNodeIndex($originParent, $root);
     const preNodeOffset = getTextPreOffset($originParent, $node);
     const tagName = $originParent.tagName;
 

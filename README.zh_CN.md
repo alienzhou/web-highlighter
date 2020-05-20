@@ -1,12 +1,36 @@
-![Web Highlighter](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png)
+<div>
+    <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
+    <p align="center">
+        <strong>✨ 一个可以在任何网页上做高亮笔记前端库，支持高亮文本的持久化存储与还原 ✨🖍️</strong>
+    </p>
+    <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
+    <p align="center">
+        <a href="https://travis-ci.org/alienzhou/web-highlighter" target="_blank">
+            <img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="Build status" />
+        </a>
+        <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
+            <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />
+        </a>
+        <a href='https://coveralls.io/github/alienzhou/web-highlighter?branch=master'>
+            <img src='https://coveralls.io/repos/github/alienzhou/web-highlighter/badge.svg?branch=master' alt='Coverage Status' />
+        </a>
+        <a href="https://unpkg.com/web-highlighter" target="_blank">
+            <img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="Gzip size" />
+        </a>
+        <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master" target="_blank">
+            <img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="Codebeat" />
+        </a>
+        <a href="https://opensource.org/licenses/mit-license.php" target="_blank">
+            <img src="https://img.shields.io/github/license/alienzhou/web-highlighter" alt="MIT Licence" />
+        </a>
+    </p>
+</div>
 
-✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
-
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter) [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gzip size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![install size](https://packagephobia.now.sh/badge?p=web-highlighter)](https://packagephobia.now.sh/result?p=web-highlighter) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+---
 
 [English](https://github.com/alienzhou/web-highlighter/blob/master/README.md) | 简体中文
 
-## 背景
+##  1. <a name=''></a>背景
 
 灵感来源：当有天我访问某个网页时，突然希望能够像在PDF上一样，对网页文本添加高亮笔记，并支持永久保存这些高亮笔记区域。
 
@@ -19,13 +43,13 @@
 因此，「web-highlighter」仓库的目标就是帮助你在任意的网页上快速地实现高亮笔记功能（例如博客网页、文档阅读器、在线图书等）。它包含了文本高亮笔记与高亮持久化下场景的核心能力，并且支持通过它简单易用的 API 来实现你自己的产品需求。「web-highlighter」已经被用在了我们网站的生产环境中。
 
 
-## 安装
+##  2. <a name='-1'></a>安装
 
 ```bash
 npm i web-highlighter
 ```
 
-## 使用方式
+##  3. <a name='-1'></a>使用方式
 
 两行代码，即可开启文本选中时的自动高亮功能。
 
@@ -52,7 +76,7 @@ highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
 highlighter.run();
 ```
 
-## 示例
+##  4. <a name='-1'></a>示例
 
 一个更复杂的使用示例。
 
@@ -110,15 +134,19 @@ npm start
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
-## 工作原理
+##  5. <a name='-1'></a>工作原理
 
 web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selection%20api) 来读取被选择的文本范围。然后选区的信息会被转换为一个可序列化的数据结构，以便于能够发送并存储在后端。当用户再次访问你的页面时，这些存储的数据被返回然后在你的页面上进行反序列化。数据结构本身是技术栈无关的。所以你可以用在任意技术栈构建的页面上（例如 React、Vue、Angular 或者 jQuery 等等）。
 
-想要了解更多实现细节，可以阅读[这片文章](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/)。
+想要了解更多实现细节，可以阅读[这篇文章](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/)。
 
-## API
+##  6. <a name='-1'></a>详细使用文档
 
-### `highlighter = new Highlighter([opts])`
+###  6.1. <a name='-1'></a>配置项
+
+```JavaScript
+const highlighter = new Highlighter([opts])
+```
 
 创建一个新的 `highlighter` 实例.
 
@@ -142,6 +170,7 @@ web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selectio
 | $root | `Document | HTMLElement` | 高亮区域的根容器元素 | 否 | `document` |
 | exceptSelectors | `Array<string>` | 过滤器，符合的元素将不会被高亮 | 否 | `null` |
 | wrapTag | `string` | 用于包裹高亮文本的 HTML 标签名 | 否 | `span` |
+| verbose | `boolean` | 是否需要输出警告和错误信息 | 否 | `false` |
 | style | `Object` | 用于控制高亮区域的样式 | 否 | 详见下方 |
 
 `style` 属性配置:
@@ -158,19 +187,31 @@ var highlighter = new Highlighter({
 });
 ```
 
-### `highlighter.run()`
+###  6.2. <a name='-1'></a>静态方法
+
+####  6.2.1. <a name='Highlighter.isHighlightSourcesource'></a>`Highlighter.isHighlightSource(source)`
+
+用于判断 `source` 参数是否为一个 highlight source 对象。如果是则返回 `true`, 反之亦然.
+
+####  6.2.2. <a name='Highlighter.isHighlightWrapNodenode'></a>`Highlighter.isHighlightWrapNode($node)`
+
+用于判断 `$node` 参数是否为一个高亮包裹元素。如果是则返回 `true`, 反之亦然.
+
+###  6.3. <a name='-1'></a>实例方法
+
+####  6.3.1. <a name='highlighter.run'></a>`highlighter.run()`
 
 开启自动划词高亮。当用户选择了一段文本时，「web-highlighter」会自动为其添加高亮效果。
 
-### `highlighter.stop()`
+####  6.3.2. <a name='highlighter.stop'></a>`highlighter.stop()`
 
 关闭自动划词高亮。
 
-### `highlighter.dispose()`
+####  6.3.3. <a name='highlighter.dispose'></a>`highlighter.dispose()`
 
 当你不再需要使用高亮功能时，需要先使用该方法来移除一些事件监听，回收一些资源。
 
-### `highlighter.fromRange(range)`
+####  6.3.4. <a name='highlighter.fromRangerange'></a>`highlighter.fromRange(range)`
 
 该方法支持你传一个 [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range)，并基于该对象进行高亮笔记操作。你可以通过 `window.getSelection().getRangeAt(0)` 方法来获取一个 range 对象，或者使用 `document.createRange()` 方法来创建一个新的 range 对象。
 
@@ -183,7 +224,7 @@ if (selection.isCollapsed) {
 }
 ```
 
-### `highlighter.fromStore(start, end, text, id)`
+####  6.3.5. <a name='highlighter.fromStorestartendtextid'></a>`highlighter.fromStore(start, end, text, id)`
 
 大多数情况下，这个 API 用于通过后端的持久化信息还原出文本高亮效果。
 
@@ -196,33 +237,33 @@ if (selection.isCollapsed) {
 - text  `string`:    文本内容
 - id    `string`:    高亮的唯一 ID
 
-### `highlighter.remove(id)`
+####  6.3.6. <a name='highlighter.removeid'></a>`highlighter.remove(id)`
 
 清除指定 id 的高亮区域。该 id 默认会由 web-highlighter 在创建高亮区域使生成。你也可以通过添加钩子来应用你自己的 id 生成规则。钩子相关文档可以[看这里](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
 
-### `highlighter.removeAll()`
+####  6.3.7. <a name='highlighter.removeAll'></a>`highlighter.removeAll()`
 
 清除根节点下的所有高亮区域。
 
-### `highlighter.addClass(classname, id)`
+####  6.3.8. <a name='highlighter.addClassclassnameid'></a>`highlighter.addClass(classname, id)`
 
 为某个 id 的高亮区域添加 CSS 类名。你可以通过这个 API 来改变某个高亮区域的样式。
 
-### `highlighter.removeClass(classname, id)`
+####  6.3.9. <a name='highlighter.removeClassclassnameid'></a>`highlighter.removeClass(classname, id)`
 
 移除某个 id 的高亮区域的指定 CSS 类名。类似于 `highlighter.addClass` 的逆操作。
 
-### `highlighter.getDoms([id])`
+####  6.3.10. <a name='highlighter.getDomsid'></a>`highlighter.getDoms([id])`
 
 获取高亮区域内的所有包裹节点。一个高亮区域可能会包含多个片段。它会返回所有这些片段的包裹节点（DOM 节点）。
 
 如果 `id` 参数留空，它会返回根节点下的所有高亮区域中的包裹节点。
 
-### `highlighter.getIdByDom(node)`
+####  6.3.11. <a name='highlighter.getIdByDomnode'></a>`highlighter.getIdByDom(node)`
 
 传入一个包裹节点，返回该节点对应的高亮区域去的唯一 ID。
 
-### `Event Listener`
+###  6.4. <a name='EventListener'></a>`Event Listener`
 
 web-highlighter 使用监听器方式来处理异步事件。
 
@@ -251,25 +292,25 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 对于不同的事件类型，其 `data` 所包含的具体属性如下：
 
-#### `EventType.CLICK`
+####  6.4.1. <a name='EventType.CLICK'></a>`EventType.CLICK`
 
 |name|description|type|
 |---|---|---|
 |`id`| 高亮区域唯一 ID |string|
 
-#### `EventType.HOVER`
+####  6.4.2. <a name='EventType.HOVER'></a>`EventType.HOVER`
 
 |name|description|type|
 |---|---|---|
 |`id`| 高亮区域唯一 ID |string|
 
-#### `EventType.HOVER_OUT`
+####  6.4.3. <a name='EventType.HOVER_OUT'></a>`EventType.HOVER_OUT`
 
 |name|description|type|
 |---|---|---|
 |`id`| 高亮区域唯一 ID |string|
 
-#### `EventType.CREATE`
+####  6.4.4. <a name='EventType.CREATE'></a>`EventType.CREATE`
 
 > 不包含参数 `e`
 
@@ -282,7 +323,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 `type` 用来告知开发者高亮区域被创建的原因。目前 `type` 包含两种可能的值：`from-input` 和 `from-store`。`from-input` 表明该高亮区域是通过用户操作（用户划词的选区）创建的；`from-store` 则表示该高亮区域是通过持久化的 `HighlightSource` 中的数据还原出来的。
 
-#### `EventType.REMOVE`
+####  6.4.5. <a name='EventType.REMOVE'></a>`EventType.REMOVE`
 
 > 不包含参数 `e`
 
@@ -290,7 +331,11 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 |---|---|---|
 |`ids`|一组高亮区域唯一 ID|Array<string>|
 
-## 兼容性
+###  6.5. <a name='Hooks'></a>Hooks（钩子）
+
+钩子可以用来更好地控制整个高亮流程。通过它你几乎可以实现任何自定义的逻辑。详细内容请参考[下面部分](#更多使用方式)。
+
+##  7. <a name='-1'></a>兼容性
 
 > 依赖 [Selection API](https://caniuse.com/#search=selection%20api)。
 
@@ -303,12 +348,12 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 _**移动端支持：**_ 如果检测为移动端，则会自动使用相应的事件监听来替代 PC 端事件。
 
-## 更多使用方式
+##  8. <a name='-1'></a>更多使用方式
 
 为了便于开发者更好地控制相关的高亮行为，web-highlighter 提供一些内部的钩子。
 
 想了解内部钩子及其使用方式，可以阅读[这篇文档](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
 
-## 许可证
+##  9. <a name='-1'></a>许可证
 
 [MIT](./LICENCE)

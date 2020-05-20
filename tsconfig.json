@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "sourceMap": true,
         "lib": [
             "dom",
@@ -7,9 +8,13 @@
         ],
         "target": "es5",
         "downlevelIteration": true,
+        "resolveJsonModule": true,
         "baseUrl": ".",
         "paths": {
             "@src/*": ["./src/*"]
         }
-    }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }

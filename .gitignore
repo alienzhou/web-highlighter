@@ -6,3 +6,5 @@ dist
 docs/TODO.md
 package-lock.json
 typings
+.nyc_output
+coverage

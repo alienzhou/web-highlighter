@@ -1,8 +1,32 @@
-![Web Highlighter](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png)
+<div>
+    <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
+    <p align="center">
+        <strong>✨ A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️</strong>
+    </p>
+    <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
+    <p align="center">
+        <a href="https://travis-ci.org/alienzhou/web-highlighter" target="_blank">
+            <img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="Build status" />
+        </a>
+        <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
+            <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />
+        </a>
+        <a href='https://coveralls.io/github/alienzhou/web-highlighter?branch=master'>
+            <img src='https://coveralls.io/repos/github/alienzhou/web-highlighter/badge.svg?branch=master' alt='Coverage Status' />
+        </a>
+        <a href="https://unpkg.com/web-highlighter" target="_blank">
+            <img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="Gzip size" />
+        </a>
+        <a href="https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master" target="_blank">
+            <img src="https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125" alt="Codebeat" />
+        </a>
+        <a href="https://opensource.org/licenses/mit-license.php" target="_blank">
+            <img src="https://img.shields.io/github/license/alienzhou/web-highlighter" alt="MIT Licence" />
+        </a>
+    </p>
+</div>
 
-✨A no-runtime dependency lib for highlighting-note & persistence on any website ✨🖍️
-
-[![NPM version](https://img.shields.io/npm/v/web-highlighter.svg)](https://www.npmjs.com/package/web-highlighter) [![](https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master)](https://travis-ci.org/alienzhou/web-highlighter) [![gzip size](https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip)](https://unpkg.com/web-highlighter)  [![codebeat badge](https://codebeat.co/badges/f5a18a9b-9765-420e-a17f-fa0b54b3a125)](https://codebeat.co/projects/github-com-alienzhou-web-highlighter-master) [![install size](https://packagephobia.now.sh/badge?p=web-highlighter)](https://packagephobia.now.sh/result?p=web-highlighter) [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+---
 
 English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/master/README.zh_CN.md)
 
@@ -117,9 +141,13 @@ It will read the selected range by [`Selection API`](https://caniuse.com/#search
 
 For more details, please read [this article (in Chinese)](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/).
 
-## API
+## APIs
 
-### `highlighter = new Highlighter([opts])`
+### 1. Options
+
+```JavaScript
+const highlighter = new Highlighter([opts])
+```
 
 Create a new `highlighter` instance.
 
@@ -143,6 +171,7 @@ All options:
 | $root | `Document | HTMLElement` | the container to enable highlighting | No | `document` |
 | exceptSelectors | `Array<string>` | if an element matches the selector, it won't be highlighted | No | `null` |
 | wrapTag | `string` | the html tag used to wrap highlighted texts | No | `span` |
+| verbose | `boolean` | dose it need to output (print) some warning and error message | No | `false` |
 | style | `Object` | control highlighted areas style | No | details below |
 
 `style` field options:
@@ -159,19 +188,31 @@ var highlighter = new Highlighter({
 });
 ```
 
-### `highlighter.run()`
+### 2. Static Methods
+
+#### `Highlighter.isHighlightSource(source)`
+
+If the `source` is a highlight source object, it will return `true`, vice verse.
+
+#### `Highlighter.isHighlightWrapNode($node)`
+
+If the `$node` is a highlight wrapper dom node, it will return `true`, vice verse.
+
+### 3. Instance Methods
+
+#### `highlighter.run()`
 
 Start auto-highlighting. When the user select a text segment, a highlighting will be added to the text automatically.
 
-### `highlighter.stop()`
+#### `highlighter.stop()`
 
 It will stop the auto-highlighting.
 
-### `highlighter.dispose()`
+#### `highlighter.dispose()`
 
 When you don't want the highlighter anymore, remember to call it first. It will remove some listeners and do some cleanup.
 
-### `highlighter.fromRange(range)`
+#### `highlighter.fromRange(range)`
 
 You can pass a [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range) object to it and then it will be highlighted. You can use `window.getSelection().getRangeAt(0)` to get a range object or use `document.createRange()` to create a new range.
 
@@ -184,7 +225,7 @@ if (selection.isCollapsed) {
 }
 ```
 
-### `highlighter.fromStore(start, end, text, id)`
+#### `highlighter.fromStore(start, end, text, id)`
 
 Mostly, you use this api to highlight text by the persisted information stored from backend.
 
@@ -197,35 +238,35 @@ Four attributes' meanings:
 - text  `string`:    text content
 - id    `string`:    unique id
 
-### `highlighter.remove(id)`
+#### `highlighter.remove(id)`
 
 Remove (clean) a highlighted area by it's unique id. The id will be generated by web-highlighter by default. You can also add a hook for your own rule. [Hooks doc here](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
 
-### `highlighter.removeAll()`
+#### `highlighter.removeAll()`
 
 Remove all highlighted areas belonging to the root.
 
-### `highlighter.addClass(className, id)`
+#### `highlighter.addClass(className, id)`
 
 Add a className for highlighted areas (wrap elements) by unique id. You can change a highlighted area's style by using this api.
 
 
-### `highlighter.removeClass(className, id)`
+#### `highlighter.removeClass(className, id)`
 
 Remove the className by unique id. It's `highlighter.addClass`'s inverse operation.
 
-### `highlighter.getDoms([id])`
+#### `highlighter.getDoms([id])`
 
 Get all the wrap nodes in a highlighted area. A highlighted area may contain many segments. It will return all the dom nodes wrapping these segments.
 
 If the `id` is not passed, it will return all the areas' wrap nodes.
 
 
-### `highlighter.getIdByDom(node)`
+#### `highlighter.getIdByDom(node)`
 
 If you have a wrap node, it can return the unique highlight id for you.
 
-### `Event Listener`
+### 4. Event Listener
 
 web-highlighter use listeners to handle the events.
 
@@ -293,6 +334,10 @@ Different event has different `data`. Attributes below:
 |name|description|type|
 |---|---|---|
 |`ids`|a list of the highlight id|Array<string>|
+
+### 5. Hooks
+
+Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
 
 ## Compatibility
 

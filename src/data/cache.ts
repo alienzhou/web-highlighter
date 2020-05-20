@@ -35,7 +35,6 @@ class Cache extends EventEmitter {
 
     getAll(): HighlightSource[] {
         const list: HighlightSource[] = [];
-        this._data = new Map();
         for (let pair of this._data) {
             list.push(pair[1]);
         }
