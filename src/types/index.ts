@@ -69,7 +69,7 @@ export interface DomMeta {
     parentTagName: string;
     parentIndex: number;
     textOffset: number;
-    extra?: any;
+    extra?: unknown;
 }
 
 export interface DomNode {

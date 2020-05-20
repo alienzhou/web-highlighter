@@ -13,15 +13,15 @@ class HighlightSource {
     endMeta: DomMeta;
     text: string;
     id: string;
-    extra?: any;
-    __isHighlightSource: any;
+    extra?: unknown;
+    __isHighlightSource: unknown;
 
     constructor(
         startMeta: DomMeta,
         endMeta: DomMeta,
         text: string,
         id: string,
-        extra?: any
+        extra?: unknown
     ) {
         this.startMeta = startMeta;
         this.endMeta = endMeta;
@@ -34,17 +34,14 @@ class HighlightSource {
     }
 
     deSerialize($root: HTMLElement | Document, hooks: HookMap): HighlightRange {
-        let startInfo: DomNode;
-        let endInfo: DomNode;
+        const {start, end} = queryElementNode(this, $root);
+        let startInfo = getTextChildByOffset(start, this.startMeta.textOffset);
+        let endInfo = getTextChildByOffset(end, this.endMeta.textOffset);
+
         if (!hooks.Serialize.Restore.isEmpty()) {
-            const res = hooks.Serialize.Restore.call(this) || [];
-            startInfo = res[0];
-            endInfo = res[1];
-        }
-        if (!startInfo || !endInfo) {
-            const {start, end} = queryElementNode(this, $root);
-            startInfo = getTextChildByOffset(start, this.startMeta.textOffset);
-            endInfo = getTextChildByOffset(end, this.endMeta.textOffset);
+            const res: DomNode[] = hooks.Serialize.Restore.call(this, startInfo, endInfo) || [];
+            startInfo = res[0] || startInfo;
+            endInfo = res[1] || endInfo;
         }
 
         const range = new HighlightRange(
