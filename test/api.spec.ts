@@ -95,6 +95,31 @@ describe('Highlighter API', function () {
             expect(wraps[1].getAttribute(attr)).to.be.equal(SplitType.head);
             expect(wraps[2].getAttribute(attr)).to.be.equal(SplitType.tail);
         });
+
+        it('should not split when the new selection matches an exist wrapper', () => {
+            const startOffset = 0;
+            const endOffset = 17;
+
+            let range = document.createRange();
+            const $p = document.querySelectorAll('p')[0];
+            range.setStart($p.childNodes[0], startOffset);
+            range.setEnd($p.childNodes[0], endOffset);
+            highlighter.fromRange(range);
+
+            const $pre = [...$p.querySelectorAll(wrapSelector)];
+
+            // select a exist wrapper
+            range = document.createRange();
+            const $wrapper = $p.querySelector(wrapSelector);
+            range.setStart($wrapper.childNodes[0], startOffset);
+            range.setEnd($wrapper.childNodes[0], endOffset);
+            highlighter.fromRange(range);
+
+            const $after = [...$p.querySelectorAll(wrapSelector)];
+
+            expect($after).lengthOf($pre.length, 'its length should be the same as before');
+            expect($after.every($n => $pre.indexOf($n) > -1), 'wrappers should be the same').to.be.true;
+        });
     });
 
     describe('#fromStore', () => {
@@ -148,9 +173,7 @@ describe('Highlighter API', function () {
             const id = sources[0].id;
             highlighter.remove(id);
 
-            const hasItem = [].slice
-                .call(document.querySelectorAll(wrapSelector))
-                .some(n => n.getAttribute(`data-${DATASET_IDENTIFIER}`) === id);
+            const hasItem = [...document.querySelectorAll(wrapSelector)].some(n => n.getAttribute(`data-${DATASET_IDENTIFIER}`) === id);
 
             expect(hasItem).to.be.false;
         });
@@ -334,10 +357,10 @@ describe('Highlighter API', function () {
 
         it('should affect all wrapper nodes when not passing id', () => {
             highlighter.addClass(className);
-            const $set: HTMLElement[] = [].slice.call(document.querySelectorAll(`.${className}`));
+            const $set = [...document.querySelectorAll(`.${className}`)];
             const $doms = highlighter.getDoms();
             expect($set).lengthOf($doms.length);
-            expect($set.every(n => $doms.indexOf(n) > -1)).to.be.true;
+            expect($set.every(n => $doms.indexOf((n as HTMLElement)) > -1)).to.be.true;
         });
     });
 

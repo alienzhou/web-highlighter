@@ -155,6 +155,10 @@ function addClass($el: HTMLElement, className?: string | Array<string>): HTMLEle
     return $el;
 }
 
+function isNodeEmpty($n: Node): boolean {
+    return !$n || !$n.textContent;
+}
+
 /**
  * Wrap a common wrapper.
  */
@@ -290,7 +294,7 @@ export const wrapHighlight = (
         $wrap = wrapNewNode(selected, range, className, wrapTag);
     }
     // text node, in a highlight wrap -> should split the existing highlight wrapper
-    else if (isHighlightWrapNode($parent) && ($prev || $next)) {
+    else if (isHighlightWrapNode($parent) && (!isNodeEmpty($prev) || !isNodeEmpty($next))) {
         $wrap = wrapPartialNode(selected, range, className, wrapTag);
     }
     // completely overlap (with a highlight wrap) -> only add extra id info
