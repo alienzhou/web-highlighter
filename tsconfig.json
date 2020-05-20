@@ -4,6 +4,7 @@
         "sourceMap": true,
         "lib": [
             "dom",
+            "dom.iterable",
             "es2015"
         ],
         "target": "es5",
