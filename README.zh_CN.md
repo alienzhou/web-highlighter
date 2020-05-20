@@ -261,7 +261,11 @@ if (selection.isCollapsed) {
 
 ####  6.3.11. <a name='highlighter.getIdByDomnode'></a>`highlighter.getIdByDom(node)`
 
-传入一个包裹节点，返回该节点对应的高亮区域去的唯一 ID。
+传入一个包裹节点，返回该节点对应的高亮区域的唯一 ID。
+
+####  6.3.11. <a name='highlighter.getExtraIdByDomnode'></a>`highlighter.getExtraIdByDom(node)`
+
+传入一个包裹节点，返回该节点对应的高亮区域的额外 ID。
 
 ###  6.4. <a name='EventListener'></a>`Event Listener`
 

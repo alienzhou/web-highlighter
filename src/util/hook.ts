@@ -11,9 +11,19 @@ class Hook {
         this.name = name;
     }
 
-    tap(cb: Function) {
-        this.ops.push(cb);
-        return this;
+    tap(cb: Function): Function {
+        if (this.ops.indexOf(cb) < 0) {
+            this.ops.push(cb);
+        }
+        return () => this.remove(cb);
+    }
+
+    remove(cb: Function): void {
+        const idx = this.ops.indexOf(cb);
+        if (idx < 0) {
+            return;
+        }
+        this.ops.splice(idx, 1);
     }
 
     isEmpty(): boolean {

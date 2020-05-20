@@ -412,6 +412,29 @@ describe('Highlighter API', function () {
         });
     });
 
+    describe('#getExtraIdByDom', () => {
+        beforeEach(() => {
+            highlighter.removeAll();
+            sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
+        });
+
+        it('should return the correct id', () => {
+            const id = sources[0].id;
+            const dom = highlighter.getDoms(id)[2];
+            const ids = highlighter.getExtraIdByDom(dom);
+            expect(ids.sort()).to.deep.equal([sources[0].id, sources[1].id].sort());
+        });
+
+        it('should return empty array when there is no extra id', () => {
+            const dom = highlighter.getDoms(sources[0].id)[0];
+            expect(highlighter.getExtraIdByDom(dom)).to.deep.equal([]);
+        });
+
+        it('should return empty array when the dom is not a wrapper', () => {
+            expect(highlighter.getExtraIdByDom(document.querySelector('img'))).to.deep.equal([]);
+        });
+    });
+
     afterEach(() => {
         cleanup();
     });

@@ -69,7 +69,7 @@ export interface DomMeta {
     parentTagName: string;
     parentIndex: number;
     textOffset: number;
-    extra?: any;
+    extra?: unknown;
 }
 
 export interface DomNode {
@@ -95,6 +95,7 @@ export type HookMap = {
         WrapNode: Hook;
     };
     Serialize: {
+        Restore: Hook;
         RecordInfo: Hook;
     };
     Remove: {

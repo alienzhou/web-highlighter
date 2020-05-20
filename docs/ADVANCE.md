@@ -34,7 +34,7 @@ highlighter.hooks.Render.UUID.tap(function (start, end, text) {
 
 Hook into the process of generating a unique id.
 
-**arguements:**
+**arguments:**
 
 - start: DOM info of the start node
 - end: DOM info of the end node
@@ -48,7 +48,7 @@ Hook into the process of generating a unique id.
 
 Process all the text nodes in the highlighted area and return a new list by using this hook.
 
-**arguements:**
+**arguments:**
 
 - id: id of the highlighted area
 - selectedNodes: all the text nodes in the highlighted area
@@ -61,7 +61,7 @@ Process all the text nodes in the highlighted area and return a new list by usin
 
 Process the wrapping elements.
 
-**arguements:**
+**arguments:**
 
 - id: id of the highlighted area
 - node: the wrapping elements
@@ -70,11 +70,23 @@ Process the wrapping elements.
 
 - the wrapping elements
 
+### `Serialize.Restore`
+
+Customize your own restoring method. When you tap this hook, the `HighlightSource` instance will use the function you pass to calculate the start and end nodes' info.
+
+**arguments:**
+
+- hs: the current `HighlightSource` instance
+
+**return value needed:**
+
+- an array: the first element is the start info and the second is the end
+
 ### `Serialize.RecordInfo`
 
 Add or modify some extra info when serialize the `HighlightRange` object.
 
-**arguements:**
+**arguments:**
 
 - start: meta info of the start node
 - end: meta info of the end node
@@ -88,7 +100,7 @@ Add or modify some extra info when serialize the `HighlightRange` object.
 
 Process the affected wrapping elements when remove highlighted areas.
 
-**arguements:**
+**arguments:**
 
 - id: id of the highlighted area
 - nodes: the affected wrapping elements

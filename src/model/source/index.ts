@@ -4,7 +4,7 @@
  * Also it has the ability for persistence.
  */
 
-import {DomMeta} from '../../types';
+import {DomMeta, HookMap, DomNode} from '../../types';
 import HighlightRange from '../range/index';
 import {queryElementNode, getTextChildByOffset} from './dom';
 
@@ -13,15 +13,15 @@ class HighlightSource {
     endMeta: DomMeta;
     text: string;
     id: string;
-    extra?: any;
-    __isHighlightSource: any;
+    extra?: unknown;
+    __isHighlightSource: unknown;
 
     constructor(
         startMeta: DomMeta,
         endMeta: DomMeta,
         text: string,
         id: string,
-        extra?: any
+        extra?: unknown
     ) {
         this.startMeta = startMeta;
         this.endMeta = endMeta;
@@ -33,10 +33,16 @@ class HighlightSource {
         }
     }
 
-    deSerialize($root: HTMLElement | Document): HighlightRange {
+    deSerialize($root: HTMLElement | Document, hooks: HookMap): HighlightRange {
         const {start, end} = queryElementNode(this, $root);
-        const startInfo = getTextChildByOffset(start, this.startMeta.textOffset);
-        const endInfo = getTextChildByOffset(end, this.endMeta.textOffset);
+        let startInfo = getTextChildByOffset(start, this.startMeta.textOffset);
+        let endInfo = getTextChildByOffset(end, this.endMeta.textOffset);
+
+        if (!hooks.Serialize.Restore.isEmpty()) {
+            const res: DomNode[] = hooks.Serialize.Restore.call(this, startInfo, endInfo) || [];
+            startInfo = res[0] || startInfo;
+            endInfo = res[1] || endInfo;
+        }
 
         const range = new HighlightRange(
             startInfo,

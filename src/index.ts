@@ -26,6 +26,7 @@ import {
     removeClass,
     isHighlightWrapNode,
     getHighlightById,
+    getExtraHighlightId,
     getHighlightsByRoot,
     getHighlightId,
     addEventListener,
@@ -65,6 +66,7 @@ export default class Highlighter extends EventEmitter {
             WrapNode: new Hook('Render.WrapNode')
         },
         Serialize: {
+            Restore: new Hook('Serialize.Restore'),
             RecordInfo: new Hook('Serialize.RecordInfo')
         },
         Remove: {
@@ -143,6 +145,7 @@ export default class Highlighter extends EventEmitter {
     removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => removeClass($n, className));
 
     getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
+    getExtraIdByDom = ($node: HTMLElement): string[] => getExtraHighlightId($node);
     getDoms = (id?: string): Array<HTMLElement> => id
         ? getHighlightById(this.options.$root, id, this.options.wrapTag)
         : getHighlightsByRoot(this.options.$root, this.options.wrapTag);
@@ -191,9 +194,9 @@ export default class Highlighter extends EventEmitter {
         return this._highlightFromHRange(hRange);
     }
 
-    fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
+    fromStore = (start: DomMeta, end: DomMeta, text: string, id: string, extra?: unknown): HighlightSource => {
         try {
-            const hs = new HighlightSource(start, end, text, id);
+            const hs = new HighlightSource(start, end, text, id, extra);
             this._highlightFromHSource(hs);
             return hs;
         }

@@ -28,6 +28,17 @@ export const getHighlightId = ($node: HTMLElement): string => {
 };
 
 /**
+ * get extra highlight id by wrapping node
+ */
+export const getExtraHighlightId = ($node: HTMLElement): string[] => {
+    if (isHighlightWrapNode($node)) {
+        const extraId = $node.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
+        return extraId.split(ID_DIVISION).filter(i => i);
+    }
+    return [];
+};
+
+/**
  * get all highlight wrapping nodes nodes from a root node
  */
 export const getHighlightsByRoot = (

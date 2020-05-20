@@ -1,6 +1,6 @@
 {
   "name": "web-highlighter",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "✨A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️",
   "main": "dist/web-highlighter.min.js",
   "browser": "dist/web-highlighter.min.js",
@@ -16,6 +16,11 @@
     "start": "node script/dev.js",
     "build": "export target=dist && node script/build.js",
     "prepublishOnly": "npm run build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test"
+    }
   },
   "homepage": "https://alienzhou.github.io/web-highlighter",
   "repository": {
@@ -49,6 +54,7 @@
     "fs-extra": "^7.0.1",
     "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.11.1",
+    "husky": "^4.2.5",
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
     "mocha": "^7.1.2",

@@ -3,7 +3,7 @@
  * modify from mitt
 */
 
-type EventHandler = (event?: any) => void;
+type EventHandler = (event?: unknown) => void;
 type EventHandlerList = Array<EventHandler>;
 type HandlersMap = {[propName: string]: EventHandlerList};
 

@@ -86,15 +86,25 @@ highlighter
  * attach hooks
  */
 highlighter.hooks.Render.SelectedNodes.tap(
-    (id, selectedNodes)  => selectedNodes.filter(n => n.$node.textContent)
+    (id, selectedNodes) => selectedNodes.filter(n => n.$node.textContent)
 );
+
+highlighter.hooks.Serialize.Restore.tap(
+    source =>  log('Serialize.Restore hook -', source)
+);
+
+highlighter.hooks.Serialize.RecordInfo.tap(() => {
+    const extraInfo = Math.random().toFixed(4);
+    log('Serialize.RecordInfo hook -', extraInfo)
+    return extraInfo;
+});
 
 /**
  * retrieve from local store
  */
 const storeInfos =  store.getAll();
 storeInfos.forEach(
-    ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id)
+    ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id, hs.extra)
 );
 
 let autoStatus;
