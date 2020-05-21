@@ -1,7 +1,3 @@
-/**
- * @file dom 操作相关的通用工具类
- */
-
 import {RootElement} from '../types';
 import {
     ID_DIVISION,
@@ -18,24 +14,53 @@ export const isHighlightWrapNode = ($node: HTMLElement): boolean => (
 );
 
 /**
- * get highlight id by wrapping node
+ * ===================================================================================
+ * below methods (getHighlightId/getExtraHighlightId)
+ * will check whether the node is inside a wrapper iteratively util reach the root node
+ * if the node is not inside the root, the id must be empty
+ * ====================================================================================
  */
-export const getHighlightId = ($node: HTMLElement): string => {
-    if (isHighlightWrapNode($node)) {
-        return $node.dataset[CAMEL_DATASET_IDENTIFIER];
+
+const findAncestorWrapperInRoot = ($node: HTMLElement, $root: RootElement): HTMLElement => {
+    let isInsideRoot = false;
+    let $wrapper: HTMLElement = null;
+    while ($node) {
+        if (isHighlightWrapNode($node)) {
+            $wrapper = $node;
+        }
+        if ($node === $root) {
+            isInsideRoot = true;
+            break;
+        }
+        $node = $node.parentNode as HTMLElement;
     }
-    return '';
+    return isInsideRoot ? $wrapper : null;
+}
+
+/**
+ * get highlight id by a node
+ */
+export const getHighlightId = ($node: HTMLElement, $root: RootElement): string => {
+    $node = findAncestorWrapperInRoot($node, $root);
+    if (!$node) {
+        return '';
+   }
+
+    return $node.dataset[CAMEL_DATASET_IDENTIFIER];
 };
 
 /**
- * get extra highlight id by wrapping node
+ * get extra highlight id by a node
  */
-export const getExtraHighlightId = ($node: HTMLElement): string[] => {
-    if (isHighlightWrapNode($node)) {
-        const extraId = $node.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
-        return extraId.split(ID_DIVISION).filter(i => i);
+export const getExtraHighlightId = ($node: HTMLElement, $root: RootElement): string[] => {
+    $node = findAncestorWrapperInRoot($node, $root);
+    if (!$node) {
+         return [];
     }
-    return [];
+
+    return $node.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
+        .split(ID_DIVISION)
+        .filter(i => i);
 };
 
 /**

@@ -401,13 +401,33 @@ describe('Highlighter API', function () {
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
         });
 
-        it('should return the correct id', () => {
+        it('should return the correct id when it\'s a wrapper', () => {
             const id = sources[0].id;
             const dom = highlighter.getDoms(id)[0];
             expect(highlighter.getIdByDom(dom)).to.be.equal(id);
         });
 
-        it('should be empty(\'\') when the dom is not a wrapper', () => {
+        it('should return the correct id when it\'s inside a wrapper', () => {
+            const id = sources[0].id;
+            const dom = highlighter.getDoms(id)[0];
+            expect(highlighter.getIdByDom(dom.childNodes[0] as HTMLElement)).to.be.equal(id);
+        });
+
+        it('should return \'\' when it\'s outside a wrapper', () => {
+            const id = sources[0].id;
+            const dom = highlighter.getDoms(id)[0];
+            expect(highlighter.getIdByDom(dom.parentElement)).to.be.empty;
+        });
+
+        it('should return \'\' when a valid wrapper is outside the root', () => {
+            const footerHighlighter = new Highlighter({
+                $root: document.querySelector('footer')
+            });
+            const dom = highlighter.getDoms(sources[0].id)[0];
+            expect(footerHighlighter.getIdByDom(dom)).to.be.empty;
+        });
+
+        it('should return \'\' when the dom is not be wrapped', () => {
             expect(highlighter.getIdByDom(document.querySelector('img'))).to.be.empty;
         });
     });
@@ -418,19 +438,41 @@ describe('Highlighter API', function () {
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
         });
 
-        it('should return the correct id', () => {
+        it('should return the correct ids when it\'s a wrapper', () => {
             const id = sources[0].id;
             const dom = highlighter.getDoms(id)[2];
             const ids = highlighter.getExtraIdByDom(dom);
             expect(ids.sort()).to.deep.equal([sources[0].id, sources[1].id].sort());
         });
 
-        it('should return empty array when there is no extra id', () => {
+        it('should return the correct ids when it\'s inside a wrapper', () => {
+            const id = sources[0].id;
+            const dom = highlighter.getDoms(id)[2].childNodes[0];
+            const ids = highlighter.getExtraIdByDom(dom as HTMLElement);
+            expect(ids.sort()).to.deep.equal([sources[0].id, sources[1].id].sort());
+        });
+
+        it('should return [] when it\'s outside a wrapper', () => {
+            const id = sources[0].id;
+            const dom = highlighter.getDoms(id)[2].parentElement;
+            const ids = highlighter.getExtraIdByDom(dom);
+            expect(ids).to.deep.equal([]);
+        });
+
+        it('should return [] when a valid wrapper is outside the root', () => {
+            const footerHighlighter = new Highlighter({
+                $root: document.querySelector('footer')
+            });
+            const dom = highlighter.getDoms(sources[0].id)[0];
+            expect(footerHighlighter.getExtraIdByDom(dom)).to.deep.equal([]);
+        });
+
+        it('should return [] when there is no extra id', () => {
             const dom = highlighter.getDoms(sources[0].id)[0];
             expect(highlighter.getExtraIdByDom(dom)).to.deep.equal([]);
         });
 
-        it('should return empty array when the dom is not a wrapper', () => {
+        it('should return [] when the dom is not be wrapped', () => {
             expect(highlighter.getExtraIdByDom(document.querySelector('img'))).to.deep.equal([]);
         });
     });
