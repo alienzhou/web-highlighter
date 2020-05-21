@@ -6,6 +6,7 @@ import Cache from '../src/data/cache';
 import Hook from '../src/util/hook';
 import EventEmitter from '../src/util/event.emitter';
 import { initDefaultStylesheet } from '../src/painter/style';
+import { addEventListener } from '../src/util/dom';
 import sinon from 'sinon';
 
 describe('Else Utils', function () {
@@ -63,6 +64,7 @@ describe('Else Utils', function () {
             expect(document.querySelectorAll('style')).lengthOf(1);
             initDefaultStylesheet();
             expect(document.querySelectorAll('style')).lengthOf(1);
+            cleanup();
         });
     });
 
@@ -202,6 +204,41 @@ describe('Else Utils', function () {
             event.emit('test');
 
             expect(spy.calledOnce).to.be.true;
+        });
+    });
+
+    describe('DOM addEventListener', () => {
+        it('should add listener correctly', () => {
+            const cleanup = jsdomGlobal('<button>test</button>');
+            
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const dom = document.querySelector('button');
+            addEventListener(dom, 'click', spy);
+            dom.dispatchEvent(new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            }));
+
+            expect(spy.calledOnce).to.be.true;
+            cleanup();
+        });
+
+        it('should remove listener correctly', () => {
+            const cleanup = jsdomGlobal('<button>test</button>');
+            
+            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const dom = document.querySelector('button');
+            const remove = addEventListener(dom, 'click', spy);
+            remove();
+            dom.dispatchEvent(new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            }));
+
+            expect(spy.callCount).to.be.equal(0);
+            cleanup();
         });
     });
 });
