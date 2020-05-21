@@ -14,6 +14,7 @@ import {
     DATASET_SPLIT_TYPE,
     DATASET_IDENTIFIER_EXTRA
 } from '../util/const';
+import { unique } from '../util/tool';
 
 /**
  * 支持的选择器类型
@@ -216,7 +217,17 @@ function wrapPartialNode(
         headSplit = true;
     }
 
-    addClass($wrap, className);
+    const classNameList: string[] = [];
+    if (isHighlightWrapNode($parent)) {
+        $parent.classList.forEach(c => classNameList.push(c));
+    }
+    if (Array.isArray(className)) {
+        classNameList.push(...className);
+    }
+    else {
+        classNameList.push(className);
+    }
+    addClass($wrap, unique(classNameList));
     $fr.appendChild($wrap);
 
     if ($next) {
