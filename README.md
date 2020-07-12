@@ -264,11 +264,15 @@ If the `id` is not passed, it will return all the areas' wrap nodes.
 
 #### `highlighter.getIdByDom(node)`
 
-If you have a wrap node, it can return the unique highlight id for you.
+If you have a DOM node, it can return the unique highlight id for you. When passing a non-wrapper element, it will find the nearest ancestor wrapper node.
 
 #### `highlighter.getExtraIdByDom(node)`
 
-If you have a wrap node, it can return the extra unique highlight id for you.
+If you have a DOM node, it can return the extra unique highlight id for you. When passing a non-wrapper element, it will find the nearest ancestor wrapper node.
+
+#### `highlighter.setOption(opt)`
+
+You can use this API to change the highlighter's options. The parameters' structure is the same as the constructor's. You can pass partial options.
 
 ### 4. Event Listener
 

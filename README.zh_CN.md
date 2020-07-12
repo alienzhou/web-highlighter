@@ -261,11 +261,15 @@ if (selection.isCollapsed) {
 
 ####  6.3.11. <a name='highlighter.getIdByDomnode'></a>`highlighter.getIdByDom(node)`
 
-传入一个包裹节点，返回该节点对应的高亮区域的唯一 ID。
+传入一个 DOM 节点，返回该节点对应的高亮区域的唯一 ID。支持传入非包裹元素。如果是非包裹，则会自动找到最近的祖先包裹元素。
 
 ####  6.3.11. <a name='highlighter.getExtraIdByDomnode'></a>`highlighter.getExtraIdByDom(node)`
 
-传入一个包裹节点，返回该节点对应的高亮区域的额外 ID。
+传入一个 DOM 节点，返回该节点对应的高亮区域的额外 ID。支持传入非包裹元素。如果是非包裹，则会自动找到最近的祖先包裹元素。
+
+####  6.3.12. <a name='highlighter.setOptionopt'></a>`highlighter.setOption(opt)`
+
+可以使用该 API 改变实例的配置项，参数结构和构造函数中的一致，支持传入部分参数。
 
 ###  6.4. <a name='EventListener'></a>`Event Listener`
 
