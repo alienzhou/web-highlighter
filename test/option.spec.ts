@@ -183,6 +183,27 @@ describe('Highlighter Options', function () {
             expect(highlighter.getDoms().every(n => n.classList.contains(className))).to.be.true;
             expect(highlighter.getDoms().some(n => n.classList.contains(defaultClassName))).to.be.false;
         });
+
+        it('should use support an className array for wrapping nodes', () => {
+            const className = ['test-class-config-1', 'test-class-config-2'];
+            const defaultClassName = getDefaultOptions().style.className;
+            const highlighter = new Highlighter({
+                style: { className }
+            });
+            highlighter.removeAll();
+
+            const $p = document.querySelectorAll('p')[0];
+            const range = document.createRange();
+            range.setStart($p.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+            highlighter.fromRange(range);
+
+            expect(highlighter.getDoms()).lengthOf.gt(0);
+            expect(highlighter.getDoms().every(n => 
+                n.classList.contains(className[0]) && n.classList.contains(className[1])
+            )).to.be.true;
+            expect(highlighter.getDoms().some(n => n.classList.contains(defaultClassName))).to.be.false;
+        });
     });
 
     afterEach(() => {
