@@ -110,7 +110,7 @@ export default class Highlighter extends EventEmitter {
             return;
         }
 
-        const id = getHighlightId($target);
+        const id = getHighlightId($target, this.options.$root);
         // prevent trigger in the same highlight range
         if (this._hoverId === id) {
             return;
@@ -133,7 +133,7 @@ export default class Highlighter extends EventEmitter {
     private _handleHighlightClick = (e): void => {
         const $target = e.target as HTMLElement;
         if (isHighlightWrapNode($target)) {
-            const id = getHighlightId($target);
+            const id = getHighlightId($target, this.options.$root);
             this.emit(EventType.CLICK, {id}, this, e);
         }
     }
@@ -144,8 +144,8 @@ export default class Highlighter extends EventEmitter {
     addClass = (className: string, id?: string) => this.getDoms(id).forEach($n => addClass($n, className));
     removeClass = (className: string, id?: string) => this.getDoms(id).forEach($n => removeClass($n, className));
 
-    getIdByDom = ($node: HTMLElement): string => getHighlightId($node);
-    getExtraIdByDom = ($node: HTMLElement): string[] => getExtraHighlightId($node);
+    getIdByDom = ($node: HTMLElement): string => getHighlightId($node, this.options.$root);
+    getExtraIdByDom = ($node: HTMLElement): string[] => getExtraHighlightId($node, this.options.$root);
     getDoms = (id?: string): Array<HTMLElement> => id
         ? getHighlightById(this.options.$root, id, this.options.wrapTag)
         : getHighlightsByRoot(this.options.$root, this.options.wrapTag);
