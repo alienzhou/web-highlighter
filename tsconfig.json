@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
         "esModuleInterop": true,
+        "declaration": true,
         "sourceMap": true,
+        "outDir": "./dist",
         "lib": [
             "dom",
             "dom.iterable",
