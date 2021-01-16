@@ -9,7 +9,7 @@ import {DomNode, ERROR, HookMap} from '@src/types';
 import {getDomRange, removeSelection} from './selection';
 import Hook from '@src/util/hook';
 import uuid from '@src/util/uuid';
-import {getDomMeta} from './dom';
+import {getDomMeta, formatDomNode} from './dom';
 import { eventEmitter, INTERNAL_ERROR_EVENT } from '@src/util/const';
 
 class HighlightRange {
@@ -34,7 +34,7 @@ class HighlightRange {
         const end: DomNode = {
             $node: range.endContainer,
             offset: range.endOffset
-        }
+        };
 
         const text = range.toString();
         let id = idHook.call(start, end, text);
@@ -56,8 +56,8 @@ class HighlightRange {
             });
         }
 
-        this.start = start;
-        this.end = end;
+        this.start = formatDomNode(start);
+        this.end = formatDomNode(end);
         this.text = text;
         this.frozen = frozen;
         this.id = id;
