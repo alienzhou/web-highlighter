@@ -3,7 +3,7 @@
  */
 
 import {CAMEL_DATASET_IDENTIFIER, ROOT_IDX, UNKNOWN_IDX} from '@src/util/const';
-import {DomMeta} from '@src/types';
+import {DomMeta, DomNode} from '@src/types';
 
 const countGlobalNodeIndex = ($node: Node, $root: Document | HTMLElement): number => {
     const tagName = ($node as HTMLElement).tagName;
@@ -77,3 +77,21 @@ export const getDomMeta = ($node: Text | HTMLElement, offset: number, $root: Doc
         textOffset: preNodeOffset + offset
     };
 };
+
+export const formatDomNode = (n: DomNode): DomNode => {
+    if (
+        // Text
+        n.$node.nodeType === 3
+        // CDATASection
+        || n.$node.nodeType === 4
+        // Comment
+        || n.$node.nodeType === 8
+    ) {
+        return n;
+    }
+
+    return {
+        $node: n.$node.childNodes[n.offset],
+        offset: 0,
+    };
+}

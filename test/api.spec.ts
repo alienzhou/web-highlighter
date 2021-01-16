@@ -120,6 +120,19 @@ describe('Highlighter API', function () {
             expect($after).lengthOf($pre.length, 'its length should be the same as before');
             expect($after.every($n => $pre.indexOf($n) > -1), 'wrappers should be the same').to.be.true;
         });
+
+        it('should work correctly when a container is not a Text/Comment/CDATASection', () => {
+            let range = document.createRange();
+            const $p = document.querySelectorAll('p')[5];
+            range.setStart($p, 1);
+            range.setEnd($p.childNodes[2], 8);
+            highlighter.fromRange(range);
+
+            const $pre = [...$p.querySelectorAll(wrapSelector)];
+
+            const text = $pre.reduce((t, $n) => t + $n.textContent, '');
+            expect(text).to.be.equal('have fun');
+        });
     });
 
     describe('#fromStore', () => {
