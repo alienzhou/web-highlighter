@@ -2,7 +2,8 @@
  * adapter for mobile and desktop events
  */
 
-import {IInteraction, UserInputEvent} from '../types';
+import type { IInteraction } from '../types';
+import { UserInputEvent } from '../types';
 import detectMobile from './is.mobile';
 
 export default (): IInteraction => {
@@ -16,4 +17,4 @@ export default (): IInteraction => {
     };
 
     return interaction;
-}
+};

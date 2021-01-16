@@ -1,13 +1,9 @@
 import EventEmitter from '@src/util/event.emitter';
-import HighlightSource from '../model/source';
-import {ERROR} from '../types'
+import type HighlightSource from '../model/source';
+import { ERROR } from '../types';
 
 class Cache extends EventEmitter {
     private _data: Map<string, HighlightSource> = new Map();
-
-    constructor() {
-        super();
-    }
 
     get data() {
         return this.getAll();
@@ -20,8 +16,10 @@ class Cache extends EventEmitter {
     save(source: HighlightSource | HighlightSource[]): void {
         if (!Array.isArray(source)) {
             this._data.set(source.id, source);
+
             return;
         }
+
         source.forEach(s => this._data.set(s.id, s));
     }
 
@@ -35,18 +33,23 @@ class Cache extends EventEmitter {
 
     getAll(): HighlightSource[] {
         const list: HighlightSource[] = [];
-        for (let pair of this._data) {
+
+        for (const pair of this._data) {
             list.push(pair[1]);
         }
+
         return list;
     }
 
     removeAll(): string[] {
         const ids: string[] = [];
-        for (let pair of this._data) {
+
+        for (const pair of this._data) {
             ids.push(pair[0]);
         }
+
         this._data = new Map();
+
         return ids;
     }
 }

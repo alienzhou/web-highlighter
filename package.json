@@ -5,6 +5,7 @@
   "main": "dist/web-highlighter.min.js",
   "browser": "dist/web-highlighter.min.js",
   "scripts": {
+    "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register test/**.spec.ts",
     "coverage": "nyc -r lcov -e .ts -x \"test/**/*.ts\" npm run test",
     "serve-example": "http-server example/static",
@@ -20,8 +21,14 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run test"
+      "pre-commit": "lint-staged && npm run test"
     }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "homepage": "https://alienzhou.github.io/web-highlighter",
   "repository": {
@@ -46,21 +53,29 @@
     "@types/jsdom-global": "^3.0.2",
     "@types/mocha": "^7.0.2",
     "@types/sinon": "^9.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.13.0",
+    "@typescript-eslint/parser": "^4.13.0",
     "better-opn": "^1.0.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "clean-webpack-plugin": "^1.0.0",
     "coveralls": "^3.1.0",
     "css-loader": "^1.0.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
     "fs-extra": "^7.0.1",
     "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.11.1",
-    "husky": "^4.2.5",
+    "husky": "^4.3.8",
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
+    "lint-staged": "^10.5.3",
     "mocha": "^7.1.2",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.0.1",
+    "prettier": "^2.2.1",
     "showdown": "^1.9.0",
     "sinon": "^9.0.2",
     "style-loader": "^0.23.1",
@@ -69,7 +84,7 @@
     "ts-node": "^8.10.1",
     "tsconfig-paths": "^3.9.0",
     "tscpaths": "0.0.9",
-    "typescript": "^3.1.6",
+    "typescript": "^4.1.3",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": ">=3.1.11",

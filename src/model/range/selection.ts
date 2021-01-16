@@ -6,10 +6,14 @@
 
 export const getDomRange = (): Range => {
     const selection = window.getSelection();
+
     if (selection.isCollapsed) {
+        // eslint-disable-next-line no-console
         console.debug('no text selected');
+
         return null;
     }
+
     return selection.getRangeAt(0);
 };
 

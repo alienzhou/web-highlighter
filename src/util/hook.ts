@@ -3,35 +3,49 @@
  * webpack-plugin-liked api
  */
 
-class Hook {
+type HookCallback<T> = (...args: unknown[]) => T;
+
+class Hook<T = unknown> {
     name = '';
-    private ops: Array<Function> = [];
+
+    private readonly ops: HookCallback<T>[] = [];
 
     constructor(name?) {
         this.name = name;
     }
 
-    tap(cb: Function): Function {
-        if (this.ops.indexOf(cb) < 0) {
+    tap(cb: HookCallback<T>) {
+        if (!this.ops.includes(cb)) {
             this.ops.push(cb);
         }
-        return () => this.remove(cb);
+
+        return () => {
+            this.remove(cb);
+        };
     }
 
-    remove(cb: Function): void {
+    remove(cb: HookCallback<T>) {
         const idx = this.ops.indexOf(cb);
+
         if (idx < 0) {
             return;
         }
+
         this.ops.splice(idx, 1);
     }
 
-    isEmpty(): boolean {
+    isEmpty() {
         return this.ops.length === 0;
     }
 
-    call(...args) {
-        return this.ops.reduce((result, op) => op(...args), null);
+    call(...args: unknown[]) {
+        let ret: T;
+
+        this.ops.forEach(op => {
+            ret = op(...args);
+        });
+
+        return ret;
     }
 }
 

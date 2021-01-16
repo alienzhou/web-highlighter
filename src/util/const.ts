@@ -17,14 +17,15 @@ export const CAMEL_DATASET_IDENTIFIER_EXTRA = camel(DATASET_IDENTIFIER_EXTRA);
 export const CAMEL_DATASET_SPLIT_TYPE = camel(DATASET_SPLIT_TYPE);
 
 const DEFAULT_WRAP_TAG = 'span';
+
 export const getDefaultOptions = () => ({
     $root: document || document.documentElement,
     exceptSelectors: null,
     wrapTag: DEFAULT_WRAP_TAG,
     verbose: false,
     style: {
-        className: 'highlight-mengshou-wrap'
-    }
+        className: 'highlight-mengshou-wrap',
+    },
 });
 
 export const getStylesheet = () => `
