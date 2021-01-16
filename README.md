@@ -220,7 +220,7 @@ Use it as bellow:
 
 ```JavaScript
 const selection = window.getSelection();
-if (selection.isCollapsed) {
+if (!selection.isCollapsed) {
     highlighter.fromRange(selection.getRangeAt(0));
 }
 ```
