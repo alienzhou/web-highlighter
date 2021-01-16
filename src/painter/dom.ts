@@ -1,10 +1,7 @@
-import HighlightRange from '../model/range';
-import {SplitType, SelectedNode, DomNode, SelectedNodeType} from '../types';
-import {
-    hasClass,
-    addClass as addElementClass,
-    isHighlightWrapNode
-} from '../util/dom';
+import type HighlightRange from '../model/range';
+import type { SelectedNode, DomNode } from '../types';
+import { SplitType, SelectedNodeType } from '../types';
+import { hasClass, addClass as addElementClass, isHighlightWrapNode } from '../util/dom';
 import {
     ID_DIVISION,
     getDefaultOptions,
@@ -12,7 +9,7 @@ import {
     CAMEL_DATASET_IDENTIFIER_EXTRA,
     DATASET_IDENTIFIER,
     DATASET_SPLIT_TYPE,
-    DATASET_IDENTIFIER_EXTRA
+    DATASET_IDENTIFIER_EXTRA,
 } from '../util/const';
 import { unique } from '../util/tool';
 
@@ -26,58 +23,66 @@ const isMatchSelector = ($node: HTMLElement, selector: string): boolean => {
     if (!$node) {
         return false;
     }
-    if (/^\./.test(selector)) {
-        const className = selector.replace(/^\./, '');
+
+    if (selector.startsWith('.')) {
+        const className = selector.replace(/^\./u, '');
+
         return $node && hasClass($node, className);
-    }
-    else if (/^#/.test(selector)) {
-        const id = selector.replace(/^#/, '');
+    } else if (selector.startsWith('#')) {
+        const id = selector.replace(/^#/u, '');
+
         return $node && $node.id === id;
     }
-    else {
-        const tagName = selector.toUpperCase()
-        return $node && $node.tagName === tagName;
-    }
-}
+
+    const tagName = selector.toUpperCase();
+
+    return $node && $node.tagName === tagName;
+};
 
 /**
  * If start node and end node is the same, don't need to tranvers the dom tree.
  */
-function getNodesIfSameStartEnd(
+const getNodesIfSameStartEnd = (
     $startNode: Text,
     startOffset: number,
     endOffset: number,
-    exceptSelectors: Array<string>
-) {
+    exceptSelectors?: string[],
+) => {
     let $element = $startNode as Node;
+
+    const isExcepted = ($e: HTMLElement) => exceptSelectors?.some(s => isMatchSelector($e, s));
+
     while ($element) {
-        if ($element.nodeType === 1
-            && exceptSelectors
-            && exceptSelectors.some(s => isMatchSelector($element as HTMLElement, s))
-        ) {
+        if ($element.nodeType === 1 && isExcepted($element as HTMLElement)) {
             return [];
         }
+
         $element = $element.parentNode;
     }
 
     $startNode.splitText(startOffset);
-    let passedNode = $startNode.nextSibling as Text;
+
+    const passedNode = $startNode.nextSibling as Text;
+
     passedNode.splitText(endOffset - startOffset);
-    return [{
-        $node: passedNode,
-        type: SelectedNodeType.text,
-        splitType: SplitType.both
-    }];
-}
+
+    return [
+        {
+            $node: passedNode,
+            type: SelectedNodeType.text,
+            splitType: SplitType.both,
+        },
+    ];
+};
 
 /**
  * get all the dom nodes between the start and end node
  */
 export const getSelectedNodes = (
-    $root: HTMLElement | Document,
+    $root: Document | HTMLElement,
     start: DomNode,
     end: DomNode,
-    exceptSelectors: Array<string>
+    exceptSelectors: string[],
 ): SelectedNode[] => {
     const $startNode = start.$node;
     const $endNode = end.$node;
@@ -89,22 +94,22 @@ export const getSelectedNodes = (
         return getNodesIfSameStartEnd($startNode, startOffset, endOffset, exceptSelectors);
     }
 
-    const nodeStack: Array<HTMLElement | Document | ChildNode | Text> = [$root];
+    const nodeStack: (ChildNode | Document | HTMLElement | Text)[] = [$root];
     const selectedNodes: SelectedNode[] = [];
+
+    const isExcepted = ($e: HTMLElement) => exceptSelectors?.some(s => isMatchSelector($e, s));
 
     let withinSelectedRange = false;
     let curNode: Node = null;
-    while (curNode = nodeStack.pop()) {
+
+    while ((curNode = nodeStack.pop())) {
         // do not traverse the excepted node
-        if (
-            curNode.nodeType === 1
-            && exceptSelectors
-            && exceptSelectors.some(s => isMatchSelector(curNode as HTMLElement, s))
-        ) {
+        if (curNode.nodeType === 1 && isExcepted(curNode as HTMLElement)) {
             continue;
         }
 
         const children = curNode.childNodes;
+
         for (let i = children.length - 1; i >= 0; i--) {
             nodeStack.push(children[i]);
         }
@@ -113,27 +118,30 @@ export const getSelectedNodes = (
         if (curNode === $startNode) {
             if (curNode.nodeType === 3) {
                 (curNode as Text).splitText(startOffset);
+
                 const node = curNode.nextSibling as Text;
+
                 selectedNodes.push({
                     $node: node,
                     type: SelectedNodeType.text,
-                    splitType: SplitType.head
+                    splitType: SplitType.head,
                 });
-
             }
+
             // meet the start-node (begin to traverse)
             withinSelectedRange = true;
-        }
-        else if (curNode === $endNode) {
+        } else if (curNode === $endNode) {
             if (curNode.nodeType === 3) {
-                const node = (curNode as Text);
+                const node = curNode as Text;
+
                 node.splitText(endOffset);
                 selectedNodes.push({
                     $node: node,
                     type: SelectedNodeType.text,
-                    splitType: SplitType.tail
+                    splitType: SplitType.tail,
                 });
             }
+
             // meet the end-node
             break;
         }
@@ -142,35 +150,38 @@ export const getSelectedNodes = (
             selectedNodes.push({
                 $node: curNode as Text,
                 type: SelectedNodeType.text,
-                splitType: SplitType.none
+                splitType: SplitType.none,
             });
         }
     }
+
     return selectedNodes;
 };
 
-function addClass($el: HTMLElement, className?: string | Array<string>): HTMLElement  {
+const addClass = ($el: HTMLElement, className?: string[] | string): HTMLElement => {
     let classNames = Array.isArray(className) ? className : [className];
-    classNames = classNames.length === 0 ? [getDefaultOptions().style.className] : classNames;
-    classNames.forEach(c => addElementClass($el, c));
-    return $el;
-}
 
-function isNodeEmpty($n: Node): boolean {
-    return !$n || !$n.textContent;
-}
+    classNames = classNames.length === 0 ? [getDefaultOptions().style.className] : classNames;
+    classNames.forEach(c => {
+        addElementClass($el, c);
+    });
+
+    return $el;
+};
+
+const isNodeEmpty = ($n: Node): boolean => !$n || !$n.textContent;
 
 /**
  * Wrap a common wrapper.
  */
-function wrapNewNode(
+const wrapNewNode = (
     selected: SelectedNode,
     range: HighlightRange,
-    className: string | Array<string>,
-    wrapTag: string
-): HTMLElement {
-    let $wrap: HTMLElement;
-    $wrap = document.createElement(wrapTag);
+    className: string[] | string,
+    wrapTag: string,
+): HTMLElement => {
+    const $wrap = document.createElement(wrapTag);
+
     addClass($wrap, className);
 
     $wrap.appendChild(selected.$node.cloneNode(false));
@@ -181,18 +192,18 @@ function wrapNewNode(
     $wrap.setAttribute(`data-${DATASET_IDENTIFIER_EXTRA}`, '');
 
     return $wrap;
-}
+};
 
 /**
  * Split and wrapper each one.
  */
-function wrapPartialNode(
+const wrapPartialNode = (
     selected: SelectedNode,
     range: HighlightRange,
-    className: string | Array<string>,
-    wrapTag: string
-): HTMLElement {
-    let $wrap: HTMLElement = document.createElement(wrapTag);
+    className: string[] | string,
+    wrapTag: string,
+): HTMLElement => {
+    const $wrap: HTMLElement = document.createElement(wrapTag);
 
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
@@ -212,26 +223,30 @@ function wrapPartialNode(
 
     if ($prev) {
         const $span = $parent.cloneNode(false);
+
         $span.textContent = $prev.textContent;
         $fr.appendChild($span);
         headSplit = true;
     }
 
     const classNameList: string[] = [];
+
     if (isHighlightWrapNode($parent)) {
         $parent.classList.forEach(c => classNameList.push(c));
     }
+
     if (Array.isArray(className)) {
         classNameList.push(...className);
-    }
-    else {
+    } else {
         classNameList.push(className);
     }
+
     addClass($wrap, unique(classNameList));
     $fr.appendChild($wrap);
 
     if ($next) {
         const $span = $parent.cloneNode(false);
+
         $span.textContent = $next.textContent;
         $fr.appendChild($span);
         tailSplit = true;
@@ -239,14 +254,11 @@ function wrapPartialNode(
 
     if (headSplit && tailSplit) {
         splitType = SplitType.both;
-    }
-    else if (headSplit) {
+    } else if (headSplit) {
         splitType = SplitType.head;
-    }
-    else if (tailSplit) {
+    } else if (tailSplit) {
         splitType = SplitType.tail;
-    }
-    else {
+    } else {
         splitType = SplitType.none;
     }
 
@@ -254,34 +266,31 @@ function wrapPartialNode(
     $parent.parentNode.replaceChild($fr, $parent);
 
     return $wrap;
-}
+};
 
 /**
  * Just update id info (no wrapper updated).
  */
-function wrapOverlapNode(
-    selected: SelectedNode,
-    range: HighlightRange,
-    className: string | Array<string>
-): HTMLElement {
+const wrapOverlapNode = (selected: SelectedNode, range: HighlightRange, className: string[] | string): HTMLElement => {
     const $parent = selected.$node.parentNode as HTMLElement;
-    let $wrap: HTMLElement = $parent;
+    const $wrap: HTMLElement = $parent;
 
     addClass($wrap, className);
 
     const dataset = $parent.dataset;
     const formerId = dataset[CAMEL_DATASET_IDENTIFIER];
+
     dataset[CAMEL_DATASET_IDENTIFIER] = range.id;
     dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
         ? formerId + ID_DIVISION + dataset[CAMEL_DATASET_IDENTIFIER_EXTRA]
         : formerId;
 
     return $wrap;
-}
+};
 
 /**
  * wrap a dom node with highlight wrapper
- * 
+ *
  * Because of supporting the highlight-overlapping,
  * Highlighter can't just wrap all nodes in a simple way.
  * There are three types:
@@ -292,14 +301,15 @@ function wrapOverlapNode(
 export const wrapHighlight = (
     selected: SelectedNode,
     range: HighlightRange,
-    className: string | Array<string>,
-    wrapTag: string
+    className: string[] | string,
+    wrapTag: string,
 ): HTMLElement => {
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
     const $next = selected.$node.nextSibling;
 
     let $wrap: HTMLElement;
+
     // text node, not in a highlight wrapper -> should be wrapped in a highlight wrapper
     if (!isHighlightWrapNode($parent)) {
         $wrap = wrapNewNode(selected, range, className, wrapTag);
@@ -312,6 +322,7 @@ export const wrapHighlight = (
     else {
         $wrap = wrapOverlapNode(selected, range, className);
     }
+
     return $wrap;
 };
 
@@ -319,15 +330,19 @@ export const wrapHighlight = (
  * merge the adjacent text nodes
  * .normalize() API has some bugs in IE11
  */
-export const normalizeSiblingText = ($s: Node, isNext: boolean = true) => {
+export const normalizeSiblingText = ($s: Node, isNext = true) => {
     if (!$s || $s.nodeType !== 3) {
         return;
     }
+
     const $sibling = isNext ? $s.nextSibling : $s.previousSibling;
+
     if ($sibling.nodeType !== 3) {
         return;
     }
+
     const text = $sibling.nodeValue;
-    $s.nodeValue = isNext ? ($s.nodeValue + text) : (text + $s.nodeValue);
+
+    $s.nodeValue = isNext ? $s.nodeValue + text : text + $s.nodeValue;
     $sibling.parentNode.removeChild($sibling);
-}
+};

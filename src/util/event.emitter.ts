@@ -1,11 +1,11 @@
 /**
  * tiny event emitter
  * modify from mitt
-*/
+ */
 
 type EventHandler = (event?: unknown) => void;
-type EventHandlerList = Array<EventHandler>;
-type HandlersMap = {[propName: string]: EventHandlerList};
+type EventHandlerList = EventHandler[];
+type HandlersMap = Record<string, EventHandlerList>;
 
 class EventEmitter {
     private handlersMap: HandlersMap = Object.create(null);
@@ -14,7 +14,9 @@ class EventEmitter {
         if (!this.handlersMap[type]) {
             this.handlersMap[type] = [];
         }
+
         this.handlersMap[type].push(handler);
+
         return this;
     }
 
@@ -22,13 +24,17 @@ class EventEmitter {
         if (this.handlersMap[type]) {
             this.handlersMap[type].splice(this.handlersMap[type].indexOf(handler) >>> 0, 1);
         }
+
         return this;
     }
 
     emit(type: string, ...data) {
         if (this.handlersMap[type]) {
-            this.handlersMap[type].slice().forEach(handler => handler(...data));
+            this.handlersMap[type].slice().forEach(handler => {
+                handler(...data);
+            });
         }
+
         return this;
     }
 }

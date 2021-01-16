@@ -43,7 +43,7 @@ describe('Highlighter Hooks', function () {
         });
 
         it('should use the internal uuid id when return undefined in the hook', () => {
-            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const spy: sinon.SinonSpy<any[], string> = sinon.spy();
             highlighter.hooks.Render.UUID.tap(spy);
 
             const range = document.createRange();
@@ -57,7 +57,7 @@ describe('Highlighter Hooks', function () {
         });
 
         it('should get correct arguments in the hook', () => {
-            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const spy: sinon.SinonSpy<any[], string> = sinon.spy();
             highlighter.hooks.Render.UUID.tap(spy);
 
             const range = document.createRange();
@@ -91,7 +91,7 @@ describe('Highlighter Hooks', function () {
         });
 
         it('should not affect the document when return undefined in the hook', () => {
-            highlighter.hooks.Render.SelectedNodes.tap(() => {});
+            highlighter.hooks.Render.SelectedNodes.tap(() => []);
 
             const html = document.body.innerHTML;
             const range = document.createRange();
@@ -122,7 +122,7 @@ describe('Highlighter Hooks', function () {
 
     describe('#Render.WrapNode', () => {
         it('should get correct arguments in the hook', () => {
-            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const spy: sinon.SinonSpy<any[], HTMLElement> = sinon.spy();
             highlighter.hooks.Render.WrapNode.tap(spy);
 
             const range = document.createRange();
@@ -137,7 +137,7 @@ describe('Highlighter Hooks', function () {
         });
 
         it('should be called multiple times when creating multiple wrappers', () => {
-            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const spy: sinon.SinonSpy<any[], HTMLElement> = sinon.spy();
             highlighter.hooks.Render.WrapNode.tap(spy);
 
             const range = document.createRange();
@@ -193,7 +193,7 @@ describe('Highlighter Hooks', function () {
 
     describe('#Serialize.RecordInfo', () => {
         it('should get correct arguments in the hook', () => {
-            const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
+            const spy: sinon.SinonSpy<any[], string> = sinon.spy();
             highlighter.hooks.Serialize.RecordInfo.tap(spy);
 
             const range = document.createRange();
