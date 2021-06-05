@@ -26,8 +26,6 @@ export default class Highlighter extends EventEmitter {
 
     static isHighlightWrapNode = isHighlightWrapNode;
 
-    options: HighlighterOptions;
-
     hooks: HookMap;
 
     painter: Painter;
@@ -35,6 +33,8 @@ export default class Highlighter extends EventEmitter {
     cache: Cache;
 
     private _hoverId: string;
+
+    private options: HighlighterOptions;
 
     private readonly event = getInteraction();
 
