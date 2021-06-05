@@ -3,6 +3,7 @@
   "version": "0.7.1",
   "description": "✨A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️",
   "main": "dist/web-highlighter.min.js",
+  "types": "dist/index.d.ts",
   "browser": "dist/web-highlighter.min.js",
   "scripts": {
     "lint": "eslint \"src/**/*.ts\" --fix",
