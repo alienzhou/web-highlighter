@@ -1,7 +1,7 @@
 <div>
     <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
     <p align="center">
-        <strong>✨ A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️</strong>
+        <strong>✨ A no-dependency lib for text highlighting & persistence on any website ✨🖍️</strong>
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
