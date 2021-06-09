@@ -140,16 +140,17 @@ export default class Highlighter extends EventEmitter {
     };
 
     fromStore = (start: DomMeta, end: DomMeta, text: string, id: string, extra?: unknown): HighlightSource => {
-        try {
-            const hs = new HighlightSource(start, end, text, id, extra);
+        const hs = new HighlightSource(start, end, text, id, extra);
 
+        try {
             this._highlightFromHSource(hs);
 
             return hs;
         } catch (err: unknown) {
             eventEmitter.emit(INTERNAL_ERROR_EVENT, {
                 type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
-                detail: { err, id, text, start, end },
+                error: err,
+                detail: hs,
             });
 
             return null;
@@ -228,7 +229,7 @@ export default class Highlighter extends EventEmitter {
         }
     };
 
-    private readonly _handleHighlightHover = (e: Event) => {
+    private readonly _handleHighlightHover = (e: MouseEvent | TouchEvent) => {
         const $target = e.target as HTMLElement;
 
         if (!isHighlightWrapNode($target)) {
@@ -254,14 +255,14 @@ export default class Highlighter extends EventEmitter {
         this.emit(EventType.HOVER, { id: this._hoverId }, this, e);
     };
 
-    private readonly _handleError = (type: string) => {
+    private readonly _handleError = (type: { type: ERROR; detail?: HighlightSource; error?: any }) => {
         if (this.options.verbose) {
             // eslint-disable-next-line no-console
             console.warn(type);
         }
     };
 
-    private readonly _handleHighlightClick = (e: Event) => {
+    private readonly _handleHighlightClick = (e: MouseEvent | TouchEvent) => {
         const $target = e.target as HTMLElement;
 
         if (isHighlightWrapNode($target)) {
