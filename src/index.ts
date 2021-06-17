@@ -21,7 +21,16 @@ import {
     removeEventListener,
 } from '@src/util/dom';
 
-export default class Highlighter extends EventEmitter {
+interface EventHandlerMap {
+    [key: string]: (...args: any[]) => void;
+    [EventType.CLICK]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
+    [EventType.HOVER]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
+    [EventType.HOVER_OUT]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
+    [EventType.CREATE]: (data: { sources: HighlightSource[]; type: CreateFrom }, h: Highlighter) => void;
+    [EventType.REMOVE]: (data: { ids: string[] }, h: Highlighter) => void;
+}
+
+export default class Highlighter extends EventEmitter<EventHandlerMap> {
     static event = EventType;
 
     static isHighlightWrapNode = isHighlightWrapNode;

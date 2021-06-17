@@ -3,26 +3,17 @@
  * modify from mitt
  */
 
-import type { CreateFrom, ERROR, EventType } from '@src/types';
-import type Highlighter from '@src/index';
-import type HighlightSource from '@src/model/source';
-
 type EventHandler = (...data: unknown[]) => void;
 
-interface EventHandlerMap {
-    [key: string]: (...args: any[]) => void;
-    [EventType.CLICK]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
-    [EventType.HOVER]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
-    [EventType.HOVER_OUT]: (data: { id: string }, h: Highlighter, e: MouseEvent | TouchEvent) => void;
-    [EventType.CREATE]: (data: { sources: HighlightSource[]; type: CreateFrom }, h: Highlighter) => void;
-    [EventType.REMOVE]: (data: { ids: string[] }, h: Highlighter) => void;
-    error: (data: { type: ERROR; detail?: HighlightSource; error?: any }) => void;
-}
+type EventMap = Record<string, EventHandler>;
+type HandlersMap<T extends EventMap> = {
+    [K in keyof T]: T[K][];
+};
 
-class EventEmitter {
-    private handlersMap: Record<keyof EventHandlerMap, EventHandler[]> = Object.create(null);
+class EventEmitter<U extends EventMap = EventMap> {
+    private handlersMap: HandlersMap<U> = Object.create(null);
 
-    on<T extends keyof EventHandlerMap>(type: T, handler: EventHandlerMap[T]) {
+    on<T extends keyof U>(type: T, handler: U[T]) {
         if (!this.handlersMap[type]) {
             this.handlersMap[type] = [];
         }
@@ -32,7 +23,7 @@ class EventEmitter {
         return this;
     }
 
-    off<T extends keyof EventHandlerMap>(type: T, handler: EventHandlerMap[T]) {
+    off<T extends keyof U>(type: T, handler: U[T]) {
         if (this.handlersMap[type]) {
             this.handlersMap[type].splice(this.handlersMap[type].indexOf(handler) >>> 0, 1);
         }
@@ -40,7 +31,7 @@ class EventEmitter {
         return this;
     }
 
-    emit<T extends keyof EventHandlerMap>(type: T, ...data: Parameters<EventHandlerMap[T]>) {
+    emit<T extends keyof U>(type: T, ...data: Parameters<U[T]>) {
         if (this.handlersMap[type]) {
             this.handlersMap[type].slice().forEach(handler => {
                 handler(...data);
