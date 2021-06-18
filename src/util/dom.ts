@@ -131,8 +131,12 @@ export const addEventListener = ($el: RootElement, evt: string, fn: EventListene
     };
 };
 
-export const addClass = ($el: HTMLElement, className: string) => {
-    $el.classList.add(className);
+export const addClass = ($el: HTMLElement, className: string[] | string) => {
+    if (!Array.isArray(className)) {
+        className = [className];
+    }
+
+    $el.classList.add(...className);
 };
 
 export const removeClass = ($el: HTMLElement, className: string): void => {
