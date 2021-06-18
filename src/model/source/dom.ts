@@ -1,5 +1,5 @@
 import type { DomNode } from '@src//types';
-import type HighlightSource from './index';
+import type HighlightSource from '@src/model/source/index';
 import { ROOT_IDX } from '@src/util/const';
 
 /**

@@ -4,13 +4,13 @@
  * represents for a piece of chosen dom
  */
 
-import HighlightSource from '../source/index';
 import type { DomNode, HookMap } from '@src/types';
-import { ERROR } from '@src/types';
-import { getDomRange, removeSelection } from './selection';
 import type Hook from '@src/util/hook';
+import HighlightSource from '@src/model/source/index';
+import { ERROR } from '@src/types';
+import { getDomRange, removeSelection } from '@src/model/range/selection';
 import uuid from '@src/util/uuid';
-import { getDomMeta, formatDomNode } from './dom';
+import { getDomMeta, formatDomNode } from '@src/model/range/dom';
 import { eventEmitter, INTERNAL_ERROR_EVENT } from '@src/util/const';
 
 class HighlightRange {

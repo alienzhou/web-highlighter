@@ -4,13 +4,13 @@
  * No need to instantiate repeatly. A Highlighter instance will bind a Painter instance.
  */
 
-import HighlightSource from '@src/model/source';
 import type HighlightRange from '@src/model/range';
-import { wrapHighlight, getSelectedNodes, normalizeSiblingText } from './dom';
-import { getHighlightsByRoot, forEach, addClass, removeAllClass } from '@src/util/dom';
 import type { PainterOptions, HookMap } from '@src/types';
+import HighlightSource from '@src/model/source';
+import { wrapHighlight, getSelectedNodes, normalizeSiblingText } from '@src/painter/dom';
+import { getHighlightsByRoot, forEach, addClass, removeAllClass } from '@src/util/dom';
 import { ERROR } from '@src/types';
-import { initDefaultStylesheet } from './style';
+import { initDefaultStylesheet } from '@src/painter/style';
 import {
     ID_DIVISION,
     eventEmitter,
@@ -18,7 +18,7 @@ import {
     INTERNAL_ERROR_EVENT,
     CAMEL_DATASET_IDENTIFIER,
     CAMEL_DATASET_IDENTIFIER_EXTRA,
-} from '../util/const';
+} from '@src/util/const';
 
 export default class Painter {
     options: PainterOptions;

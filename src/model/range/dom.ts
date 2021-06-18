@@ -2,8 +2,8 @@
  * some dom operations about HighlightRange
  */
 
-import { CAMEL_DATASET_IDENTIFIER, ROOT_IDX, UNKNOWN_IDX } from '@src/util/const';
 import type { DomMeta, DomNode } from '@src/types';
+import { CAMEL_DATASET_IDENTIFIER, ROOT_IDX, UNKNOWN_IDX } from '@src/util/const';
 
 const countGlobalNodeIndex = ($node: Node, $root: Document | HTMLElement): number => {
     const tagName = ($node as HTMLElement).tagName;

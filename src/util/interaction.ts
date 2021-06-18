@@ -2,9 +2,9 @@
  * adapter for mobile and desktop events
  */
 
-import type { IInteraction } from '../types';
-import { UserInputEvent } from '../types';
-import detectMobile from './is.mobile';
+import type { IInteraction } from '@src/types';
+import { UserInputEvent } from '@src/types';
+import detectMobile from '@src/util/is.mobile';
 
 export default (): IInteraction => {
     const isMobile = detectMobile(window.navigator.userAgent);

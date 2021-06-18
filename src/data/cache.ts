@@ -1,6 +1,6 @@
 import EventEmitter from '@src/util/event.emitter';
-import type HighlightSource from '../model/source';
-import { ERROR } from '../types';
+import type HighlightSource from '@src/model/source';
+import { ERROR } from '@src/types';
 
 class Cache extends EventEmitter {
     private _data: Map<string, HighlightSource> = new Map();
