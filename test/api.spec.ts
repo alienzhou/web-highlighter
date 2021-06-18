@@ -177,7 +177,7 @@ describe('Highlighter API', function () {
     });
 
     describe('#remove', () => {
-        beforeEach(() => {            
+        beforeEach(() => {
             const s = sources[0];
             highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id);
         });
@@ -203,7 +203,7 @@ describe('Highlighter API', function () {
     });
 
     describe('#removeAll', () => {
-        beforeEach(() => {            
+        beforeEach(() => {
             const s = sources[0];
             highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id);
             highlighter.removeAll();
@@ -491,6 +491,29 @@ describe('Highlighter API', function () {
     });
 
     describe('complicated use cases', () => {
+        it('should get updated after deleting when the highlight wrapper is inside another wrapper', () => {
+            // https://github.com/alienzhou/web-highlighter/pull/80
+            const defaultClassName = getDefaultOptions().style.className;
+            const range = document.createRange();
+            const $p = document.querySelectorAll('p')[3];
+            const $highlight = $p.querySelector('span');
+            range.setStart($highlight.childNodes[0], 12);
+            range.setEnd($highlight.childNodes[0], 21);
+
+            // change className and highlight it 
+            highlighter.setOption({ style: { className: 'highlight-test' } });
+            const { id } = highlighter.fromRange(range);
+
+            // remove the highlight
+            highlighter.remove(id);
+
+            const classnames: string[] = [];
+            const $wraps = $p.querySelectorAll(wrapSelector);
+            $wraps.forEach($n => classnames.push($n.className));
+
+            expect(classnames).to.be.deep.equal(new Array($wraps.length).fill(defaultClassName));
+        });
+
         it('should set the only new className on an already existed wrapper after highlighting', () => {
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[3];
@@ -515,13 +538,13 @@ describe('Highlighter API', function () {
             const $highlight = $p.querySelector('span');
             range.setStart($highlight.childNodes[0], 12);
             range.setEnd($highlight.childNodes[0], 21);
-            
+
             // change className and highlight it 
             highlighter.setOption({ style: { className: 'highlight-test' } });
             highlighter.fromRange(range);
-            
+
             const $wraps = $p.querySelectorAll(wrapSelector);
-            
+
             expect($wraps[1].className).to.be.equal('highlight-test');
         });
     });
