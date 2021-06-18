@@ -7,7 +7,7 @@
 import HighlightSource from '@src/model/source';
 import type HighlightRange from '@src/model/range';
 import { wrapHighlight, getSelectedNodes, normalizeSiblingText } from './dom';
-import { getHighlightsByRoot, forEach } from '@src/util/dom';
+import { getHighlightsByRoot, forEach, addClass, removeAllClass } from '@src/util/dom';
 import type { PainterOptions, HookMap } from '@src/types';
 import { ERROR } from '@src/types';
 import { initDefaultStylesheet } from './style';
@@ -162,9 +162,9 @@ export default class Painter {
 
             if ($overlapSpan) {
                 // empty the current class list
-                $s.classList.remove(...$s.classList);
+                removeAllClass($s);
                 // retain the class list of the overlapped wrapper which associated with "extra id"
-                $s.classList.add(...$overlapSpan.classList);
+                addClass($s, [...$overlapSpan.classList]);
             }
 
             dataset[CAMEL_DATASET_IDENTIFIER] = newId;
