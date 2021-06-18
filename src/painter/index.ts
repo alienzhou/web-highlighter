@@ -153,9 +153,23 @@ export default class Painter {
         $idToUpdate.forEach($s => {
             const dataset = $s.dataset;
             const ids = dataset[CAMEL_DATASET_IDENTIFIER_EXTRA].split(ID_DIVISION);
+            const newId = ids.shift();
 
-            dataset[CAMEL_DATASET_IDENTIFIER] = ids.shift();
+            // find overlapped wrapper associated with "extra id"
+            const $overlapSpan = document.querySelector<HTMLElement>(
+                `${wrapTag}[data-${DATASET_IDENTIFIER}="${newId}"]`,
+            );
+
+            if ($overlapSpan) {
+                // empty the current class list
+                $s.classList.remove(...$s.classList);
+                // retain the class list of the overlapped wrapper which associated with "extra id"
+                $s.classList.add(...$overlapSpan.classList);
+            }
+
+            dataset[CAMEL_DATASET_IDENTIFIER] = newId;
             dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = ids.join(ID_DIVISION);
+
             hooks.Remove.UpdateNodes.call(id, $s, 'id-update');
         });
 
