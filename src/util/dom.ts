@@ -139,4 +139,8 @@ export const removeClass = ($el: HTMLElement, className: string): void => {
     $el.classList.remove(className);
 };
 
+export const removeAllClass = ($el: HTMLElement): void => {
+    $el.className = '';
+};
+
 export const hasClass = ($el: HTMLElement, className: string): boolean => $el.classList.contains(className);
