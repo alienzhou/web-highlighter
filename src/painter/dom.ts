@@ -1,7 +1,7 @@
-import type HighlightRange from '../model/range';
-import type { SelectedNode, DomNode } from '../types';
-import { SplitType, SelectedNodeType } from '../types';
-import { hasClass, addClass as addElementClass, isHighlightWrapNode, removeAllClass } from '../util/dom';
+import type HighlightRange from '@src/model/range';
+import type { SelectedNode, DomNode } from '@src/types';
+import { SplitType, SelectedNodeType } from '@src/types';
+import { hasClass, addClass as addElementClass, isHighlightWrapNode, removeAllClass } from '@src/util/dom';
 import {
     ID_DIVISION,
     getDefaultOptions,

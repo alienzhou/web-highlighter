@@ -4,9 +4,9 @@
  * Also it has the ability for persistence.
  */
 
-import type { DomMeta, HookMap, DomNode } from '../../types';
-import HighlightRange from '../range/index';
-import { queryElementNode, getTextChildByOffset } from './dom';
+import type { DomMeta, HookMap, DomNode } from '@src/types';
+import HighlightRange from '@src/model/range/index';
+import { queryElementNode, getTextChildByOffset } from '@src/model/source/dom';
 
 class HighlightSource {
     startMeta: DomMeta;

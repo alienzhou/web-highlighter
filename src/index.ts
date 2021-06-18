@@ -1,3 +1,4 @@
+import type { DomNode, DomMeta, HookMap, HighlighterOptions } from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import HighlightSource from '@src/model/source';
@@ -7,8 +8,7 @@ import getInteraction from '@src/util/interaction';
 import Cache from '@src/data/cache';
 import Painter from '@src/painter';
 import { eventEmitter, getDefaultOptions, INTERNAL_ERROR_EVENT } from '@src/util/const';
-import type { DomNode, DomMeta, HookMap, HighlighterOptions } from './types';
-import { ERROR, EventType, CreateFrom } from './types';
+import { ERROR, EventType, CreateFrom } from '@src/types';
 import {
     addClass,
     removeClass,

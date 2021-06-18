@@ -5,8 +5,9 @@
 
 import type HighlightSource from '@src/model/source';
 import type { ERROR } from '@src/types';
-import camel from './camel';
-import EventEmitter from './event.emitter';
+import camel from '@src/util/camel';
+import EventEmitter from '@src/util/event.emitter';
+
 export const ID_DIVISION = ';';
 export const LOCAL_STORE_KEY = 'highlight-mengshou';
 export const STYLESHEET_ID = 'highlight-mengshou-style';
