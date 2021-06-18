@@ -7,6 +7,11 @@ const highlighter = new Highlighter({
     wrapTag: 'i',
     exceptSelectors: ['.my-remove-tip', 'pre', 'code']
 });
+highlighter.setOption({
+    style: {
+        className: 'yellow-highlight',
+    },
+});
 const store = new LocalStore();
 const log = console.log.bind(console, '[highlighter]');
 
@@ -38,6 +43,14 @@ const switchAuto = auto => {
         $btn.removeAttribute('disabled');
     }
 };
+
+const switchColor = color => highlighter.setOption({
+    style: {
+        className: color === 'yellow'
+            ? 'yellow-highlight'
+            : 'blue-highlight',
+    },
+});
 
 function getPosition($node) {
     let offset = {
@@ -83,42 +96,42 @@ highlighter
     });
 
 /**
- * avoid re-highlighting the existing selection
+ * FIXME: avoid re-highlighting the existing selection
  */
-function getIds(selected) {
-    if (!selected || !selected.$node || !selected.$node.parentNode) {
-        return [];
-    }
-    return [
-        highlighter.getIdByDom(selected.$node.parentNode),
-        ...highlighter.getExtraIdByDom(selected.$node.parentNode)
-    ].filter(i => i)
-}
-function getIntersection(arrA, arrB) {
-    const record = {};
-    const intersection = [];
-    arrA.forEach(i => record[i] = true);
-    arrB.forEach(i => record[i] && intersection.push(i) && (record[i] = false));
-    return intersection;
-}
-highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
-    selectedNodes = selectedNodes.filter(n => n.$node.textContent);
-    if (selectedNodes.length === 0) {
-        return [];
-    }
+// function getIds(selected) {
+//     if (!selected || !selected.$node || !selected.$node.parentNode) {
+//         return [];
+//     }
+//     return [
+//         highlighter.getIdByDom(selected.$node.parentNode),
+//         ...highlighter.getExtraIdByDom(selected.$node.parentNode)
+//     ].filter(i => i)
+// }
+// function getIntersection(arrA, arrB) {
+//     const record = {};
+//     const intersection = [];
+//     arrA.forEach(i => record[i] = true);
+//     arrB.forEach(i => record[i] && intersection.push(i) && (record[i] = false));
+//     return intersection;
+// }
+// highlighter.hooks.Render.SelectedNodes.tap((id, selectedNodes) => {
+//     selectedNodes = selectedNodes.filter(n => n.$node.textContent);
+//     if (selectedNodes.length === 0) {
+//         return [];
+//     }
 
-    const candidates = selectedNodes.slice(1).reduce(
-        (left, selected) => getIntersection(left, getIds(selected)),
-        getIds(selectedNodes[0])
-    );
-    for (let i = 0; i < candidates.length; i++) {
-        if (highlighter.getDoms(candidates[i]).length === selectedNodes.length) {
-            return [];
-        }
-    }
+//     const candidates = selectedNodes.slice(1).reduce(
+//         (left, selected) => getIntersection(left, getIds(selected)),
+//         getIds(selectedNodes[0])
+//     );
+//     for (let i = 0; i < candidates.length; i++) {
+//         if (highlighter.getDoms(candidates[i]).length === selectedNodes.length) {
+//             return [];
+//         }
+//     }
 
-    return selectedNodes;
-});
+//     return selectedNodes;
+// });
 
 highlighter.hooks.Serialize.Restore.tap(
     source =>  log('Serialize.Restore hook -', source)
@@ -146,6 +159,7 @@ document.querySelectorAll('[name="auto"]').forEach($n => {
 });
 switchAuto(autoStatus);
 
+let colorStatus = 'yellow';
 document.addEventListener('click', e => {
     const $ele = e.target;
 
@@ -163,6 +177,14 @@ document.addEventListener('click', e => {
         if (autoStatus !== val) {
             switchAuto(val);
             autoStatus = val;
+        }
+    }
+    // toggle highlighting color
+    else if ($ele.getAttribute('name') === 'color') {
+        const val = $ele.value;
+        if (colorStatus !== val) {
+            switchColor(val);
+            colorStatus = val;
         }
     }
     // highlight range manually

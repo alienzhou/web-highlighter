@@ -490,6 +490,42 @@ describe('Highlighter API', function () {
         });
     });
 
+    describe('complicated use cases', () => {
+        it('should set the only new className on an already existed wrapper after highlighting', () => {
+            const range = document.createRange();
+            const $p = document.querySelectorAll('p')[3];
+            range.setStart($p.querySelector('span').childNodes[0], 64);
+            range.setEnd($p.querySelector('span').nextSibling, 9);
+            highlighter.fromRange(range);
+
+            const $span = $p.querySelectorAll(wrapSelector)[1];
+            const range2 = document.createRange();
+            range2.setStart($span.childNodes[0], 0);
+            range2.setEnd($span.childNodes[0], 20);
+            highlighter.setOption({ style: { className: 'highlight-test' } });
+            highlighter.fromRange(range2);
+
+            const $wraps = $p.querySelectorAll(wrapSelector);
+            expect($wraps[1].className).to.be.equal('highlight-test');
+        });
+
+        it('should set the only new className on a split wrapper after highlighting', () => {
+            const range = document.createRange();
+            const $p = document.querySelectorAll('p')[3];
+            const $highlight = $p.querySelector('span');
+            range.setStart($highlight.childNodes[0], 12);
+            range.setEnd($highlight.childNodes[0], 21);
+            
+            // change className and highlight it 
+            highlighter.setOption({ style: { className: 'highlight-test' } });
+            highlighter.fromRange(range);
+            
+            const $wraps = $p.querySelectorAll(wrapSelector);
+            
+            expect($wraps[1].className).to.be.equal('highlight-test');
+        });
+    });
+
     afterEach(() => {
         cleanup();
     });

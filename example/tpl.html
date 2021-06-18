@@ -16,6 +16,14 @@
             img {
                 max-width: 100%;
             }
+
+            .yellow-highlight {
+                background-color: #FF9;
+            }
+
+            .blue-highlight {
+                background-color: #9FF;
+            }
         </style>
         <title>Web Highlighter: a mini tool for highlighting website text</title>
     </head>
@@ -36,6 +44,11 @@
                 <label class="op-name">auto-highlight：</label>
                 <label><input name="auto" type="radio" value="on" checked />enabled</label>
                 <label><input name="auto" type="radio" value="off" />disabled</label>
+            </div>
+            <div>
+                <label class="op-color">color：</label>
+                <label><input name="color" type="radio" value="yellow" checked />yellow</label>
+                <label><input name="color" type="radio" value="blue" />blue</label>
             </div>
             <button class="op-btn disabled" id="js-highlight" disabled >highlight manually</button>
             <a href="https://github.com/alienzhou/web-highlighter" target="_blank">

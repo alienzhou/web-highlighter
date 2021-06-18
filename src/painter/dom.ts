@@ -1,7 +1,7 @@
 import type HighlightRange from '../model/range';
 import type { SelectedNode, DomNode } from '../types';
 import { SplitType, SelectedNodeType } from '../types';
-import { hasClass, addClass as addElementClass, isHighlightWrapNode } from '../util/dom';
+import { hasClass, addClass as addElementClass, isHighlightWrapNode, removeAllClass } from '../util/dom';
 import {
     ID_DIVISION,
     getDefaultOptions,
@@ -231,10 +231,6 @@ const wrapPartialNode = (
 
     const classNameList: string[] = [];
 
-    if (isHighlightWrapNode($parent)) {
-        $parent.classList.forEach(c => classNameList.push(c));
-    }
-
     if (Array.isArray(className)) {
         classNameList.push(...className);
     } else {
@@ -275,6 +271,7 @@ const wrapOverlapNode = (selected: SelectedNode, range: HighlightRange, classNam
     const $parent = selected.$node.parentNode as HTMLElement;
     const $wrap: HTMLElement = $parent;
 
+    removeAllClass($wrap);
     addClass($wrap, className);
 
     const dataset = $parent.dataset;
