@@ -3,14 +3,17 @@
  * modify from mitt
  */
 
-type EventHandler = (event?: unknown) => void;
-type EventHandlerList = EventHandler[];
-type HandlersMap = Record<string, EventHandlerList>;
+type EventHandler = (...data: unknown[]) => void;
 
-class EventEmitter {
-    private handlersMap: HandlersMap = Object.create(null);
+type EventMap = Record<string, EventHandler>;
+type HandlersMap<T extends EventMap> = {
+    [K in keyof T]: T[K][];
+};
 
-    on(type: string, handler: EventHandler) {
+class EventEmitter<U extends EventMap = EventMap> {
+    private handlersMap: HandlersMap<U> = Object.create(null);
+
+    on<T extends keyof U>(type: T, handler: U[T]) {
         if (!this.handlersMap[type]) {
             this.handlersMap[type] = [];
         }
@@ -20,7 +23,7 @@ class EventEmitter {
         return this;
     }
 
-    off(type: string, handler: EventHandler) {
+    off<T extends keyof U>(type: T, handler: U[T]) {
         if (this.handlersMap[type]) {
             this.handlersMap[type].splice(this.handlersMap[type].indexOf(handler) >>> 0, 1);
         }
@@ -28,7 +31,7 @@ class EventEmitter {
         return this;
     }
 
-    emit(type: string, ...data) {
+    emit<T extends keyof U>(type: T, ...data: Parameters<U[T]>) {
         if (this.handlersMap[type]) {
             this.handlersMap[type].slice().forEach(handler => {
                 handler(...data);

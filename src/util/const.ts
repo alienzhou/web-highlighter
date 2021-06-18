@@ -3,6 +3,8 @@
  * cSpell:ignore mengshou
  */
 
+import type HighlightSource from '@src/model/source';
+import type { ERROR } from '@src/types';
 import camel from './camel';
 import EventEmitter from './event.emitter';
 export const ID_DIVISION = ';';
@@ -41,4 +43,11 @@ export const getStylesheet = () => `
 export const ROOT_IDX = -2;
 export const UNKNOWN_IDX = -1;
 export const INTERNAL_ERROR_EVENT = 'error';
-export const eventEmitter = new EventEmitter();
+
+interface EventHandlerMap {
+    [key: string]: (...args: any[]) => void;
+    error: (data: { type: ERROR; detail?: HighlightSource; error?: any }) => void;
+}
+class ErrorEventEmitter extends EventEmitter<EventHandlerMap> {}
+
+export const eventEmitter = new ErrorEventEmitter();
