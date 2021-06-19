@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v0.7.3
+
+### Fix
+
+- highlight wrapper inside another wrapper not get updated when deleting [#80](https://github.com/alienzhou/web-highlighter/pull/80)
+- make the className the latest one when wrapping a partial or an overlap node [#82](https://github.com/alienzhou/web-highlighter/pull/82)
+
+### Improvement
+
+- better typings for event emitter [#81](https://github.com/alienzhou/web-highlighter/pull/81)
+- tsconfig path alias and npm scripts [#84](https://github.com/alienzhou/web-highlighter/pull/84)
+
 ## v0.7.2
 
 ### Fix

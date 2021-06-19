@@ -490,7 +490,7 @@ describe('Highlighter API', function () {
         });
     });
 
-    describe('complicated use cases', () => {
+    describe('changing className by .setOption', () => {
         it('should get updated after deleting when the highlight wrapper is inside another wrapper', () => {
             // https://github.com/alienzhou/web-highlighter/pull/80
             const defaultClassName = getDefaultOptions().style.className;
