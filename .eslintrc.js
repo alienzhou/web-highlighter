@@ -233,6 +233,7 @@ module.exports = {
     ],
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
+    "@typescript-eslint/prefer-string-starts-ends-with": "off",
     "@typescript-eslint/promise-function-async": "off",
     "@typescript-eslint/restrict-template-expressions": [
       "warn",

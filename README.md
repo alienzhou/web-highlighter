@@ -351,7 +351,7 @@ Hooks let you control the highlighting flow powerfully. You can almost customize
 
 > It depends on [Selection API](https://caniuse.com/#search=selection%20api).
 
-- IE 10、11
+- IE 11
 - Edge
 - Firefox 52+
 - Chrome 15+
