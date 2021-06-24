@@ -24,12 +24,12 @@ const isMatchSelector = ($node: HTMLElement, selector: string): boolean => {
         return false;
     }
 
-    if (selector.startsWith('.')) {
-        const className = selector.replace(/^\./u, '');
+    if (/^\./.test(selector)) {
+        const className = selector.replace(/^\./, '');
 
         return $node && hasClass($node, className);
-    } else if (selector.startsWith('#')) {
-        const id = selector.replace(/^#/u, '');
+    } else if (/^#/.test(selector)) {
+        const id = selector.replace(/^#/, '');
 
         return $node && $node.id === id;
     }

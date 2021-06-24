@@ -347,7 +347,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 > 依赖 [Selection API](https://caniuse.com/#search=selection%20api)。
 
-- IE 10、11
+- IE 11
 - Edge
 - Firefox 52+
 - Chrome 15+

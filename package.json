@@ -12,7 +12,7 @@
     "serve-example": "http-server example/static",
     "serve": "http-server -p 8081 ./dist",
     "watch": "webpack --config ./config/webpack.config.prod.js --watch",
-    "build-example": "export target=example && node script/build.js",
+    "build-example": "target=example node script/build.js",
     "static": "run-p watch serve",
     "start": "node script/dev.js",
     "build:types": "tscpaths -p tsconfig.json -s ./src -o ./dist",
