@@ -1,6 +1,6 @@
 {
   "name": "web-highlighter",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "✨A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️",
   "main": "dist/web-highlighter.min.js",
   "types": "dist/index.d.ts",
