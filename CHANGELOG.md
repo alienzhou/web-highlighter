@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v0.7.4
+
+### Fix
+
+Removing unsupported APIs to fix compatibility issues in IE11:
+
+- [Array.prototype.includes](https://caniuse.com/array-includes)
+- [String: startsWith](https://caniuse.com/mdn-javascript_builtins_string_startswith)
+- [RegExp: unicode](https://caniuse.com/mdn-javascript_builtins_regexp_unicode)
+
+---
+
 ## v0.7.3
 
 ### Fix
@@ -11,6 +23,8 @@
 
 - better typings for event emitter [#81](https://github.com/alienzhou/web-highlighter/pull/81)
 - tsconfig path alias and npm scripts [#84](https://github.com/alienzhou/web-highlighter/pull/84)
+
+---
 
 ## v0.7.2
 
