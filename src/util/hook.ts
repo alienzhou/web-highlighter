@@ -15,7 +15,7 @@ class Hook<T = unknown> {
     }
 
     tap(cb: HookCallback<T>) {
-        if (!this.ops.includes(cb)) {
+        if (this.ops.indexOf(cb) === -1) {
             this.ops.push(cb);
         }
 

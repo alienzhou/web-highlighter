@@ -5,7 +5,7 @@ export const unique = <T>(arr: T[]): T[] => {
     const res: T[] = [];
 
     for (const el of arr) {
-        if (!res.includes(el)) {
+        if (res.indexOf(el) === -1) {
             res.push(el);
         }
     }
