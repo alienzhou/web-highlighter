@@ -66,7 +66,7 @@ import Highlighter from 'web-highlighter';
 const highlighter = new Highlighter();
 
 // 2. retrieve data from backend, then highlight it on the page
-getRemoteData().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text));
+getRemoteData().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
 
 // 3. listen for highlight creating, then save to backend
 highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
