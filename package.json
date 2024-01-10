@@ -17,9 +17,12 @@
     "start": "node script/dev.js",
     "build:types": "tscpaths -p tsconfig.json -s ./src -o ./dist",
     "build:code": "target=dist node script/build.js",
-    "build": "run-s build:code build:types",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider run-s build:code build:types",
     "prepublishOnly": "run-s lint build test",
     "prepare": "npm run build"
+  },
+  "scriptsComments": {
+    "build": "NODE_OPTIONS env var is a hack to address Error: error:0308010C:digital envelope routines::unsupported - see https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported/73465262#73465262"
   },
   "husky": {
     "hooks": {
