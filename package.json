@@ -18,7 +18,8 @@
     "build:types": "tscpaths -p tsconfig.json -s ./src -o ./dist",
     "build:code": "target=dist node script/build.js",
     "build": "run-s build:code build:types",
-    "prepublishOnly": "run-s lint build test"
+    "prepublishOnly": "run-s lint build test",
+    "prepare": "npm run build"
   },
   "husky": {
     "hooks": {
