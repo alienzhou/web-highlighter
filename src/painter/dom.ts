@@ -80,6 +80,7 @@ const getNodesIfSameStartEnd = (
  */
 export const getSelectedNodes = (
     $root: Document | HTMLElement,
+    rootDocument: Document,
     start: DomNode,
     end: DomNode,
     exceptSelectors: string[],
@@ -90,16 +91,9 @@ export const getSelectedNodes = (
     const endOffset = end.offset;
 
     // assumes web-highlighter is running in top-level page so document is the top-level document
-    const nodeInIframe = (node: Node) => node.ownerDocument !== document;
 
     // split current node when the start-node and end-node is the same
-    if (
-        $startNode === $endNode &&
-        // iFrame check assumes $root is HTMLElement NOT Document
-        // Document.ownerDocument = null
-        ($startNode instanceof Text ||
-            (nodeInIframe($startNode) && $startNode instanceof $root.ownerDocument.defaultView.Text))
-    ) {
+    if ($startNode === $endNode && $startNode instanceof rootDocument.defaultView.Text) {
         return getNodesIfSameStartEnd($startNode, startOffset, endOffset, exceptSelectors);
     }
 
@@ -188,8 +182,9 @@ const wrapNewNode = (
     range: HighlightRange,
     className: string[] | string,
     wrapTag: string,
+    rootDocument: Document,
 ): HTMLElement => {
-    const $wrap = document.createElement(wrapTag);
+    const $wrap = rootDocument.createElement(wrapTag);
 
     addClass($wrap, className);
 
@@ -211,13 +206,14 @@ const wrapPartialNode = (
     range: HighlightRange,
     className: string[] | string,
     wrapTag: string,
+    rootDocument: Document,
 ): HTMLElement => {
-    const $wrap: HTMLElement = document.createElement(wrapTag);
+    const $wrap: HTMLElement = rootDocument.createElement(wrapTag);
 
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
     const $next = selected.$node.nextSibling;
-    const $fr = document.createDocumentFragment();
+    const $fr = rootDocument.createDocumentFragment();
     const parentId = $parent.dataset[CAMEL_DATASET_IDENTIFIER];
     const parentExtraId = $parent.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
     const extraInfo = parentExtraId ? parentId + ID_DIVISION + parentExtraId : parentId;
@@ -309,6 +305,7 @@ export const wrapHighlight = (
     range: HighlightRange,
     className: string[] | string,
     wrapTag: string,
+    rootDocument: Document,
 ): HTMLElement => {
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
@@ -318,11 +315,11 @@ export const wrapHighlight = (
 
     // text node, not in a highlight wrapper -> should be wrapped in a highlight wrapper
     if (!isHighlightWrapNode($parent)) {
-        $wrap = wrapNewNode(selected, range, className, wrapTag);
+        $wrap = wrapNewNode(selected, range, className, wrapTag, rootDocument);
     }
     // text node, in a highlight wrap -> should split the existing highlight wrapper
     else if (isHighlightWrapNode($parent) && (!isNodeEmpty($prev) || !isNodeEmpty($next))) {
-        $wrap = wrapPartialNode(selected, range, className, wrapTag);
+        $wrap = wrapPartialNode(selected, range, className, wrapTag, rootDocument);
     }
     // completely overlap (with a highlight wrap) -> only add extra id info
     else {

@@ -112,6 +112,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         this.painter = new Painter(
             {
                 $root: this.options.$root,
+                rootDocument: this.options.rootDocument,
                 wrapTag: this.options.wrapTag,
                 className: this.options.style.className,
                 exceptSelectors: this.options.exceptSelectors,

@@ -32,13 +32,14 @@ export default class Painter {
     constructor(options: PainterOptions, hooks: HookMap) {
         this.options = {
             $root: options.$root,
+            rootDocument: options.rootDocument,
             wrapTag: options.wrapTag,
             exceptSelectors: options.exceptSelectors,
             className: options.className,
         };
         this.hooks = hooks;
 
-        initDefaultStylesheet();
+        initDefaultStylesheet(this.options.rootDocument);
     }
 
     /* =========================== render =========================== */
@@ -47,17 +48,17 @@ export default class Painter {
             throw ERROR.HIGHLIGHT_RANGE_FROZEN;
         }
 
-        const { $root, className, exceptSelectors } = this.options;
+        const { $root, rootDocument, className, exceptSelectors } = this.options;
         const hooks = this.hooks;
 
-        let $selectedNodes = getSelectedNodes($root, range.start, range.end, exceptSelectors);
+        let $selectedNodes = getSelectedNodes($root, rootDocument, range.start, range.end, exceptSelectors);
 
         if (!hooks.Render.SelectedNodes.isEmpty()) {
             $selectedNodes = hooks.Render.SelectedNodes.call(range.id, $selectedNodes) || [];
         }
 
         return $selectedNodes.map(n => {
-            let $node = wrapHighlight(n, range, className, this.options.wrapTag);
+            let $node = wrapHighlight(n, range, className, this.options.wrapTag, rootDocument);
 
             if (!hooks.Render.WrapNode.isEmpty()) {
                 $node = hooks.Render.WrapNode.call(range.id, $node);
@@ -107,7 +108,10 @@ export default class Painter {
 
         const hooks = this.hooks;
         const wrapTag = this.options.wrapTag;
-        const $spans = document.querySelectorAll<HTMLElement>(`${wrapTag}[data-${DATASET_IDENTIFIER}]`);
+
+        const $spans = this.options.rootDocument.querySelectorAll<HTMLElement>(
+            `${wrapTag}[data-${DATASET_IDENTIFIER}]`,
+        );
 
         // nodes to remove
         const $toRemove: HTMLElement[] = [];
@@ -136,7 +140,7 @@ export default class Painter {
 
         $toRemove.forEach($s => {
             const $parent = $s.parentNode;
-            const $fr = document.createDocumentFragment();
+            const $fr = this.options.rootDocument.createDocumentFragment();
 
             forEach($s.childNodes, ($c: Node) => $fr.appendChild($c.cloneNode(false)));
 
@@ -156,7 +160,7 @@ export default class Painter {
             const newId = ids.shift();
 
             // find overlapped wrapper associated with "extra id"
-            const $overlapSpan = document.querySelector<HTMLElement>(
+            const $overlapSpan = this.options.rootDocument.querySelector<HTMLElement>(
                 `${wrapTag}[data-${DATASET_IDENTIFIER}="${newId}"]`,
             );
 
@@ -184,12 +188,12 @@ export default class Painter {
     }
 
     removeAllHighlight() {
-        const { wrapTag, $root } = this.options;
+        const { wrapTag, $root, rootDocument } = this.options;
         const $spans = getHighlightsByRoot($root, wrapTag);
 
         $spans.forEach($s => {
             const $parent = $s.parentNode;
-            const $fr = document.createDocumentFragment();
+            const $fr = rootDocument.createDocumentFragment();
 
             forEach($s.childNodes, ($c: Node) => $fr.appendChild($c.cloneNode(false)));
             $parent.replaceChild($fr, $s);

@@ -4,6 +4,7 @@ export type RootElement = Document | HTMLElement;
 
 export interface HighlighterOptions {
     $root?: RootElement;
+    rootDocument: Document;
     exceptSelectors?: string[];
     wrapTag?: string;
     verbose?: boolean;
@@ -14,6 +15,7 @@ export interface HighlighterOptions {
 
 export interface PainterOptions {
     $root: RootElement;
+    rootDocument: Document;
     wrapTag: string;
     className: string[] | string;
     exceptSelectors: string[];

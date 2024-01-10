@@ -23,6 +23,7 @@ const DEFAULT_WRAP_TAG = 'span';
 
 export const getDefaultOptions = () => ({
     $root: document || document.documentElement,
+    rootDocument: document,
     exceptSelectors: null,
     wrapTag: DEFAULT_WRAP_TAG,
     verbose: false,

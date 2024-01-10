@@ -3,18 +3,18 @@
  */
 import { STYLESHEET_ID, getStylesheet } from '@src/util/const';
 
-export const initDefaultStylesheet = () => {
+export const initDefaultStylesheet = (rootDocument: Document) => {
     const styleId = STYLESHEET_ID;
 
-    let $style: HTMLStyleElement = document.getElementById(styleId) as HTMLStyleElement;
+    let $style: HTMLStyleElement = rootDocument.getElementById(styleId) as HTMLStyleElement;
 
     if (!$style) {
-        const $cssNode = document.createTextNode(getStylesheet());
+        const $cssNode = rootDocument.createTextNode(getStylesheet());
 
-        $style = document.createElement('style');
+        $style = rootDocument.createElement('style');
         $style.id = styleId;
         $style.appendChild($cssNode);
-        document.head.appendChild($style);
+        rootDocument.head.appendChild($style);
     }
 
     return $style;
