@@ -89,19 +89,16 @@ export const getSelectedNodes = (
     const startOffset = start.offset;
     const endOffset = end.offset;
 
-
     // assumes web-highlighter is running in top-level page so document is the top-level document
-    const nodeInIframe = (node: Node) => node.ownerDocument !== document
+    const nodeInIframe = (node: Node) => node.ownerDocument !== document;
 
     // split current node when the start-node and end-node is the same
     if (
         $startNode === $endNode &&
-        (
-            // iFrame check assumes $root is HTMLElement NOT Document
-            // Document.ownerDocument = null
-            $startNode instanceof Text ||
-            (nodeInIframe($startNode) && $startNode instanceof $root.ownerDocument.defaultView.Text)
-        )
+        // iFrame check assumes $root is HTMLElement NOT Document
+        // Document.ownerDocument = null
+        ($startNode instanceof Text ||
+            (nodeInIframe($startNode) && $startNode instanceof $root.ownerDocument.defaultView.Text))
     ) {
         return getNodesIfSameStartEnd($startNode, startOffset, endOffset, exceptSelectors);
     }
