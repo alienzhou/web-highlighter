@@ -27,12 +27,6 @@ class HighlightRange {
     frozen: boolean;
 
     constructor(start: DomNode, end: DomNode, text: string, id: string, frozen = false) {
-        if (start.$node.nodeType !== 3 || end.$node.nodeType !== 3) {
-            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
-                type: ERROR.RANGE_NODE_INVALID,
-            });
-        }
-
         this.start = formatDomNode(start);
         this.end = formatDomNode(end);
         this.text = text;
