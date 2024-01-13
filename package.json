@@ -24,11 +24,6 @@
   "scriptsComments": {
     "build": "NODE_OPTIONS env var is a hack to address Error: error:0308010C:digital envelope routines::unsupported - see https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported/73465262#73465262"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && npm run test"
-    }
-  },
   "lint-staged": {
     "src/**/*.ts": [
       "prettier --write",
