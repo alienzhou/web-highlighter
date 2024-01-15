@@ -150,6 +150,10 @@ export const getSelectedNodes = (
         }
         // handle text nodes between the range
         else if (withinSelectedRange && curNode.nodeType === 3) {
+            // skip nodes with only whitespace to avoid creating spurious wrapping nodes
+            // that shift the layout
+            if (curNode.textContent.trim() === '') continue;
+
             selectedNodes.push({
                 $node: curNode as Text,
                 type: SelectedNodeType.text,
