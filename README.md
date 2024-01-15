@@ -159,7 +159,7 @@ Create a new `highlighter` instance.
     exceptSelectors: null,
     wrapTag: 'span',
     style: {
-        className: 'highlight-mengshou-wrap'
+        className: 'highlight-wrap'
     }
 }
 ```
@@ -178,7 +178,7 @@ All options:
 
 | name | type | description | required | default |
 |---|---|---|---|---|
-| className | `string` | the className for wrap element | No | `highlight-mengshou-wrap` |
+| className | `string` | the className for wrap element | No | `highlight-wrap` |
 
 `exceptSelectors` needs `null` or `Array<string>`. It supports id selectors, class selectors and tag selectors. For example, to skip h1 and `.title` elements:
 

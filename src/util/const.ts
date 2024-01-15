@@ -28,13 +28,12 @@ export const getDefaultOptions = () => ({
     wrapTag: DEFAULT_WRAP_TAG,
     verbose: false,
     style: {
-        className: 'highlight-mengshou-wrap',
+        className: 'highlight-wrap',
     },
 });
 
 export const getStylesheet = () => `
     .${getDefaultOptions().style.className} {
-        background: #ff9;
         cursor: pointer;
     }
     .${getDefaultOptions().style.className}.active {
