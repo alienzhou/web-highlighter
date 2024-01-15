@@ -60,9 +60,9 @@ describe('Else Utils', function () {
         it('should not generate duplicate stylesheet', () => {
             const cleanup = jsdomGlobal();
             expect(document.querySelectorAll('style')).lengthOf(0);
-            initDefaultStylesheet();
+            initDefaultStylesheet(document);
             expect(document.querySelectorAll('style')).lengthOf(1);
-            initDefaultStylesheet();
+            initDefaultStylesheet(document);
             expect(document.querySelectorAll('style')).lengthOf(1);
             cleanup();
         });
@@ -132,7 +132,7 @@ describe('Else Utils', function () {
             hook.tap(spy);
             hook.remove(spy);
             hook.call();
-            
+
             expect(hook.isEmpty()).to.be.true;
             expect(spy.callCount).to.be.equal(0);
         });
@@ -146,7 +146,7 @@ describe('Else Utils', function () {
             hook.tap(spy);
             hook.tap(spy2);
             hook.call(p1, p2);
-            
+
             expect(spy.args[0][0]).to.be.equal(p1);
             expect(spy2.args[0][0]).to.be.equal(p1);
             expect(spy.args[0][1]).to.be.equal(p2);
@@ -210,7 +210,7 @@ describe('Else Utils', function () {
     describe('DOM addEventListener', () => {
         it('should add listener correctly', () => {
             const cleanup = jsdomGlobal('<button>test</button>');
-            
+
             const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
             const dom = document.querySelector('button');
             addEventListener(dom, 'click', spy);
@@ -226,7 +226,7 @@ describe('Else Utils', function () {
 
         it('should remove listener correctly', () => {
             const cleanup = jsdomGlobal('<button>test</button>');
-            
+
             const spy: sinon.SinonSpy<any[], any[]> = sinon.spy();
             const dom = document.querySelector('button');
             const remove = addEventListener(dom, 'click', spy);
