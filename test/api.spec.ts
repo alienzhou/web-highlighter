@@ -139,7 +139,7 @@ describe('Highlighter API', () => {
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[5];
 
-            range.setStart($p, 1);
+            range.setStart($p, 2);
             range.setEnd($p.childNodes[2], 8);
             highlighter.fromRange(range);
 
@@ -631,6 +631,6 @@ describe('Highlighter API', () => {
     });
 
     afterEach(() => {
-        cleanup();
+        document.body.innerHTML = ''
     });
 }).timeout(50000);
