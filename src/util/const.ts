@@ -34,7 +34,6 @@ export const getDefaultOptions = () => ({
 
 export const getStylesheet = () => `
     .${getDefaultOptions().style.className} {
-        cursor: pointer;
     }
     .${getDefaultOptions().style.className}.active {
         background: #ffb;
