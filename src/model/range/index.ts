@@ -34,8 +34,8 @@ class HighlightRange {
         this.id = id;
     }
 
-    static fromSelection(idHook: Hook<string>) {
-        const range = getDomRange();
+    static fromSelection(idHook: Hook<string>, rootDocument: Document) {
+        const range = getDomRange(rootDocument);
 
         if (!range) {
             return null;

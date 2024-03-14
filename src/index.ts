@@ -231,16 +231,18 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
     }
 
     private readonly _handleSelection = () => {
-        const range = HighlightRange.fromSelection(this.hooks.Render.UUID);
+        // rootDocument is Document | undefined, but function types it as Document
+        // TS doesn't care atm since strictnNullChecks is off
+        // TODO (caly): fix this
+        const range = HighlightRange.fromSelection(this.hooks.Render.UUID, this.options.rootDocument);
 
         if (range) {
             this._highlightFromHRange(range);
-            HighlightRange.removeDomRange();
+            HighlightRange.removeDomRange(this.options.rootDocument);
         }
     };
 
-    private readonly _handleHighlightHover = (e: MouseEvent | TouchEvent) => {
-        const $target = e.target as HTMLElement;
+    private readonly _handleHighlightHover = (e: MouseEvent | TouchEvent) => { const $target = e.target as HTMLElement;
 
         if (!isHighlightWrapNode($target)) {
             this._hoverId && this.emit(EventType.HOVER_OUT, { id: this._hoverId }, this, e);
