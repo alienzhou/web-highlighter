@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        // TODO (caly): turn on strict mode and fix all the typing error :sweat:
+        "strict": false,
         "esModuleInterop": true,
         "declaration": true,
         "sourceMap": true,
