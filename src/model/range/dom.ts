@@ -87,22 +87,6 @@ export const formatDomNode = (n: DomNode): DomNode => {
         return n;
     }
 
-    function getClosestTextNode(node: Node): Node | null {
-        if (node.nodeType == node.TEXT_NODE) {
-            return node
-        }
-
-        for (let childNode of node.childNodes) {
-            const closestTextNode = getClosestTextNode(childNode)
-
-            if (closestTextNode !== null && closestTextNode.nodeType == node.TEXT_NODE) {
-                return closestTextNode
-            }
-        }
-
-        return null
-    }
-
     const closestTextNode = getClosestTextNode(n.$node.childNodes[n.offset])
 
     return {
@@ -110,3 +94,19 @@ export const formatDomNode = (n: DomNode): DomNode => {
         offset: 0,
     };
 };
+
+export function getClosestTextNode(node: Node): Node | null {
+    if (node.nodeType == node.TEXT_NODE) {
+        return node
+    }
+
+    for (let childNode of node.childNodes) {
+        const closestTextNode = getClosestTextNode(childNode)
+
+        if (closestTextNode !== null && closestTextNode.nodeType == node.TEXT_NODE) {
+            return closestTextNode
+        }
+    }
+
+    return null
+}
