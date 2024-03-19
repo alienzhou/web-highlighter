@@ -87,7 +87,9 @@ export const formatDomNode = (n: DomNode): DomNode => {
         return n;
     }
 
-    const closestTextNode = getClosestTextNode(n.$node.childNodes[n.offset])
+    const nodeToPass = n.$node.childNodes.length > n.offset ? n.$node.childNodes[n.offset] : n.$node
+
+    const closestTextNode = getClosestTextNode(nodeToPass)
 
     return {
         $node: closestTextNode,
