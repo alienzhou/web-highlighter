@@ -1,6 +1,4 @@
 import { expect } from 'chai';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
 import Painter from '@src/painter';
 import { DATASET_IDENTIFIER, getDefaultOptions } from '@src/util/const';
 import Hook from '@src/util/hook';
@@ -10,10 +8,6 @@ describe('Painter', () => {
 	let painter: Painter;
 
 	beforeEach(() => {
-		const html = readFileSync(resolve(__dirname, 'fixtures', 'span_with_ix_highlighted.html'), 'utf-8');
-
-		document.body.innerHTML = html;
-
 		const defaultOptions = getDefaultOptions()
 
 		const hooks = {
@@ -41,8 +35,6 @@ describe('Painter', () => {
 	})
 
 	it('removeAllHighlight() should remove all the highlights and reconstruct the previous DOM state', () => {
-		const originalHtml = readFileSync(resolve(__dirname, 'fixtures', 'span_with_ix_original.html'), 'utf-8');
-
 		const originalContainer = document.createElement('span')
 		const text1 = document.createTextNode('As ')
 		const ix1 = document.createElement('ix')
