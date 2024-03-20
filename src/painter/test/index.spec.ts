@@ -53,8 +53,6 @@ describe('Painter', () => {
 		originalContainer.appendChild(ix2)
 		originalContainer.appendChild(text3)
 
-		console.log('it ~ originalContainer:', originalContainer.outerHTML)
-
 		const highlightedContainer = document.createElement('span')
 		const hText1 = document.createTextNode('As ')
 		const hIx1 = document.createElement('ix')
@@ -78,7 +76,6 @@ describe('Painter', () => {
 		highlightedContainer.appendChild(hIx2)
 		highlightedContainer.appendChild(hMark3)
 		highlightedContainer.appendChild(hText3)
-		console.log('it ~ highlightedContainer:', highlightedContainer.outerHTML)
 
 		const bodyContainer = document.createElement('body')
 		bodyContainer.appendChild(highlightedContainer)
@@ -86,7 +83,6 @@ describe('Painter', () => {
 		document.body = bodyContainer
 
 		painter.removeAllHighlight()
-		console.log('it ~ processed container:', document.body.children[0].outerHTML)
 
 		expect(compareDOMNodes(document.body.childNodes[0], originalContainer)).to.be.true
 	});
