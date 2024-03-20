@@ -197,6 +197,9 @@ export default class Painter {
 
             forEach($s.childNodes, ($c: Node) => $fr.appendChild($c.cloneNode(false)));
             $parent.replaceChild($fr, $s);
+
+            // rejoin the text nodes to prevent mutating the DOM and causing issues with sentence highlights
+            $parent.normalize();
         });
     }
     /* ============================================================== */
