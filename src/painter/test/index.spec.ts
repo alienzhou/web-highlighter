@@ -6,7 +6,7 @@ import { DATASET_IDENTIFIER, getDefaultOptions } from '@src/util/const';
 import Hook from '@src/util/hook';
 
 
-describe.only('Painter', () => {
+describe('Painter', () => {
 	let painter: Painter;
 
 	beforeEach(() => {
