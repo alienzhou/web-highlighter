@@ -87,9 +87,10 @@ export const formatDomNode = (n: DomNode): DomNode => {
         return n;
     }
 
+    // dont use this yet because it somehow causes the scroll to first highlight to break sometimes
     const nodeToPass = n.$node.childNodes.length > n.offset ? n.$node.childNodes[n.offset] : n.$node
 
-    const closestTextNode = getClosestTextNode(nodeToPass)
+    const closestTextNode = getClosestTextNode(n.$node.childNodes[n.offset])
 
     return {
         $node: closestTextNode,
