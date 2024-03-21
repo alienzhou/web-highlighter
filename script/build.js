@@ -1,8 +1,3 @@
-const convert = require('./convet-md');
-if (process.env.target === 'example') {
-    convert();
-}
-
 const webpack = require('webpack');
 const configPath = process.env.target === 'example' ? '../config/webpack.config.example.js' : '../config/webpack.config.prod.js';
 const config = require(configPath);
