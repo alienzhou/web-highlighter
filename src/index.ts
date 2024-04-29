@@ -1,4 +1,4 @@
-import type { DomNode, DomMeta, HookMap, HighlighterOptions } from '@src/types';
+import type { DomNode, DomMeta, HookMap, HighlighterOptions, IInteraction } from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import HighlightSource from '@src/model/source';
@@ -45,7 +45,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
 
     private options: HighlighterOptions;
 
-    private readonly event = getInteraction();
+    private readonly event: IInteraction;
 
     constructor(options?: HighlighterOptions) {
         super();
@@ -53,6 +53,9 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         // initialize hooks
         this.hooks = this._getHooks();
         this.setOption(options);
+
+        this.event = getInteraction(this.options.window);
+
         // initialize cache
         this.cache = new Cache();
 
@@ -242,7 +245,8 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         }
     };
 
-    private readonly _handleHighlightHover = (e: MouseEvent | TouchEvent) => { const $target = e.target as HTMLElement;
+    private readonly _handleHighlightHover = (e: MouseEvent | TouchEvent) => {
+        const $target = e.target as HTMLElement;
 
         if (!isHighlightWrapNode($target)) {
             this._hoverId && this.emit(EventType.HOVER_OUT, { id: this._hoverId }, this, e);

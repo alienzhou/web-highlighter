@@ -6,7 +6,7 @@ import type { IInteraction } from '@src/types';
 import { UserInputEvent } from '@src/types';
 import detectMobile from '@src/util/is.mobile';
 
-export default (): IInteraction => {
+export default (window: Window): IInteraction => {
     const isMobile = detectMobile(window.navigator.userAgent);
 
     const interaction: IInteraction = {

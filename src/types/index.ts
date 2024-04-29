@@ -11,6 +11,7 @@ export interface HighlighterOptions {
     style?: {
         className?: string[] | string;
     };
+    window: Window;
 }
 
 export interface PainterOptions {

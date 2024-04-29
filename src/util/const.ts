@@ -30,6 +30,7 @@ export const getDefaultOptions = () => ({
     style: {
         className: 'highlight-wrap',
     },
+    window,
 });
 
 export const getStylesheet = () => `
