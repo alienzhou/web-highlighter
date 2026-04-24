@@ -74,6 +74,17 @@ export interface DomMeta {
     parentTagName: string;
     parentIndex: number;
     textOffset: number;
+    /**
+     * Accumulated text offset from the very first text node under $root
+     * to the beginning of the target text (inclusive of `offset`).
+     *
+     * Optional for backward compatibility: old records may not contain it.
+     * When present, this offset gives a DOM-structure-independent anchor
+     * that can be used to restore the highlight even if the structural
+     * DOM between $root and the target text node has changed
+     * (e.g. because of stage/mode-specific conditional rendering).
+     */
+    rootTextOffset?: number;
     extra?: unknown;
 }
 

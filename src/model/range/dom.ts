@@ -68,10 +68,24 @@ export const getDomMeta = ($node: HTMLElement | Text, offset: number, $root: Doc
     const preNodeOffset = getTextPreOffset($originParent, $node);
     const tagName = $originParent.tagName;
 
+    // Also record the absolute text offset from $root. This gives a
+    // DOM-structure-independent anchor that can be used to restore the
+    // highlight even if the surrounding DOM changes (e.g. stage/mode
+    // specific conditional rendering adds or removes wrapper elements
+    // without affecting the actual text content).
+    let rootTextOffset: number | undefined;
+
+    try {
+        rootTextOffset = getTextPreOffset($root, $node) + offset;
+    } catch (_e) {
+        rootTextOffset = undefined;
+    }
+
     return {
         parentTagName: tagName,
         parentIndex: index,
         textOffset: preNodeOffset + offset,
+        rootTextOffset,
     };
 };
 

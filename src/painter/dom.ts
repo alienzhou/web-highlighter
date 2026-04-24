@@ -185,7 +185,11 @@ const wrapNewNode = (
     addClass($wrap, className);
 
     $wrap.appendChild(selected.$node.cloneNode(false));
-    selected.$node.parentNode.replaceChild($wrap, selected.$node);
+    
+    // 安全检查：确保parentNode存在且节点仍在DOM中
+    if (selected.$node.parentNode && selected.$node.isConnected) {
+        selected.$node.parentNode.replaceChild($wrap, selected.$node);
+    }
 
     $wrap.setAttribute(`data-${DATASET_IDENTIFIER}`, range.id);
     $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, selected.splitType);
@@ -259,7 +263,11 @@ const wrapPartialNode = (
     }
 
     $wrap.setAttribute(`data-${DATASET_SPLIT_TYPE}`, splitType);
-    $parent.parentNode.replaceChild($fr, $parent);
+    
+    // 安全检查：确保parentNode存在且节点仍在DOM中
+    if ($parent.parentNode && $parent.isConnected) {
+        $parent.parentNode.replaceChild($fr, $parent);
+    }
 
     return $wrap;
 };
@@ -268,6 +276,14 @@ const wrapPartialNode = (
  * Just update id info (no wrapper updated).
  */
 const wrapOverlapNode = (selected: SelectedNode, range: HighlightRange, className: string[] | string): HTMLElement => {
+    // 安全检查：确保parentNode存在
+    if (!selected.$node.parentNode || !selected.$node.isConnected) {
+        // 创建一个临时元素作为fallback
+        const $fallback = document.createElement('span');
+        addClass($fallback, className);
+        return $fallback;
+    }
+
     const $parent = selected.$node.parentNode as HTMLElement;
     const $wrap: HTMLElement = $parent;
 
@@ -301,6 +317,14 @@ export const wrapHighlight = (
     className: string[] | string,
     wrapTag: string,
 ): HTMLElement => {
+    // 安全检查：确保选中的节点仍然有效
+    if (!selected || !selected.$node || !selected.$node.parentNode || !selected.$node.isConnected) {
+        // 如果节点已无效，创建一个空的包装元素避免崩溃
+        const $emptyWrap = document.createElement(wrapTag);
+        addClass($emptyWrap, className);
+        return $emptyWrap;
+    }
+
     const $parent = selected.$node.parentNode as HTMLElement;
     const $prev = selected.$node.previousSibling;
     const $next = selected.$node.nextSibling;
@@ -334,12 +358,16 @@ export const normalizeSiblingText = ($s: Node, isNext = true) => {
 
     const $sibling = isNext ? $s.nextSibling : $s.previousSibling;
 
-    if ($sibling.nodeType !== 3) {
+    if (!$sibling || $sibling.nodeType !== 3) {
         return;
     }
 
     const text = $sibling.nodeValue;
 
     $s.nodeValue = isNext ? $s.nodeValue + text : text + $s.nodeValue;
-    $sibling.parentNode.removeChild($sibling);
+    
+    // 安全检查：确保parentNode存在且节点仍在DOM中
+    if ($sibling.parentNode && $sibling.isConnected) {
+        $sibling.parentNode.removeChild($sibling);
+    }
 };

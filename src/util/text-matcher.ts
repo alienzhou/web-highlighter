@@ -37,6 +37,80 @@ export const getNodeTextContent = (node: Node): string => {
 };
 
 /**
+ * Find all occurrences of `target` inside `source` (case-sensitive, raw).
+ * Returned positions are indices into `source` (the raw, un-normalized text).
+ */
+export const findAllOccurrences = (source: string, target: string): number[] => {
+    if (!source || !target) {
+        return [];
+    }
+
+    const result: number[] = [];
+    let searchFrom = 0;
+
+    while (true) {
+        const idx = source.indexOf(target, searchFrom);
+
+        if (idx === -1) {
+            break;
+        }
+
+        result.push(idx);
+        searchFrom = idx + 1;
+    }
+
+    return result;
+};
+
+/**
+ * Walk text nodes under `$root` and locate the text node that covers
+ * the given root-relative char offset. Returns the DOM text node plus
+ * an in-node offset, or null if the offset is out of range.
+ *
+ * Note: we walk ALL text nodes (including any inside except-selector
+ * elements). This is consistent with how `rootTextOffset` is computed
+ * at save time (via `getTextPreOffset`), so positions round-trip.
+ */
+export const mapRootOffsetToDomNode = (
+    $root: Node,
+    rootOffset: number,
+): { $node: Node; offset: number } | null => {
+    if (rootOffset < 0) {
+        return null;
+    }
+
+    const walker = document.createTreeWalker($root, NodeFilter.SHOW_TEXT);
+
+    let accumulated = 0;
+    let lastTextNode: Node = null;
+    let textNode: Node;
+
+    while ((textNode = walker.nextNode())) {
+        lastTextNode = textNode;
+
+        const nodeLen = textNode.textContent?.length || 0;
+
+        if (accumulated + nodeLen >= rootOffset) {
+            return {
+                $node: textNode,
+                offset: Math.max(0, Math.min(nodeLen, rootOffset - accumulated)),
+            };
+        }
+
+        accumulated += nodeLen;
+    }
+
+    if (lastTextNode) {
+        return {
+            $node: lastTextNode,
+            offset: lastTextNode.textContent?.length || 0,
+        };
+    }
+
+    return null;
+};
+
+/**
  * Find DOM node range containing specified text with precise offset support
  */
 export const findTextInNode = (

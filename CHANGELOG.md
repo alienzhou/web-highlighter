@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.0.4
+
+### Features
+
+- `DomMeta` 新增可选字段 `rootTextOffset`：保存高亮起止点相对 `$root` 的绝对文本偏移，提供一个与 DOM 结构解耦的锚点。
+- `queryElementNode` 新增多级还原策略，按优先级依次尝试：
+  1. `directAnchorRestore`：直接使用 `rootTextOffset` 还原（最稳）。
+  2. `rootTextSearch`：在 `$root` 文本里搜索目标文本，用 `rootTextOffset` 或 `parentTagName`/`parentIndex` 做 tie-break。
+  3. 原有 `robustSearch`（基于 `parentIndex` 的邻居搜索）。
+  4. 传统 `parentIndex` 兜底。
+- 所有新字段均为可选、完全向后兼容：没有 `rootTextOffset` 的老数据会自动走后续策略。
+
+### Improvement
+
+- 当 `$root` 子树因条件渲染（v-if 等）导致 DOM 层级变化时，高亮仍可被稳定还原。
+
+---
+
 ## v0.7.4
 
 ### Fix

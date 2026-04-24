@@ -1,7 +1,7 @@
 /**
  * Painter object is designed for some painting work about higlighting,
  * including rendering, cleaning...
- * No need to instantiate repeatly. A Highlighter instance will bind a Painter instance.
+ * No need to tantiate repeatly. A Highlighter instance will bind a Painter instance.
  */
 
 import type HighlightRange from '@src/model/range';
@@ -59,15 +59,32 @@ export default class Painter {
             $selectedNodes = hooks.Render.SelectedNodes.call(range.id, $selectedNodes) || [];
         }
 
-        return $selectedNodes.map(n => {
-            let $node = wrapHighlight(n, range, className, this.options.wrapTag);
+        // 使用更安全的方式处理每个节点，防止单个节点失败影响整个高亮过程
+        const wrappedNodes: HTMLElement[] = [];
+        
+        $selectedNodes.forEach(n => {
+            try {
+                let $node = wrapHighlight(n, range, className, this.options.wrapTag);
 
-            if (!hooks.Render.WrapNode.isEmpty()) {
-                $node = hooks.Render.WrapNode.call(range.id, $node);
+                if (!hooks.Render.WrapNode.isEmpty()) {
+                    $node = hooks.Render.WrapNode.call(range.id, $node);
+                }
+
+                // 只有成功包装的节点才添加到结果中
+                if ($node) {
+                    wrappedNodes.push($node);
+                }
+            } catch (error) {
+                // 单个节点包装失败时记录错误但继续处理其他节点
+                console.warn('包装高亮节点时发生错误:', error, n);
+                eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                    type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
+                    error,
+                });
             }
-
-            return $node;
         });
+
+        return wrappedNodes;
     }
 
     highlightSource(sources: HighlightSource | HighlightSource[]): HighlightSource[] {
@@ -101,7 +118,6 @@ export default class Painter {
                 eventEmitter.emit(INTERNAL_ERROR_EVENT, {
                     type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
                     error,
-                    detail: s,
                 });
             }
         });
@@ -147,6 +163,11 @@ export default class Painter {
         }
 
         $toRemove.forEach($s => {
+            // 检查元素是否仍然在DOM中且有有效的父节点
+            if (!$s || !$s.parentNode || !$s.isConnected) {
+                return;
+            }
+
             const $parent = $s.parentNode;
             const $fr = document.createDocumentFragment();
 
@@ -155,11 +176,14 @@ export default class Painter {
             const $prev = $s.previousSibling;
             const $next = $s.nextSibling;
 
-            $parent.replaceChild($fr, $s);
-            // there are bugs in IE11, so use a more reliable function
-            normalizeSiblingText($prev, true);
-            normalizeSiblingText($next, false);
-            hooks.Remove.UpdateNodes.call(id, $s, 'remove');
+            // 再次检查父节点是否仍然存在
+            if ($s.parentNode === $parent && $parent) {
+                $parent.replaceChild($fr, $s);
+                // there are bugs in IE11, so use a more reliable function
+                normalizeSiblingText($prev, true);
+                normalizeSiblingText($next, false);
+                hooks.Remove.UpdateNodes.call(id, $s, 'remove');
+            }
         });
 
         $idToUpdate.forEach($s => {
@@ -200,11 +224,36 @@ export default class Painter {
         const $spans = getHighlightsByRoot($root, wrapTag);
 
         $spans.forEach($s => {
-            const $parent = $s.parentNode;
-            const $fr = document.createDocumentFragment();
+            try {
+                // 检查元素是否仍然在DOM中且有有效的父节点
+                if (!$s || !$s.parentNode || !$s.isConnected) {
+                    return;
+                }
 
-            forEach($s.childNodes, ($c: Node) => $fr.appendChild($c.cloneNode(false)));
-            $parent.replaceChild($fr, $s);
+                const $parent = $s.parentNode;
+                const $fr = document.createDocumentFragment();
+
+                // 安全地克隆子节点
+                forEach($s.childNodes, ($c: Node) => {
+                    if ($c) {
+                        $fr.appendChild($c.cloneNode(false));
+                    }
+                });
+
+                // 再次检查父节点是否仍然存在（防止在异步操作中被移除）
+                if ($s.parentNode === $parent && $parent) {
+                    $parent.replaceChild($fr, $s);
+                }
+            } catch (error) {
+                // 如果单个元素处理失败，记录错误但继续处理其他元素
+                console.warn('移除高亮元素时发生错误:', error, $s);
+                
+                // 触发内部错误事件，让调用方知道发生了错误
+                eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                    type: ERROR.HIGHLIGHT_SOURCE_RECREATE,
+                    error,
+                });
+            }
         });
     }
     /* ============================================================== */

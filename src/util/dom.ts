@@ -13,6 +13,21 @@ export const isHighlightWrapNode = ($node: HTMLElement): boolean =>
     !!$node.dataset && !!$node.dataset[CAMEL_DATASET_IDENTIFIER];
 
 /**
+ * 安全检查DOM节点是否仍然有效且连接到DOM中
+ * 这对于在响应式框架环境中避免DOM操作错误很重要
+ */
+export const isNodeValid = ($node: Node): boolean => {
+    return $node && $node.parentNode && $node.isConnected;
+};
+
+/**
+ * 安全检查DOM元素是否仍然有效且连接到DOM中
+ */  
+export const isElementValid = ($element: HTMLElement): boolean => {
+    return $element && $element.parentNode && $element.isConnected;
+};
+
+/**
  * ===================================================================================
  * below methods (getHighlightId/getExtraHighlightId)
  * will check whether the node is inside a wrapper iteratively util reach the root node

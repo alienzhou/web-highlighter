@@ -1,6 +1,6 @@
 {
-  "name": "web-highlighter",
-  "version": "0.7.4",
+  "name": "wsgfz-web-highlighter",
+  "version": "1.0.4",
   "description": "✨A no-runtime dependency lib for text highlighting & persistence on any website ✨🖍️",
   "main": "dist/web-highlighter.umd.js",
   "types": "dist/index.d.ts",
@@ -39,10 +39,10 @@
       "eslint --fix"
     ]
   },
-  "homepage": "https://alienzhou.github.io/web-highlighter",
+  "homepage": "https://github.com/wsgfz/web-highlighter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alienzhou/web-highlighter"
+    "url": "https://github.com/wsgfz/web-highlighter"
   },
   "keywords": [
     "text",
@@ -53,7 +53,7 @@
     "selection",
     "range"
   ],
-  "author": "alienzhou <alienzhou16@163.com>",
+  "author": "wsgfz",
   "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.2.11",
