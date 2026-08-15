@@ -5,8 +5,8 @@
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
-        <a href="https://travis-ci.org/alienzhou/web-highlighter" target="_blank">
-            <img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="Build status" />
+        <a href="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml" target="_blank">
+            <img src="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI status" />
         </a>
         <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
             <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />

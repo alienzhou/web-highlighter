@@ -10,10 +10,9 @@ module.exports = {
     'import',
   ],
   extends: [
-    "eslint:all",
-    'plugin:@typescript-eslint/all',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'prettier',
-    'prettier/@typescript-eslint',
   ],
   root: true,
   env: {
@@ -242,7 +241,7 @@ module.exports = {
         "allowNumber": true
       }
     ],
-    "@typescript-eslint/semi": "error",
+    "semi": "error",
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/typedef": "off",
     "prettier/prettier": "error"
