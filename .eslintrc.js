@@ -246,4 +246,16 @@ module.exports = {
     "@typescript-eslint/typedef": "off",
     "prettier/prettier": "error"
   },
+  overrides: [
+    {
+      files: ['test/**/*.ts'],
+      parserOptions: {
+        project: null,
+      },
+      rules: {
+        'func-names': 'off',
+        '@typescript-eslint/restrict-template-expressions': 'off',
+      },
+    },
+  ],
 };

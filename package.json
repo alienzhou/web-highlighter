@@ -14,7 +14,8 @@
   "scripts": {
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test": "mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.spec.ts\"",
+    "test": "npm run build && mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.spec.ts\"",
+    "test:dist": "npm run build && mocha -r ts-node/register \"test/dist.spec.ts\"",
     "coverage": "nyc -r lcov -e .ts -x \"test/**/*.ts\" npm run test",
     "serve-example": "http-server example/static",
     "serve": "http-server -p 8081 ./dist",
