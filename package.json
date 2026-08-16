@@ -21,7 +21,9 @@
   "scripts": {
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test:unit": "mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.spec.ts\" --exclude \"test/dist.spec.ts\"",
+    "test:types": "tsc --project tsconfig.test.json",
+    "test:unit": "run-s test:types test:unit:runtime",
+    "test:unit:runtime": "mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.spec.ts\" --exclude \"test/dist.spec.ts\"",
     "test:dist": "mocha -r ts-node/register \"test/dist.spec.ts\"",
     "test:package": "node script/test-package.js",
     "test": "run-s build test:unit test:dist test:package",

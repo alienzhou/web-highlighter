@@ -20,14 +20,30 @@ describe('Distribution bundle', function () {
         expect(Highlighter).to.be.a('function');
 
         const highlighter = new Highlighter();
-        const text = window.document.querySelector('p').firstChild;
+        const paragraph = window.document.querySelector('p');
+
+        if (!paragraph || !paragraph.firstChild || !paragraph.firstChild.textContent) {
+            throw new Error('Expected test paragraph with text content');
+        }
+
+        const text = paragraph.firstChild;
+        const textContent = text.textContent;
+
+        if (!textContent) {
+            throw new Error('Expected test paragraph with text content');
+        }
+
         const range = window.document.createRange();
 
         range.setStart(text, 0);
-        range.setEnd(text, text.textContent.length);
+        range.setEnd(text, textContent.length);
 
         const source = highlighter.fromRange(range);
         const wrapper = window.document.querySelector('[data-highlight-id]');
+
+        if (!wrapper) {
+            throw new Error('Expected highlighted wrapper');
+        }
 
         expect(wrapper.textContent).to.equal('Highlight this text.');
         expect(highlighter.getDoms(source.id)).to.deep.equal([wrapper]);
@@ -35,7 +51,7 @@ describe('Distribution bundle', function () {
         highlighter.remove(source.id);
 
         expect(window.document.querySelector('[data-highlight-id]')).to.be.null;
-        expect(window.document.querySelector('p').textContent).to.equal('Highlight this text.');
+        expect(paragraph.textContent).to.equal('Highlight this text.');
 
         window.close();
     });
