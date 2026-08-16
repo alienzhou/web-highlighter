@@ -42,6 +42,16 @@ This is a useful feature for readers. If you're a developer, you may want your w
 
 For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.
 
+## Development
+
+This project uses Node.js `22.15.1`. With [nvm](https://github.com/nvm-sh/nvm) installed, run:
+
+```bash
+nvm use
+npm ci
+npm test
+```
+
 ## Install
 
 ```bash
