@@ -44,7 +44,7 @@ For this reason, the repo (web-highlighter) aims to help you implement highlight
 
 ## Development
 
-This project uses Node.js `22.15.1`. With [nvm](https://github.com/nvm-sh/nvm) installed, run:
+This project uses Node.js `22.15.1` and publishes ES5 output with IE11 support. With [nvm](https://github.com/nvm-sh/nvm) installed, run:
 
 ```bash
 nvm use

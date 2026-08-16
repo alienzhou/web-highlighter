@@ -45,7 +45,7 @@
 
 ## 开发
 
-本项目固定使用 Node.js `22.15.1`。安装 [nvm](https://github.com/nvm-sh/nvm) 后，在项目根目录执行：
+本项目固定使用 Node.js `22.15.1`，发布 ES5 产物并保留 IE11 支持。安装 [nvm](https://github.com/nvm-sh/nvm) 后，在项目根目录执行：
 
 ```bash
 nvm use

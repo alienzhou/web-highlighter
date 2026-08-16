@@ -12,12 +12,19 @@
     "node": "22.15.1"
   },
   "packageManager": "npm@10.9.2",
+  "browserslist": [
+    "ie 11",
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions"
+  ],
   "scripts": {
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "test:unit": "mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.spec.ts\" --exclude \"test/dist.spec.ts\"",
     "test:dist": "mocha -r ts-node/register \"test/dist.spec.ts\"",
-    "test": "run-s build test:unit test:dist",
+    "test:package": "node script/test-package.js",
+    "test": "run-s build test:unit test:dist test:package",
     "coverage": "nyc -r lcov -e .ts -x \"test/**/*.ts\" npm run test",
     "serve-example": "http-server example/static",
     "serve": "http-server -p 8081 ./dist",
