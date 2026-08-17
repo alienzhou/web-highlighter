@@ -8,15 +8,11 @@ convert();
 const config = require('../config/webpack.config.dev.js');
 const serverConfig = require('../config/server.config.js');
 
-WebpackDevServer.addDevServerEntrypoints(config, serverConfig);
 const compiler = webpack(config);
 const {port, host} = serverConfig;
 
-const devServer = new WebpackDevServer(compiler, serverConfig);
-devServer.listen(port, host, err => {
-    if (err) {
-        return console.log(err);
-    }
+const devServer = new WebpackDevServer(serverConfig, compiler);
+devServer.start().then(() => {
     console.log('Starting the development server...\n');
     opn(`http://${host}:${port}`);
 });
