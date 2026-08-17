@@ -1,4 +1,4 @@
-const showdown = require('showdown');
+const MarkdownIt = require('markdown-it');
 const path = require('path');
 const chalk = require('chalk');
 const paths = require('../config/paths');
@@ -13,9 +13,7 @@ module.exports = function () {
     log(mdPath, '-', 'converting...');
 
     const md = fs.readFileSync(mdPath, 'utf-8');
-    showdown.setFlavor('github');
-    const converter = new showdown.Converter();
-    const html = converter.makeHtml(md);
+    const html = new MarkdownIt().render(md);
     const tpl = fs.readFileSync(paths.exampleTplPath, 'utf-8');
     fs.outputFileSync(paths.exampleMdPath, tpl.replace(/{{\$markdown}}/, html), 'utf-8');
 
