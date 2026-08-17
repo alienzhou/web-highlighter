@@ -11,9 +11,6 @@
         <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
             <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />
         </a>
-        <a href='https://coveralls.io/github/alienzhou/web-highlighter?branch=master'>
-            <img src='https://coveralls.io/repos/github/alienzhou/web-highlighter/badge.svg?branch=master' alt='Coverage Status' />
-        </a>
         <a href="https://unpkg.com/web-highlighter" target="_blank">
             <img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="Gzip size" />
         </a>
