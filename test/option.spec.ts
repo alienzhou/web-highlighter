@@ -51,6 +51,43 @@ describe('Highlighter Options', function () {
 
             expect(highlighter.getDoms()).lengthOf(0);
         });
+
+        it('should not modify the dom outside $root', () => {
+            const $root = document.querySelectorAll('p')[0];
+            const highlighter = new Highlighter({ $root });
+
+            highlighter.removeAll();
+
+            const $p = document.querySelectorAll('p')[1];
+            const html = $p.innerHTML;
+            const range = document.createRange();
+
+            range.setStart($p.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+
+            expect(highlighter.fromRange(range)).to.be.null;
+            expect($p.innerHTML).to.equal(html);
+        });
+
+        it('should not highlight a range partially outside $root', () => {
+            const $root = document.querySelectorAll('p')[0];
+            const highlighter = new Highlighter({ $root });
+
+            highlighter.removeAll();
+
+            const $p = document.querySelectorAll('p')[1];
+            const rootHtml = $root.innerHTML;
+            const outsideHtml = $p.innerHTML;
+            const range = document.createRange();
+
+            range.setStart($root.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+
+            expect(highlighter.fromRange(range)).to.be.null;
+            expect($root.innerHTML).to.equal(rootHtml);
+            expect($p.innerHTML).to.equal(outsideHtml);
+            expect(highlighter.getDoms()).lengthOf(0);
+        });
     });
 
     describe('#exceptSelectors', () => {
