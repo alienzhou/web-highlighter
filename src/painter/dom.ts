@@ -105,6 +105,10 @@ export const getSelectedNodes = (
     while ((curNode = nodeStack.pop())) {
         // do not traverse the excepted node
         if (curNode.nodeType === 1 && isExcepted(curNode as HTMLElement)) {
+            if (curNode.contains($endNode)) {
+                break;
+            }
+
             continue;
         }
 
