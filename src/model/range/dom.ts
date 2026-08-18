@@ -75,20 +75,88 @@ export const getDomMeta = ($node: HTMLElement | Text, offset: number, $root: Doc
     };
 };
 
-export const formatDomNode = (n: DomNode): DomNode => {
-    if (
-        // Text
-        n.$node.nodeType === 3 ||
-        // CDATASection
-        n.$node.nodeType === 4 ||
-        // Comment
-        n.$node.nodeType === 8
-    ) {
+const isTextLikeNode = ($node: Node): boolean =>
+    // Text / CDATASection / Comment
+    $node.nodeType === 3 || $node.nodeType === 4 || $node.nodeType === 8;
+
+/**
+ * find the first (or the last) text node inside a node, the node itself included
+ */
+const findTextNode = ($node: Node, fromStart: boolean): Node => {
+    if (!$node) {
+        return null;
+    }
+
+    if (isTextLikeNode($node)) {
+        return $node;
+    }
+
+    const children = $node.childNodes;
+
+    for (let i = 0; i < children.length; i++) {
+        const $child = children[fromStart ? i : children.length - 1 - i];
+        const $text = findTextNode($child, fromStart);
+
+        if ($text) {
+            return $text;
+        }
+    }
+
+    return null;
+};
+
+/**
+ * find the closest text node after (or before) a boundary of an element node
+ */
+const findAdjacentTextNode = ($node: Node, offset: number, fromStart: boolean): Node => {
+    const children = $node.childNodes;
+    const step = fromStart ? 1 : -1;
+
+    for (let i = fromStart ? offset : offset - 1; i >= 0 && i < children.length; i += step) {
+        const $text = findTextNode(children[i], fromStart);
+
+        if ($text) {
+            return $text;
+        }
+    }
+
+    // no text node inside the element, keep searching in its siblings and ancestors
+    let $cur = $node;
+
+    while ($cur) {
+        const $sibling = fromStart ? $cur.nextSibling : $cur.previousSibling;
+
+        if (!$sibling) {
+            $cur = $cur.parentNode;
+            continue;
+        }
+
+        const $text = findTextNode($sibling, fromStart);
+
+        if ($text) {
+            return $text;
+        }
+
+        $cur = $sibling;
+    }
+
+    return null;
+};
+
+/**
+ * an element boundary (e.g. the end of a range is <p>|<b>text</b></p>) can't be serialized,
+ * so convert it to the equivalent boundary of its closest text node
+ */
+export const formatDomNode = (n: DomNode, isStart: boolean): DomNode => {
+    if (isTextLikeNode(n.$node)) {
         return n;
     }
 
-    return {
-        $node: n.$node.childNodes[n.offset],
-        offset: 0,
-    };
+    const $text = findAdjacentTextNode(n.$node, n.offset, isStart);
+
+    if (!$text) {
+        return { $node: null, offset: 0 };
+    }
+
+    return { $node: $text, offset: isStart ? 0 : $text.textContent.length };
 };
