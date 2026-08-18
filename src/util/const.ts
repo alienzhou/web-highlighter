@@ -32,9 +32,11 @@ export const getDefaultOptions = () => ({
 });
 
 export const getStylesheet = () => `
+    [data-${DATASET_IDENTIFIER}] {
+        cursor: pointer;
+    }
     .${getDefaultOptions().style.className} {
         background: #ff9;
-        cursor: pointer;
     }
     .${getDefaultOptions().style.className}.active {
         background: #ffb;
