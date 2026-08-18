@@ -328,6 +328,24 @@ describe('Highlighter Options', function () {
             ).to.be.true;
             expect(highlighter.getDoms().some(n => n.classList.contains(defaultClassName))).to.be.false;
         });
+
+        it('should keep the default interaction style with a customized className', () => {
+            const highlighter = new Highlighter({
+                style: { className: 'test-class-config' },
+            });
+
+            highlighter.removeAll();
+
+            const $p = document.querySelectorAll('p')[0];
+            const range = document.createRange();
+
+            range.setStart($p.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+            highlighter.fromRange(range);
+
+            expect(highlighter.getDoms()).lengthOf.gt(0);
+            expect(highlighter.getDoms().every(n => getComputedStyle(n).cursor === 'pointer')).to.be.true;
+        });
     });
 
     afterEach(() => {
