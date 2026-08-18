@@ -147,6 +147,14 @@ web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selectio
 
 想要了解更多实现细节，可以阅读[这篇文章](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/)。
 
+### 持久化约束
+
+持久化的高亮记录的是相对 `$root` 的 DOM 路径和文本偏移，而不是屏幕坐标。请在内容完全渲染后再恢复高亮，并保持创建高亮时使用的 `$root`、文档结构、文本切分方式和 `wrapTag` 配置一致。如果框架重新渲染内容，或文档结构发生变化，持久化位置便无法保证仍然正确。内容会变化时，可以通过 [`Serialize.Restore` 钩子](./docs/ADVANCE.zh_CN.md#serializerestore) 实现自己的恢复策略。
+
+### 动态内容与表格
+
+动态 DOM 在内容稳定后可以正常使用。对于异步加载或频繁重新渲染的内容，请在渲染完成后再初始化和恢复高亮。库不支持跨 table cell 的单一连续高亮，因为一个包裹元素不能安全地跨越多个 `td` 或 `th`。可以使用 [`Render.SelectedNodes` 钩子](./docs/ADVANCE.zh_CN.md#renderselectednodes) 将选区拆分为受支持的片段。
+
 ##  6. <a name='-1'></a>详细使用文档
 
 ###  6.1. <a name='-1'></a>配置项
@@ -362,6 +370,10 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 - Opera 15+
 
 _**移动端支持：**_ 如果检测为移动端，则会自动使用相应的事件监听来替代 PC 端事件。
+
+### 运行环境
+
+web-highlighter 依赖浏览器 DOM API，包括 `document`、`Range` 和 `Selection`。它支持提供这些 API 的浏览器和 WebView；原生小程序渲染层及非 DOM 的原生应用视图不受支持。
 
 ##  8. <a name='-1'></a>更多使用方式
 

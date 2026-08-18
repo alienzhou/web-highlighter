@@ -146,6 +146,14 @@ Another real product built with web-highlighter (for the highlighting area on th
 
 It will read the selected range by [`Selection API`](https://caniuse.com/#search=selection%20api). Then the information of the range will be converted to a serializable data structure so that it can be store in backend. When users visit your page next time, these data will be returned and deserialized in your page. The data structure is tech stack independent. So you can use on any 'static' pages made with React / Vue / Angular / jQuery and others.
 
+### Persistence constraints
+
+Persisted highlights record DOM paths and text offsets relative to `$root`; they are not screen coordinates. Restore highlights only after the content is fully rendered, and keep the same `$root`, document structure, text segmentation, and `wrapTag` configuration used when the highlight was created. If a framework re-renders the content or the document changes, persisted positions can no longer be guaranteed. Use the [`Serialize.Restore` hook](./docs/ADVANCE.md#serializerestore) to implement a restoration strategy for changing content.
+
+### Dynamic content and tables
+
+Dynamic DOM is supported after it becomes stable. For asynchronously loaded or frequently re-rendered content, initialize and restore highlights after rendering completes. The library does not support one continuous highlight across table cells, because a wrapper cannot safely span multiple `td` or `th` elements. Use the [`Render.SelectedNodes` hook](./docs/ADVANCE.md#renderselectednodes) to split those selections into supported fragments.
+
 For more details, please read [this article (in Chinese)](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/).
 
 ## APIs
@@ -366,6 +374,10 @@ Hooks let you control the highlighting flow powerfully. You can almost customize
 - Opera 15+
 
 _**Mobile supports:**_ automatically detect whether mobile devices and use touch events when on mobile devices.
+
+### Runtime environment
+
+web-highlighter requires browser DOM APIs, including `document`, `Range`, and `Selection`. It supports browsers and WebViews that provide these APIs. Native mini-program renderers and non-DOM native application views are not supported.
 
 ## Advance
 
