@@ -5,14 +5,11 @@
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
-        <a href="https://travis-ci.org/alienzhou/web-highlighter" target="_blank">
-            <img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="Build status" />
+        <a href="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml" target="_blank">
+            <img src="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI status" />
         </a>
         <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
             <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />
-        </a>
-        <a href='https://coveralls.io/github/alienzhou/web-highlighter?branch=master'>
-            <img src='https://coveralls.io/repos/github/alienzhou/web-highlighter/badge.svg?branch=master' alt='Coverage Status' />
         </a>
         <a href="https://unpkg.com/web-highlighter" target="_blank">
             <img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="Gzip size" />
@@ -41,6 +38,16 @@ If you have ever visited [medium.com](http://medium.com), you must know the feat
 This is a useful feature for readers. If you're a developer, you may want your website support it and attract more visits. If you're a user (like me), you may want a browser-plugin to do this.
 
 For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.
+
+## Development
+
+This project uses Node.js `22.15.1` and publishes ES5 output with IE11 support. With [nvm](https://github.com/nvm-sh/nvm) installed, run:
+
+```bash
+nvm use
+npm ci
+npm test
+```
 
 ## Install
 

@@ -3,9 +3,9 @@
  * config for production (lib bundle)
  */
 const webpack = require('webpack');
-const {distDirname, basePath} = require('./paths.js');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const merge = require('webpack-merge');
+const { distPath } = require('./paths.js');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { merge } = require('webpack-merge');
 const baseConfig = require('./base.config');
 const pkg = require('../package.json');
 const name = pkg.name;
@@ -20,7 +20,7 @@ const config = {
         filename: 'web-highlighter.min.js'
     },
     plugins: [
-        new CleanWebpackPlugin([distDirname], {root: basePath}),
+        new CleanWebpackPlugin(),
         new webpack.BannerPlugin(bannerInfo)
     ]
 };

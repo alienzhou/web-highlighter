@@ -5,14 +5,11 @@
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
-        <a href="https://travis-ci.org/alienzhou/web-highlighter" target="_blank">
-            <img src="https://api.travis-ci.org/alienzhou/web-highlighter.svg?branch=master" alt="Build status" />
+        <a href="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml" target="_blank">
+            <img src="https://github.com/alienzhou/web-highlighter/actions/workflows/ci.yml/badge.svg?branch=master" alt="CI status" />
         </a>
         <a href="https://www.npmjs.com/package/web-highlighter" target="_blank">
             <img src="https://img.shields.io/npm/v/web-highlighter.svg" alt="NPM version" />
-        </a>
-        <a href='https://coveralls.io/github/alienzhou/web-highlighter?branch=master'>
-            <img src='https://coveralls.io/repos/github/alienzhou/web-highlighter/badge.svg?branch=master' alt='Coverage Status' />
         </a>
         <a href="https://unpkg.com/web-highlighter" target="_blank">
             <img src="https://img.badgesize.io/https://unpkg.com/web-highlighter/dist/web-highlighter.min.js?compression=gzip" alt="Gzip size" />
@@ -42,6 +39,16 @@
 
 因此，「web-highlighter」仓库的目标就是帮助你在任意的网页上快速地实现高亮笔记功能（例如博客网页、文档阅读器、在线图书等）。它包含了文本高亮笔记与高亮持久化下场景的核心能力，并且支持通过它简单易用的 API 来实现你自己的产品需求。「web-highlighter」已经被用在了我们网站的生产环境中。
 
+
+## 开发
+
+本项目固定使用 Node.js `22.15.1`，发布 ES5 产物并保留 IE11 支持。安装 [nvm](https://github.com/nvm-sh/nvm) 后，在项目根目录执行：
+
+```bash
+nvm use
+npm ci
+npm test
+```
 
 ##  2. <a name='-1'></a>安装
 
