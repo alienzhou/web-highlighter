@@ -33,14 +33,23 @@ class HighlightRange {
             });
         }
 
-        this.start = formatDomNode(start);
-        this.end = formatDomNode(end);
+        this.start = formatDomNode(start, true);
+        this.end = formatDomNode(end, false);
         this.text = text;
         this.frozen = frozen;
         this.id = id;
     }
 
-    isValid = (): boolean => Boolean(this.start.$node && this.end.$node);
+    isValid = (): boolean => {
+        if (!this.start.$node || !this.end.$node) {
+            return false;
+        }
+
+        // the boundaries may be reversed after being converted to text nodes
+        const position = this.start.$node.compareDocumentPosition(this.end.$node);
+
+        return this.start.$node === this.end.$node || !!(position & this.start.$node.DOCUMENT_POSITION_FOLLOWING);
+    };
 
     static fromSelection(idHook: Hook<string>) {
         const range = getDomRange();

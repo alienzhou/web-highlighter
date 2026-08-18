@@ -37,6 +37,19 @@ describe('Highlighter ranges', () => {
         expect(document.querySelector(wrapSelector)).to.be.null;
     });
 
+    it('should ignore ranges whose element boundaries contain no text node', () => {
+        document.body.innerHTML = '<main><p>before</p><p><img></p><p>after</p></main>';
+
+        const $p = document.querySelectorAll('p')[1];
+        const range = document.createRange();
+
+        range.selectNodeContents($p);
+
+        expect(highlighter.fromRange(range)).to.be.null;
+        expect(document.querySelector(wrapSelector)).to.be.null;
+        expect(document.body.textContent).to.equal('beforeafter');
+    });
+
     it('should highlight text in a range containing an image', () => {
         document.body.innerHTML = '<p>before<img>after</p>';
 
