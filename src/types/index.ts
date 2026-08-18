@@ -31,6 +31,7 @@ export enum ERROR {
     DOM_SELECTION_EMPTY = '[DOM] The selection contains no dom node, may be you except them.',
     RANGE_INVALID = "[RANGE] Got invalid dom range, can't convert to a valid highlight range.",
     RANGE_NODE_INVALID = "[RANGE] Start or end node isn't a text node, it may occur an error.",
+    RANGE_OUT_OF_ROOT = '[RANGE] Start or end node is outside the root node.',
     DB_ID_DUPLICATE_ERROR = '[STORE] Unique id conflict.',
     CACHE_SET_ERROR = "[CACHE] Cache.data can't be set manually, please use .save().",
     SOURCE_TYPE_ERROR = "[SOURCE] Object isn't a highlight source instance.",

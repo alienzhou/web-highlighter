@@ -41,6 +41,21 @@ const findAncestorWrapperInRoot = ($node: HTMLElement, $root: RootElement): HTML
 };
 
 /**
+ * whether a node is inside the root node (the root node itself included)
+ */
+export const isInsideRoot = ($node: Node, $root: RootElement): boolean => {
+    while ($node) {
+        if ($node === $root) {
+            return true;
+        }
+
+        $node = $node.parentNode;
+    }
+
+    return false;
+};
+
+/**
  * get highlight id by a node
  */
 export const getHighlightId = ($node: HTMLElement, $root: RootElement): string => {

@@ -17,6 +17,7 @@ import {
     getExtraHighlightId,
     getHighlightsByRoot,
     getHighlightId,
+    isInsideRoot,
     addEventListener,
     removeEventListener,
 } from '@src/util/dom';
@@ -205,6 +206,17 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
     });
 
     private readonly _highlightFromHRange = (range: HighlightRange): HighlightSource => {
+        if (
+            !isInsideRoot(range.start.$node, this.options.$root) ||
+            !isInsideRoot(range.end.$node, this.options.$root)
+        ) {
+            eventEmitter.emit(INTERNAL_ERROR_EVENT, {
+                type: ERROR.RANGE_OUT_OF_ROOT,
+            });
+
+            return null;
+        }
+
         const source: HighlightSource = range.serialize(this.options.$root, this.hooks);
         const $wraps = this.painter.highlightRange(range);
 
