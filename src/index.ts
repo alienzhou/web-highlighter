@@ -137,7 +137,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
 
         const hRange = new HighlightRange(start, end, text, id);
 
-        if (!hRange) {
+        if (!hRange.isValid()) {
             eventEmitter.emit(INTERNAL_ERROR_EVENT, {
                 type: ERROR.RANGE_INVALID,
             });

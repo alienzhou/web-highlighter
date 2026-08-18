@@ -40,6 +40,8 @@ class HighlightRange {
         this.id = id;
     }
 
+    isValid = (): boolean => Boolean(this.start.$node && this.end.$node);
+
     static fromSelection(idHook: Hook<string>) {
         const range = getDomRange();
 
