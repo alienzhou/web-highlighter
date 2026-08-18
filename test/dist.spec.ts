@@ -41,6 +41,38 @@ describe('Distribution bundle', function () {
         window.close();
     });
 
+    it('ignores image-only ranges', () => {
+        const bundle = readFileSync(resolve(__dirname, '..', 'dist', 'web-highlighter.min.js'), 'utf-8');
+        const dom = new JSDOM('<main><img></main>', {
+            runScripts: 'dangerously',
+        });
+        const { window } = dom;
+
+        window.eval(bundle);
+
+        const Highlighter = (window as typeof window & { Highlighter: new (options?: any) => any }).Highlighter;
+        const image = window.document.querySelector('img');
+
+        if (!Highlighter || !image) {
+            throw new Error('Expected UMD global and test image');
+        }
+
+        const highlighter = new Highlighter();
+        const range = window.document.createRange();
+
+        range.selectNodeContents(image);
+
+        let source;
+
+        expect(() => {
+            source = highlighter.fromRange(range);
+        }).not.to.throw();
+        expect(source).to.be.null;
+        expect(window.document.querySelector('[data-highlight-id]')).to.be.null;
+
+        window.close();
+    });
+
     it('exposes the UMD global and supports the highlight lifecycle', () => {
         const bundle = readFileSync(resolve(__dirname, '..', 'dist', 'web-highlighter.min.js'), 'utf-8');
         const dom = new JSDOM('<main><p>Highlight this text.</p></main>', {
