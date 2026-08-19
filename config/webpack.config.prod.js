@@ -21,6 +21,9 @@ const config = {
     },
     plugins: [
         new CleanWebpackPlugin(),
+        new webpack.DefinePlugin({
+            __WEB_HIGHLIGHTER_VERSION__: JSON.stringify(version)
+        }),
         new webpack.BannerPlugin(bannerInfo)
     ]
 };

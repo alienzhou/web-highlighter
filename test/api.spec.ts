@@ -8,7 +8,6 @@ import { SplitType } from '../src/types/index';
 import sources from './fixtures/source.json';
 import brokenSources from './fixtures/broken.json';
 import getInteraction from '../src/util/interaction';
-import packageJson from '../package.json';
 
 describe('Highlighter API', function () {
     this.timeout(50000);
@@ -231,7 +230,7 @@ describe('Highlighter API', function () {
 
             const diagnostics = highlighter.getDiagnostics();
 
-            expect(diagnostics.libraryVersion).to.equal(packageJson.version);
+            expect(diagnostics.libraryVersion).to.equal('development');
             expect(diagnostics.configuration.wrapTag).to.equal('span');
             expect(diagnostics.selection.textLength).to.equal(17);
             expect(diagnostics.highlights.wrapperCount).to.be.greaterThan(0);
