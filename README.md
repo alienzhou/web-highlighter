@@ -242,7 +242,7 @@ It will stop the auto-highlighting.
 
 When you don't want the highlighter anymore, remember to call it first. It will remove some listeners and do some cleanup.
 
-#### `highlighter.fromRange(range)`
+#### `highlighter.fromRange(range, [options])`
 
 You can pass a [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range) object to it and then it will be highlighted. You can use `window.getSelection().getRangeAt(0)` to get a range object or use `document.createRange()` to create a new range.
 
@@ -254,6 +254,21 @@ if (!selection.isCollapsed) {
     highlighter.fromRange(selection.getRangeAt(0));
 }
 ```
+
+Highlighting splits and replaces text nodes. A native selection is live, so the browser recomputes its boundaries while that happens and may truncate it when the selection spans several text nodes. `options.selection` decides what happens to the native selection:
+
+| value | behaviour |
+|---|---|
+| `keep` | the default, the native selection is left to the caller |
+| `clear` | the native selection is dropped before the DOM is modified |
+| `restore` | the created wrappers are selected after highlighting |
+
+```JavaScript
+// pass the current selection and keep the same text selected afterwards
+highlighter.fromRange(selection.getRangeAt(0), { selection: 'restore' });
+```
+
+`highlighter.run()` always clears the native selection before modifying the DOM.
 
 #### `highlighter.fromStore(start, end, text, id)`
 

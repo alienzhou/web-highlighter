@@ -241,7 +241,7 @@ var highlighter = new Highlighter({
 
 当你不再需要使用高亮功能时，需要先使用该方法来移除一些事件监听，回收一些资源。
 
-####  6.3.4. <a name='highlighter.fromRangerange'></a>`highlighter.fromRange(range)`
+####  6.3.4. <a name='highlighter.fromRangerange'></a>`highlighter.fromRange(range, [options])`
 
 该方法支持你传一个 [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range)，并基于该对象进行高亮笔记操作。你可以通过 `window.getSelection().getRangeAt(0)` 方法来获取一个 range 对象，或者使用 `document.createRange()` 方法来创建一个新的 range 对象。
 
@@ -253,6 +253,21 @@ if (!selection.isCollapsed) {
     highlighter.fromRange(selection.getRangeAt(0));
 }
 ```
+
+高亮过程会拆分并替换文本节点。而原生 selection 是「活」的，浏览器会在此过程中重算它的端点；当选区跨越多个文本节点时，重算结果可能被截断。`options.selection` 用于指定原生 selection 的处理方式：
+
+| 取值 | 行为 |
+|---|---|
+| `keep` | 默认值，不改动原生 selection，交由调用方自行处理 |
+| `clear` | 在修改 DOM 之前清除原生 selection |
+| `restore` | 高亮完成后重新选中生成的包裹元素 |
+
+```JavaScript
+// 传入当前选区，并在高亮后保持相同文本处于选中状态
+highlighter.fromRange(selection.getRangeAt(0), { selection: 'restore' });
+```
+
+`highlighter.run()` 自动模式下始终会在修改 DOM 之前清除原生 selection。
 
 ####  6.3.5. <a name='highlighter.fromStorestartendtextid'></a>`highlighter.fromStore(start, end, text, id)`
 

@@ -1,4 +1,4 @@
-import type { DomNode, DomMeta, HookMap, HighlighterOptions } from '@src/types';
+import type { DomNode, DomMeta, HookMap, HighlighterOptions, FromRangeOptions, SelectionMode } from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import { getDomMeta } from '@src/model/range/dom';
@@ -137,7 +137,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         );
     };
 
-    fromRange = (range: Range): HighlightSource => {
+    fromRange = (range: Range, options?: FromRangeOptions): HighlightSource => {
         const start: DomNode = {
             $node: range.startContainer,
             offset: range.startOffset,
@@ -162,7 +162,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
             return null;
         }
 
-        return this._highlightFromHRange(hRange);
+        return this._highlightFromHRange(hRange, options?.selection ?? 'keep');
     };
 
     fromStore = (start: DomMeta, end: DomMeta, text: string, id: string, extra?: unknown): HighlightSource => {
@@ -221,7 +221,10 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         },
     });
 
-    private readonly _highlightFromHRange = (range: HighlightRange): HighlightSource => {
+    private readonly _highlightFromHRange = (
+        range: HighlightRange,
+        selectionMode: SelectionMode = 'keep',
+    ): HighlightSource => {
         if (
             !isInsideRoot(range.start.$node, this.options.$root) ||
             !isInsideRoot(range.end.$node, this.options.$root)
@@ -234,6 +237,13 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         }
 
         const source: HighlightSource = range.serialize(this.options.$root, this.hooks);
+
+        // the native selection is live: splitting text nodes while it still
+        // covers them makes the browser recompute (and truncate) its boundaries
+        if (selectionMode !== 'keep') {
+            HighlightRange.removeDomRange();
+        }
+
         const $wraps = this.painter.highlightRange(range);
 
         if ($wraps.length === 0) {
@@ -242,6 +252,10 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
             });
 
             return null;
+        }
+
+        if (selectionMode === 'restore') {
+            HighlightRange.restoreDomRange($wraps);
         }
 
         this.cache.save(source);
@@ -261,8 +275,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         const range = HighlightRange.fromSelection(this.hooks.Render.UUID);
 
         if (range) {
-            this._highlightFromHRange(range);
-            HighlightRange.removeDomRange();
+            this._highlightFromHRange(range, 'clear');
         }
     };
 

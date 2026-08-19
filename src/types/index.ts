@@ -19,6 +19,18 @@ export interface PainterOptions {
     exceptSelectors: string[];
 }
 
+/**
+ * how the native selection should be handled after a highlight is created
+ *  - keep: leave it to the caller (the default of .fromRange)
+ *  - clear: drop the native selection
+ *  - restore: select the created wrappers
+ */
+export type SelectionMode = 'keep' | 'clear' | 'restore';
+
+export interface FromRangeOptions {
+    selection?: SelectionMode;
+}
+
 export enum SplitType {
     none = 'none',
     head = 'head',
