@@ -394,6 +394,10 @@ Different event has different `data`. Attributes below:
 |---|---|---|
 |`ids`|a list of the highlight id|Array<string>|
 
+### 5. Hooks
+
+Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
+
 ### Diagnostics for bug reports
 
 When reporting an issue, first reproduce it and then run the following from DevTools. It copies a JSON snapshot of browser metadata, the active selection shape, options, and persisted-position metadata:
