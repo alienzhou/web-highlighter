@@ -292,6 +292,10 @@ Get all the wrap nodes in a highlighted area. A highlighted area may contain man
 If the `id` is not passed, it will return all the areas' wrap nodes.
 
 
+#### `highlighter.getSourceByDom(node)`
+
+Get the `HighlightSource` for one wrap node. It accepts the wrapper itself or a descendant node, and returns `null` outside a highlight. Unlike the original source emitted by the `CREATE` event, this source describes only that individual wrapped segment, so its `startMeta` and `endMeta` can be persisted separately after a cross-node or cross-paragraph selection.
+
 #### `highlighter.getIdByDom(node)`
 
 If you have a DOM node, it can return the unique highlight id for you. When passing a non-wrapper element, it will find the nearest ancestor wrapper node.
