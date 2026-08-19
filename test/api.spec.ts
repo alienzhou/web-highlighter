@@ -339,6 +339,40 @@ describe('Highlighter API', function () {
         });
     });
 
+    describe('#getSourceByDom', () => {
+        it('should get a source for each wrapper in a cross-paragraph highlight', () => {
+            const $paragraphs = document.querySelectorAll('p');
+            const range = document.createRange();
+
+            range.setStart($paragraphs[0].childNodes[0], 0);
+            range.setEnd($paragraphs[1].childNodes[0], 17);
+            const source = highlighter.fromRange(range);
+            const wrappers = highlighter.getDoms(source.id);
+            const wrapperSources = wrappers.map($node => highlighter.getSourceByDom($node));
+
+            expect(wrapperSources.map(s => s.text).join('')).to.equal(source.text);
+            expect(wrapperSources.every(s => s.id === source.id)).to.be.true;
+            expect(wrapperSources.map(s => s.startMeta.parentIndex)).to.deep.equal([0, 0, 1]);
+            expect(wrapperSources.map(s => s.startMeta.textOffset)).to.deep.equal([0, 150, 0]);
+        });
+
+        it('should get a source from a node inside a wrapper', () => {
+            const $p = document.querySelectorAll('p')[0];
+            const range = document.createRange();
+
+            range.setStart($p.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+            const source = highlighter.fromRange(range);
+            const wrapper = highlighter.getDoms(source.id)[0];
+
+            expect(highlighter.getSourceByDom(wrapper.firstChild as HTMLElement).text).to.equal(source.text);
+        });
+
+        it('should return null for a node outside a wrapper', () => {
+            expect(highlighter.getSourceByDom(document.querySelector('img'))).to.be.null;
+        });
+    });
+
     describe('#addClass', () => {
         const className = 'test-class';
 

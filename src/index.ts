@@ -1,6 +1,7 @@
 import type { DomNode, DomMeta, HookMap, HighlighterOptions } from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
+import { getDomMeta } from '@src/model/range/dom';
 import HighlightSource from '@src/model/source';
 import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
@@ -17,6 +18,7 @@ import {
     getExtraHighlightId,
     getHighlightsByRoot,
     getHighlightId,
+    getHighlightWrapNode,
     isInsideRoot,
     addEventListener,
     removeEventListener,
@@ -95,6 +97,20 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         id
             ? getHighlightById(this.options.$root, id, this.options.wrapTag)
             : getHighlightsByRoot(this.options.$root, this.options.wrapTag);
+
+    getSourceByDom = ($node: HTMLElement): HighlightSource => {
+        const $wrap = getHighlightWrapNode($node, this.options.$root);
+        const $text = $wrap && ($wrap.firstChild as Text);
+
+        if (!$text || $text.nodeType !== 3) {
+            return null;
+        }
+
+        const start = getDomMeta($text, 0, this.options.$root);
+        const end = getDomMeta($text, $text.length, this.options.$root);
+
+        return new HighlightSource(start, end, $text.textContent, getHighlightId($wrap, this.options.$root));
+    };
 
     dispose = () => {
         const $root = this.options.$root;

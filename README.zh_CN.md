@@ -289,7 +289,11 @@ if (!selection.isCollapsed) {
 
 如果 `id` 参数留空，它会返回根节点下的所有高亮区域中的包裹节点。
 
-####  6.3.11. <a name='highlighter.getIdByDomnode'></a>`highlighter.getIdByDom(node)`
+####  6.3.11. <a name='highlighter.getSourceByDomnode'></a>`highlighter.getSourceByDom(node)`
+
+获取单个高亮包裹节点对应的 `HighlightSource`。可以传入包裹节点本身或它的后代节点；不在高亮区域内时返回 `null`。与 `CREATE` 事件中产生的原始 source 不同，该 source 只描述当前包裹片段，因此跨节点或跨段落选区拆分后的每个片段都可以分别获得并持久化自己的 `startMeta`、`endMeta`。
+
+####  6.3.12. <a name='highlighter.getIdByDomnode'></a>`highlighter.getIdByDom(node)`
 
 传入一个 DOM 节点，返回该节点对应的高亮区域的唯一 ID。支持传入非包裹元素。如果是非包裹，则会自动找到最近的祖先包裹元素。
 

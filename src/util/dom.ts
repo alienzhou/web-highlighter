@@ -55,11 +55,14 @@ export const isInsideRoot = ($node: Node, $root: RootElement): boolean => {
     return false;
 };
 
+export const getHighlightWrapNode = ($node: HTMLElement, $root: RootElement): HTMLElement =>
+    findAncestorWrapperInRoot($node, $root);
+
 /**
  * get highlight id by a node
  */
 export const getHighlightId = ($node: HTMLElement, $root: RootElement): string => {
-    $node = findAncestorWrapperInRoot($node, $root);
+    $node = getHighlightWrapNode($node, $root);
 
     if (!$node) {
         return '';
@@ -72,7 +75,7 @@ export const getHighlightId = ($node: HTMLElement, $root: RootElement): string =
  * get extra highlight id by a node
  */
 export const getExtraHighlightId = ($node: HTMLElement, $root: RootElement): string[] => {
-    $node = findAncestorWrapperInRoot($node, $root);
+    $node = getHighlightWrapNode($node, $root);
 
     if (!$node) {
         return [];
