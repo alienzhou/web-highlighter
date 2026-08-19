@@ -122,6 +122,24 @@ describe('Integration Usage', function () {
         ).to.be.equal(highlightedText);
     });
 
+    it('should restore the original DOM structure after removing a cross-paragraph highlight', () => {
+        const html =
+            '<main><p data-key="first">before <b>bold</b> after</p><p data-key="second">next paragraph</p></main>';
+
+        document.body.innerHTML = html;
+
+        const highlighter = new Highlighter();
+        const $paragraphs = document.querySelectorAll('p');
+        const range = document.createRange();
+
+        range.setStart($paragraphs[0].firstChild, 3);
+        range.setEnd($paragraphs[1].firstChild, 4);
+        highlighter.fromRange(range);
+        highlighter.removeAll();
+
+        expect(document.body.innerHTML).to.equal(html);
+    });
+
     afterEach(() => {
         cleanup();
     });
