@@ -12,6 +12,7 @@ import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import { getDomMeta } from '@src/model/range/dom';
 import HighlightSource from '@src/model/source';
+import version from '@src/version';
 import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
 import getInteraction from '@src/util/interaction';
@@ -149,7 +150,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         const rootElement = $root instanceof Document ? $root.documentElement : $root;
         const sources = this.cache.getAll();
         const snapshot: DiagnosticSnapshot = {
-            libraryVersion: '0.7.4',
+            libraryVersion: version,
             timestamp: new Date().toISOString(),
             lifecycle: {
                 isRunning: this._isRunning,
