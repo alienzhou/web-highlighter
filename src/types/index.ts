@@ -31,6 +31,59 @@ export interface FromRangeOptions {
     selection?: SelectionMode;
 }
 
+/**
+ * A privacy-preserving snapshot for attaching to bug reports.
+ * It records runtime state, but never serializes document HTML or text content.
+ */
+export interface DiagnosticSnapshot {
+    libraryVersion: string;
+    timestamp: string;
+    runtime: {
+        userAgent: string;
+        platform?: string;
+        language: string;
+        viewport?: {
+            width: number;
+            height: number;
+        };
+    };
+    configuration: {
+        root: {
+            nodeName: string;
+            id: string | null;
+            className: string | null;
+        };
+        wrapTag: string;
+        exceptSelectors: string[] | null;
+        verbose: boolean;
+    };
+    selection: {
+        rangeCount: number;
+        isCollapsed: boolean;
+        textLength: number;
+        start?: {
+            nodeType: number;
+            nodeName: string;
+            offset: number;
+        };
+        end?: {
+            nodeType: number;
+            nodeName: string;
+            offset: number;
+        };
+    };
+    highlights: {
+        wrapperCount: number;
+        sourceCount: number;
+        sources: Array<{
+            id: string;
+            textLength: number;
+            startMeta: DomMeta;
+            endMeta: DomMeta;
+        }>;
+    };
+}
+
 export enum SplitType {
     none = 'none',
     head = 'head',

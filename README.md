@@ -394,9 +394,16 @@ Different event has different `data`. Attributes below:
 |---|---|---|
 |`ids`|a list of the highlight id|Array<string>|
 
-### 5. Hooks
+### Diagnostics for bug reports
 
-Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
+When reporting an issue, first reproduce it and then run the following from DevTools. It copies a JSON snapshot of browser metadata, the active selection shape, options, and persisted-position metadata:
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics(), null, 2));
+```
+
+The snapshot intentionally **does not include page HTML or selected text**. Include it with a minimal HTML/JavaScript reproduction and the exact interaction steps. For `fromStore()` failures, also provide the serialized `HighlightSource` and the relevant DOM before and after the content changes.
+
 
 ## Compatibility
 

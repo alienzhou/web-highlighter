@@ -390,9 +390,16 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 |---|---|---|
 |`ids`|一组高亮区域唯一 ID|Array<string>|
 
-###  6.5. <a name='Hooks'></a>Hooks（钩子）
+### 6.5. 问题排查信息
 
-钩子可以用来更好地控制整个高亮流程。通过它你几乎可以实现任何自定义的逻辑。详细内容请参考[下面部分](#更多使用方式)。
+提交问题前，请先稳定复现，再在浏览器 DevTools 中运行下面的代码。它会复制一份 JSON 快照，包含浏览器信息、当前选区形态、初始化配置和持久化位置元数据：
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics(), null, 2));
+```
+
+快照**不会包含页面 HTML 或被选中的文本内容**。请同时附上最小 HTML/JavaScript 复现和准确操作步骤。若是 `fromStore()` 恢复失败，还请提供序列化后的 `HighlightSource`，以及内容变更前后相关 DOM。
+
 
 ##  7. <a name='-1'></a>兼容性
 

@@ -1,4 +1,12 @@
-import type { DomNode, DomMeta, HookMap, HighlighterOptions, FromRangeOptions, SelectionMode } from '@src/types';
+import type {
+    DomNode,
+    DomMeta,
+    HookMap,
+    HighlighterOptions,
+    FromRangeOptions,
+    SelectionMode,
+    DiagnosticSnapshot,
+} from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import { getDomMeta } from '@src/model/range/dom';
@@ -110,6 +118,74 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         const end = getDomMeta($text, $text.length, this.options.$root);
 
         return new HighlightSource(start, end, $text.textContent, getHighlightId($wrap, this.options.$root));
+    };
+
+    /**
+     * Capture non-content runtime state for a reproducible bug report.
+     * Call `copy(JSON.stringify(highlighter.getDiagnostics(), null, 2))` in DevTools.
+     */
+    getDiagnostics = (): DiagnosticSnapshot => {
+        const selection = window.getSelection();
+        const range = selection?.rangeCount ? selection.getRangeAt(0) : null;
+        const $root = this.options.$root;
+        const rootElement = $root instanceof Document ? $root.documentElement : $root;
+        const sources = this.cache.getAll();
+
+        return {
+            libraryVersion: '0.7.4',
+            timestamp: new Date().toISOString(),
+            runtime: {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                viewport:
+                    typeof window.innerWidth === 'number'
+                        ? {
+                              width: window.innerWidth,
+                              height: window.innerHeight,
+                          }
+                        : undefined,
+            },
+            configuration: {
+                root: {
+                    nodeName: rootElement?.nodeName || '#document',
+                    id: rootElement?.id || null,
+                    className: rootElement?.className || null,
+                },
+                wrapTag: this.options.wrapTag,
+                exceptSelectors: this.options.exceptSelectors,
+                verbose: this.options.verbose,
+            },
+            selection: {
+                rangeCount: selection?.rangeCount || 0,
+                isCollapsed: selection?.isCollapsed || false,
+                textLength: selection?.toString().length || 0,
+                ...(range
+                    ? {
+                          start: {
+                              nodeType: range.startContainer.nodeType,
+                              nodeName: range.startContainer.nodeName,
+                              offset: range.startOffset,
+                          },
+                          end: {
+                              nodeType: range.endContainer.nodeType,
+                              nodeName: range.endContainer.nodeName,
+                              offset: range.endOffset,
+                          },
+                      }
+                    : {}),
+            },
+            highlights: {
+                wrapperCount: this.getDoms().length,
+                sourceCount: sources.length,
+                sources: sources.map(source => ({
+                    id: source.id,
+                    textLength: source.text.length,
+                    startMeta: source.startMeta,
+                    endMeta: source.endMeta,
+                })),
+            },
+        };
     };
 
     dispose = () => {

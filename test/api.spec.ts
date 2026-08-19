@@ -176,6 +176,33 @@ describe('Highlighter API', function () {
         });
     });
 
+    describe('#getDiagnostics', () => {
+        it('should capture runtime state without source text', () => {
+            const range = document.createRange();
+            const $p = document.querySelectorAll('p')[0];
+            range.setStart($p.childNodes[0], 0);
+            range.setEnd($p.childNodes[0], 17);
+            const source = highlighter.fromRange(range);
+            const $wrap = highlighter.getDoms(source.id)[0];
+            const selectedRange = document.createRange();
+            selectedRange.selectNodeContents($wrap);
+
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(selectedRange);
+            const diagnostics = highlighter.getDiagnostics();
+
+            expect(diagnostics.configuration.wrapTag).to.equal('span');
+            expect(diagnostics.selection.textLength).to.equal(17);
+            expect(diagnostics.highlights.wrapperCount).to.be.greaterThan(0);
+            expect(diagnostics.highlights.sourceCount).to.equal(1);
+            expect(diagnostics.highlights.sources[0]).to.deep.include({
+                id: source.id,
+                textLength: 17,
+            });
+            expect(JSON.stringify(diagnostics)).not.to.contain(source.text);
+        });
+    });
+
     describe('#remove', () => {
         beforeEach(() => {
             const s = sources[0];
