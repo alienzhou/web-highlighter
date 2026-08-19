@@ -13,7 +13,10 @@ module.exports = function () {
     log(mdPath, '-', 'converting...');
 
     const md = fs.readFileSync(mdPath, 'utf-8');
-    const html = new MarkdownIt().render(md);
+    // The README intentionally uses HTML for its centered masthead, badges, and logo.
+    // This is a local, repository-controlled document, so preserve those elements
+    // instead of escaping them into visible source text in the example page.
+    const html = new MarkdownIt({ html: true }).render(md);
     const tpl = fs.readFileSync(paths.exampleTplPath, 'utf-8');
     fs.outputFileSync(paths.exampleMdPath, tpl.replace(/{{\$markdown}}/, html), 'utf-8');
 

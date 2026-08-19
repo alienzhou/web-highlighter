@@ -1,7 +1,7 @@
 <div>
     <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
     <p align="center">
-        <strong>✨ 一个可以在任何网页上做高亮笔记前端库，支持高亮文本的持久化存储与还原 ✨🖍️</strong>
+        <strong>一个无依赖的前端库，可在任意网页中高亮文本，并持久化和恢复高亮内容。</strong>
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
@@ -50,13 +50,13 @@ npm ci
 npm test
 ```
 
-##  2. <a name='-1'></a>安装
+## 2. 安装
 
 ```bash
 npm i web-highlighter
 ```
 
-##  3. <a name='-1'></a>使用方式
+## 3. 使用方式
 
 两行代码，即可开启文本选中时的自动高亮功能。
 
@@ -83,7 +83,7 @@ highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
 highlighter.run();
 ```
 
-##  4. <a name='-1'></a>示例
+## 4. 示例
 
 一个更复杂的使用示例。
 
@@ -141,7 +141,7 @@ npm start
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
-##  5. <a name='-1'></a>工作原理
+## 5. 工作原理
 
 web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selection%20api) 来读取被选择的文本范围。然后选区的信息会被转换为一个可序列化的数据结构，以便于能够发送并存储在后端。当用户再次访问你的页面时，这些存储的数据被返回然后在你的页面上进行反序列化。数据结构本身是技术栈无关的。所以你可以用在任意技术栈构建的页面上（例如 React、Vue、Angular 或者 jQuery 等等）。
 
@@ -170,21 +170,21 @@ const sources = paragraphRanges.map(range => highlighter.fromRange(range));
 
 动态 DOM 在内容稳定后可以正常使用。对于异步加载或频繁重新渲染的内容，请在渲染完成后再初始化和恢复高亮。库不支持跨 table cell 的单一连续高亮，因为一个包裹元素不能安全地跨越多个 `td` 或 `th`。可以使用 [`Render.SelectedNodes` 钩子](./docs/ADVANCE.zh_CN.md#renderselectednodes) 将选区拆分为受支持的片段。
 
-##  6. <a name='-1'></a>详细使用文档
+## 6. 详细使用文档
 
-###  6.1. <a name='-1'></a>配置项
+### 6.1. 配置项
 
 ```JavaScript
 const highlighter = new Highlighter([opts])
 ```
 
-创建一个新的 `highlighter` 实例.
+创建一个新的 `Highlighter` 实例。
 
-`opts` 会合并至默认配置 (如下所示).
+`opts` 会与下方默认配置合并。
 
 ```JavaScript
 {
-    $root: document.documentElement,
+    $root: document,
     exceptSelectors: null,
     wrapTag: 'span',
     style: {
@@ -209,7 +209,7 @@ const highlighter = new Highlighter([opts])
 |---|---|---|---|---|
 | className | `string` | 高亮包裹元素的 className | 否 | `highlight-mengshou-wrap` |
 
-`exceptSelectors` 为 `null` 或 `Array<string>`。 支持 ID 选择器、类选择器和标签选择器。例如，想要忽略标签为 h1 和 classname 为 `.title` 的元素：
+`exceptSelectors` 接受 `null` 或 `Array<string>`，支持 ID、类和标签选择器。例如，忽略 `h1` 和 `.title` 元素：
 
 ```JavaScript
 var highlighter = new Highlighter({
@@ -217,17 +217,17 @@ var highlighter = new Highlighter({
 });
 ```
 
-###  6.2. <a name='-1'></a>静态方法
+### 6.2. 静态方法
 
 ####  6.2.1. <a name='Highlighter.isHighlightSourcesource'></a>`Highlighter.isHighlightSource(source)`
 
-用于判断 `source` 参数是否为一个 highlight source 对象。如果是则返回 `true`, 反之亦然.
+用于判断 `source` 是否为 `HighlightSource` 对象；是则返回 `true`，否则返回 `false`。
 
 ####  6.2.2. <a name='Highlighter.isHighlightWrapNodenode'></a>`Highlighter.isHighlightWrapNode($node)`
 
-用于判断 `$node` 参数是否为一个高亮包裹元素。如果是则返回 `true`, 反之亦然.
+用于判断 `$node` 是否为高亮包裹元素；是则返回 `true`，否则返回 `false`。
 
-###  6.3. <a name='-1'></a>实例方法
+### 6.3. 实例方法
 
 ####  6.3.1. <a name='highlighter.run'></a>`highlighter.run()`
 
@@ -273,7 +273,7 @@ highlighter.fromRange(selection.getRangeAt(0), { selection: 'restore' });
 
 大多数情况下，这个 API 用于通过后端的持久化信息还原出文本高亮效果。
 
-其中四个所需的参数来源于 `HighlightSource` 对象。`HighlightSource` 对象是一个特殊的对象，当高亮笔记被添加时会被创建。为了能在后端实现数据持久化，它需要找到一种能表示 dom 节点的数据结构。这个结构在 web-highlighter 内被称为`HighlightSource`。
+为了能在后端实现数据持久化，需要用可序列化（`JSON.stringify()`）的数据结构表示浏览器中的 DOM 节点。web-highlighter 将这个数据结构称为 `HighlightSource`。
 
 四个参数的含义如下：
 
@@ -312,11 +312,11 @@ highlighter.fromRange(selection.getRangeAt(0), { selection: 'restore' });
 
 传入一个 DOM 节点，返回该节点对应的高亮区域的唯一 ID。支持传入非包裹元素。如果是非包裹，则会自动找到最近的祖先包裹元素。
 
-####  6.3.11. <a name='highlighter.getExtraIdByDomnode'></a>`highlighter.getExtraIdByDom(node)`
+####  6.3.13. <a name='highlighter.getExtraIdByDomnode'></a>`highlighter.getExtraIdByDom(node)`
 
 传入一个 DOM 节点，返回该节点对应的高亮区域的额外 ID。支持传入非包裹元素。如果是非包裹，则会自动找到最近的祖先包裹元素。
 
-####  6.3.12. <a name='highlighter.setOptionopt'></a>`highlighter.setOption(opt)`
+####  6.3.14. <a name='highlighter.setOptionopt'></a>`highlighter.setOption(opt)`
 
 可以使用该 API 改变实例的配置项，参数结构和构造函数中的一致，支持传入部分参数。
 
@@ -333,13 +333,14 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 });
 ```
 
-回调函数接受三个参数：
+回调函数至少接收两个参数：
 
-- data `any`: 事件触发时的具体数据
-- inst `Highlighter`: 当前 Highlighter 类的实例
-- e `Event`: 某些事件会有浏览器触发（例如点击）, web-highlighter 会将浏览器原生 event 对象暴露出来
+- data `any`：事件触发时的具体数据
+- inst `Highlighter`：当前 `Highlighter` 实例
 
-`Highlighter.event` 是内部的 `EventType` 类型. 它包含了如下这些事件：
+对于 `CLICK`、`HOVER` 和 `HOVER_OUT`，回调还会接收第三个参数 `e`（浏览器原生 `Event`）。
+
+`Highlighter.event` 是内部的 `EventType` 类型，包含以下事件：
 
 - `EventType.CLICK`: 点击高亮区域
 - `EventType.HOVER`: 鼠标移至高亮区域，类似 mouse enter
@@ -376,7 +377,7 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 |`sources`|`HighlightSource` 对象数组|Array&lt;HighlightSource&gt;|
 |`type`|高亮区域创建的来源|string|
 
-> 回调只接收一个对象参数，因此请按 `({sources, type}) => ...` 解构使用。`sources` 中的每一项都是 `HighlightSource`；调用 `Highlighter.isHighlightSource()` 时需要传入数组中的某一项，而不是整个回调参数对象。
+> `CREATE` 回调接收 `(data, inst)`，不包含第三个浏览器事件参数。请按 `({ sources, type }) => ...` 解构 `data`。`sources` 中的每一项都是 `HighlightSource`；调用 `Highlighter.isHighlightSource()` 时应传入数组中的单项，而不是整个回调参数对象。
 
 `sources` 是一个 `HighlightSource` 对象数组。这些对象在高亮区域被创建时，会由 web-highlighter 创建并传给回调函数。为了能够在后端（数据库中）进行高亮数据的持久化，需要使用一个可以被序列化（`JSON.stringify()`）的数据结构来表示浏览器中的 DOM 节点。`HighlightSource` 就是 web-highlighter 提供的来用于持久化的数据对象。
 
@@ -423,7 +424,7 @@ copy(JSON.stringify(highlighter.getDiagnostics({
 请结合合适等级的快照、最小 HTML/JavaScript 复现和准确操作步骤提交问题。对于 `fromStore()` 失败，请同时提供内容变更前后的相关 DOM 和原始 source。
 
 
-##  7. <a name='-1'></a>兼容性
+## 7. 兼容性
 
 > 依赖 [Selection API](https://caniuse.com/#search=selection%20api)。
 
@@ -440,12 +441,12 @@ _**移动端支持：**_ 如果检测为移动端，则会自动使用相应的�
 
 web-highlighter 依赖浏览器 DOM API，包括 `document`、`Range` 和 `Selection`。它支持提供这些 API 的浏览器和 WebView；原生小程序渲染层及非 DOM 的原生应用视图不受支持。
 
-##  8. <a name='-1'></a>更多使用方式
+## 8. 更多使用方式
 
 为了便于开发者更好地控制相关的高亮行为，web-highlighter 提供一些内部的钩子。
 
 想了解内部钩子及其使用方式，可以阅读[这篇文档](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.zh_CN.md)。
 
-##  9. <a name='-1'></a>许可证
+## 9. 许可证
 
-[MIT](./LICENCE)
+[MIT](./LICENSE)
