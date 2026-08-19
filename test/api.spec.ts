@@ -201,6 +201,26 @@ describe('Highlighter API', function () {
             });
             expect(JSON.stringify(diagnostics)).not.to.contain(source.text);
         });
+
+        it('should include redacted DOM and full sources only by explicit opt-in', () => {
+            document.body.innerHTML = '<main id="root"><p>secret text</p></main>';
+            highlighter = new Highlighter({ $root: document.querySelector<HTMLElement>('#root') });
+            const range = document.createRange();
+            const $text = document.querySelector('p').firstChild;
+            range.setStart($text, 0);
+            range.setEnd($text, $text.textContent.length);
+            const source = highlighter.fromRange(range);
+
+            const redacted = highlighter.getDiagnostics({ dom: 'redacted' });
+            const full = highlighter.getDiagnostics({ dom: 'full', sources: 'full' });
+
+            expect(redacted.document.mode).to.equal('redacted');
+            expect(redacted.document.html).not.to.contain('secret text');
+            expect(redacted.document.html).to.contain('[…](11)');
+            expect(redacted.fullSources).to.be.undefined;
+            expect(full.document.html).to.contain('secret text');
+            expect(full.fullSources[0].text).to.equal(source.text);
+        });
     });
 
     describe('#remove', () => {

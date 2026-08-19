@@ -32,12 +32,29 @@ export interface FromRangeOptions {
 }
 
 /**
- * A privacy-preserving snapshot for attaching to bug reports.
- * It records runtime state, but never serializes document HTML or text content.
+ * Controls how much evidence `getDiagnostics()` includes.
+ * The default is safe: no DOM HTML and no persisted source text.
+ */
+export interface DiagnosticOptions {
+    /** Include root DOM evidence: `none` (default), `redacted`, or explicit `full` HTML. */
+    dom?: 'none' | 'redacted' | 'full';
+    /** Include persisted sources: metadata (default) or explicit full source objects. */
+    sources?: 'metadata' | 'full';
+    /** Limit exported DOM HTML in redacted/full modes. Defaults to 20,000 characters. */
+    maxDomLength?: number;
+}
+
+/**
+ * A reproducible runtime snapshot for bug reports.
+ * DOM and source text are included only when explicitly requested through `DiagnosticOptions`.
  */
 export interface DiagnosticSnapshot {
     libraryVersion: string;
     timestamp: string;
+    lifecycle: {
+        isRunning: boolean;
+        isDisposed: boolean;
+    };
     runtime: {
         userAgent: string;
         platform?: string;
@@ -45,6 +62,11 @@ export interface DiagnosticSnapshot {
         viewport?: {
             width: number;
             height: number;
+        };
+        capabilities: {
+            selection: boolean;
+            range: boolean;
+            touch: boolean;
         };
     };
     configuration: {
@@ -82,6 +104,24 @@ export interface DiagnosticSnapshot {
             endMeta: DomMeta;
         }>;
     };
+    errors: Array<{
+        type: ERROR;
+        message?: string;
+        sourceId?: string;
+    }>;
+    document?: {
+        mode: 'redacted' | 'full';
+        html: string;
+        originalLength: number;
+        truncated: boolean;
+    };
+    fullSources?: Array<{
+        startMeta: DomMeta;
+        endMeta: DomMeta;
+        text: string;
+        id: string;
+        extra?: unknown;
+    }>;
 }
 
 export enum SplitType {

@@ -9,13 +9,19 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a problem. A minimal reproduction is the fastest way to get a fix.
-
-        Before submitting, please capture a diagnostic snapshot. It contains browser/runtime/configuration metadata but deliberately excludes page HTML and selected text:
+        Before submitting, please capture a diagnostic snapshot. The default snapshot contains browser/runtime/configuration metadata, selection shape, lifecycle state, and recent library errors, but deliberately excludes page HTML and selected text:
 
         ```js
         copy(JSON.stringify(highlighter.getDiagnostics(), null, 2))
         ```
+
+        For DOM structure mismatches, use the text-free structure snapshot:
+
+        ```js
+        copy(JSON.stringify(highlighter.getDiagnostics({dom: 'redacted'}), null, 2))
+        ```
+
+        Only use `{dom: 'full', sources: 'full'}` after reviewing its private content.
   - type: input
     id: version
     attributes:
@@ -74,7 +80,7 @@ body:
     id: diagnostics
     attributes:
       label: Diagnostic snapshot
-      description: "Paste the output of copy(JSON.stringify(highlighter.getDiagnostics(), null, 2)). It excludes document HTML and text content."
+      description: "Paste getDiagnostics() output. The default is safe; use {dom: 'redacted'} for structure issues and review any full output before sharing."
       render: json
     validations:
       required: true
