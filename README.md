@@ -150,6 +150,21 @@ It will read the selected range by [`Selection API`](https://caniuse.com/#search
 
 Persisted highlights record DOM paths and text offsets relative to `$root`; they are not screen coordinates. Restore highlights only after the content is fully rendered, and keep the same `$root`, document structure, text segmentation, and `wrapTag` configuration used when the highlight was created. If a framework re-renders the content or the document changes, persisted positions can no longer be guaranteed. Use the [`Serialize.Restore` hook](./docs/ADVANCE.md#serializerestore) to implement a restoration strategy for changing content.
 
+### Cross-paragraph persistence and DOM restoration
+
+A cross-paragraph selection creates one continuous `HighlightSource`. If your application needs one record per paragraph, split the selection into one `Range` per paragraph before creating highlights, call `fromRange()` for each range, and persist the returned `HighlightSource` objects individually. Use the [`Serialize.RecordInfo` hook](./docs/ADVANCE.md#serializerecordinfo) to store paragraph-specific identifiers in `source.extra`.
+
+```JavaScript
+highlighter.hooks.Serialize.RecordInfo.tap((start, end) => ({
+    startParagraphId: start.$node.parentElement.closest('p').dataset.id,
+    endParagraphId: end.$node.parentElement.closest('p').dataset.id,
+}));
+
+const sources = paragraphRanges.map(range => highlighter.fromRange(range));
+```
+
+`remove(id)` and `removeAll()` remove the highlight wrappers and restore the original element hierarchy and attributes, including for cross-paragraph highlights. Browser text splitting and merging means the original TextNode object identities and event listeners attached directly to TextNodes are not preserved; delegate events from a stable parent element instead.
+
 ### Dynamic content and tables
 
 Dynamic DOM is supported after it becomes stable. For asynchronously loaded or frequently re-rendered content, initialize and restore highlights after rendering completes. The library does not support one continuous highlight across table cells, because a wrapper cannot safely span multiple `td` or `th` elements. Use the [`Render.SelectedNodes` hook](./docs/ADVANCE.md#renderselectednodes) to split those selections into supported fragments.

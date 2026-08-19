@@ -151,6 +151,21 @@ web-highlighter 会通过 [`Selection API`](https://caniuse.com/#search=selectio
 
 持久化的高亮记录的是相对 `$root` 的 DOM 路径和文本偏移，而不是屏幕坐标。请在内容完全渲染后再恢复高亮，并保持创建高亮时使用的 `$root`、文档结构、文本切分方式和 `wrapTag` 配置一致。如果框架重新渲染内容，或文档结构发生变化，持久化位置便无法保证仍然正确。内容会变化时，可以通过 [`Serialize.Restore` 钩子](./docs/ADVANCE.zh_CN.md#serializerestore) 实现自己的恢复策略。
 
+### 跨段落持久化与 DOM 恢复
+
+一次跨段落的选区会生成一个连续的 `HighlightSource`。如果业务需要按段落保存，请在创建高亮前按段落把选区拆成多个 `Range`，分别调用 `fromRange()` 并保存各自返回的 `HighlightSource`。段落的业务唯一属性可以通过 [`Serialize.RecordInfo` 钩子](./docs/ADVANCE.zh_CN.md#serializerecordinfo) 写入 `source.extra`。
+
+```JavaScript
+highlighter.hooks.Serialize.RecordInfo.tap((start, end) => ({
+    startParagraphId: start.$node.parentElement.closest('p').dataset.id,
+    endParagraphId: end.$node.parentElement.closest('p').dataset.id,
+}));
+
+const sources = paragraphRanges.map(range => highlighter.fromRange(range));
+```
+
+`remove(id)` 和 `removeAll()` 会移除高亮包裹元素并恢复原始的元素层级和属性，包括跨段落高亮。由于浏览器在划分文本时会切分和合并 TextNode，不保证原有 TextNode 对象身份或直接绑定在 TextNode 上的事件监听；应将事件委托给稳定的父元素。
+
 ### 动态内容与表格
 
 动态 DOM 在内容稳定后可以正常使用。对于异步加载或频繁重新渲染的内容，请在渲染完成后再初始化和恢复高亮。库不支持跨 table cell 的单一连续高亮，因为一个包裹元素不能安全地跨越多个 `td` 或 `th`。可以使用 [`Render.SelectedNodes` 钩子](./docs/ADVANCE.zh_CN.md#renderselectednodes) 将选区拆分为受支持的片段。
