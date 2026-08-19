@@ -373,10 +373,12 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 |name|description|type|
 |---|---|---|
-|`source`|`HighlightSource` 对象|Array|
+|`sources`|`HighlightSource` 对象数组|Array&lt;HighlightSource&gt;|
 |`type`|高亮区域创建的来源|string|
 
-`source` 是一个 `HighlightSource` 对象。该对象在高亮区域被创建时，会由 web-highlighter 创建并传给回调函数。为了能够在后端（数据库中）进行高亮数据的持久化，需要使用一个可以被序列化（`JSON.stringify()`）的数据结构来表示浏览器中的 DOM 节点。`HighlightSource` 就是 web-highlighter 提供的来用于持久化的数据对象。
+> 回调只接收一个对象参数，因此请按 `({sources, type}) => ...` 解构使用。`sources` 中的每一项都是 `HighlightSource`；调用 `Highlighter.isHighlightSource()` 时需要传入数组中的某一项，而不是整个回调参数对象。
+
+`sources` 是一个 `HighlightSource` 对象数组。这些对象在高亮区域被创建时，会由 web-highlighter 创建并传给回调函数。为了能够在后端（数据库中）进行高亮数据的持久化，需要使用一个可以被序列化（`JSON.stringify()`）的数据结构来表示浏览器中的 DOM 节点。`HighlightSource` 就是 web-highlighter 提供的来用于持久化的数据对象。
 
 `type` 用来告知开发者高亮区域被创建的原因。目前 `type` 包含两种可能的值：`from-input` 和 `from-store`。`from-input` 表明该高亮区域是通过用户操作（用户划词的选区）创建的；`from-store` 则表示该高亮区域是通过持久化的 `HighlightSource` 中的数据还原出来的。
 

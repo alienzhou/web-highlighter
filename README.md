@@ -377,10 +377,12 @@ Different event has different `data`. Attributes below:
 
 |name|description|type|
 |---|---|---|
-|`source`|`HighlightSource` object|Array<HighlightSource>|
+|`sources`|a list of `HighlightSource` objects|Array<HighlightSource>|
 |`type`|the reason for creating|string|
 
-`source` is a `HighlightSource` object. It is an object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to use a data structure which can be serialized (`JSON.stringify()`) to represent a dom node in browsers. `HighlightSource` is the data structure designed for this.
+> The callback receives a single object, so destructure it as `({sources, type}) => ...`. Each item of `sources` is a `HighlightSource`; pass an item (not the wrapper object) to `Highlighter.isHighlightSource()`.
+
+`sources` is a list of `HighlightSource` objects. Such an object is created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to use a data structure which can be serialized (`JSON.stringify()`) to represent a dom node in browsers. `HighlightSource` is the data structure designed for this.
 
 `type` explains why a highlighted area is be created. Now `type` has two possible values: `from-input` and `from-store`. `from-input` shows that a highlighted area is created because of user's selection. `from-store` means it from a storage.
 
