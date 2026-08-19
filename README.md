@@ -1,7 +1,7 @@
 <div>
     <h1 align="center"><code>Web Highlighter</code>&nbsp;&nbsp;🖍️</h1>
     <p align="center">
-        <strong>✨ A no-dependency lib for text highlighting & persistence on any website ✨🖍️</strong>
+        <strong>✨ A dependency-free library for highlighting and persisting text on any website ✨🖍️</strong>
     </p>
     <img src="https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/logo.png">
     <p align="center">
@@ -29,15 +29,15 @@ English | [简体中文](https://github.com/alienzhou/web-highlighter/blob/maste
 
 ## Background
 
-It's from an idea: highlight texts on the website and save the highlighted areas just like what you do in PDF.
+The project began with a simple idea: highlight text on a website and save those highlights, much like you would in a PDF.
 
-If you have ever visited [medium.com](http://medium.com), you must know the feature of highlighting notes: users select a text segment and click the 'highlight' button. Then the text will be highlighted with a shining background color. Besides, the highlighted areas will be saved and recovered when you visit it next time. It's like the simple demo bellow.
+If you have visited [medium.com](http://medium.com), you may be familiar with its highlighting feature: users select a text segment and click **Highlight**. The selected text receives a highlighted background, and the highlight is saved and restored on later visits. The following GIF shows a simple demo.
 
 ![](https://raw.githubusercontent.com/alienzhou/web-highlighter/master/docs/img/sample.gif)
 
-This is a useful feature for readers. If you're a developer, you may want your website support it and attract more visits. If you're a user (like me), you may want a browser-plugin to do this.
+This feature is useful for readers. Developers may want to add it to their websites, while users may want a browser extension that provides it.
 
-For this reason, the repo (web-highlighter) aims to help you implement highlighting-note on any website quickly (e.g. blogs, document viewers, online books and so on). It contains the core abilities for note highlighting and persistence. And you can implement your own product by some easy-to-use APIs. It has been used for our sites in production.
+web-highlighter helps you implement text highlighting and persistence on websites such as blogs, document viewers, and online books. It provides the core functionality and easy-to-use APIs for building your own product, and it is used in production.
 
 ## Development
 
@@ -57,104 +57,96 @@ npm i web-highlighter
 
 ## Usage
 
-Only two lines, highlighted when texts are selected.
+Add these two lines to automatically highlight selected text.
 
-```JavaScript
+```javascript
 import Highlighter from 'web-highlighter';
-(new Highlighter()).run();
+new Highlighter().run();
 ```
 
-If you need persistence, four lines make it.
+To persist highlights, add the following setup:
 
-```JavaScript
+```javascript
 import Highlighter from 'web-highlighter';
 
-// 1. initialize
+// 1. Initialize the highlighter.
 const highlighter = new Highlighter();
 
-// 2. retrieve data from backend, then highlight it on the page
-getRemoteData().then(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
+// 2. Retrieve persisted data from the backend, then restore highlights.
+getRemoteData().then(source => highlighter.fromStore(
+    source.startMeta,
+    source.endMeta,
+    source.text,
+    source.id,
+));
 
-// 3. listen for highlight creating, then save to backend
-highlighter.on(Highlighter.event.CREATE, ({sources}) => save(sources));
+// 3. Save newly created highlights to the backend.
+highlighter.on(Highlighter.event.CREATE, ({ sources }) => save(sources));
 
-// 4. auto highlight
+// 4. Enable automatic highlighting.
 highlighter.run();
 ```
 
 ## Example
 
-A more complex example
+A more complete integration:
 
-```JavaScript
+```javascript
 import Highlighter from 'web-highlighter';
 
-// won't highlight pre&code elements
+// Do not highlight text within <pre> or <code> elements.
 const highlighter = new Highlighter({
-    exceptSelectors: ['pre', 'code']
+    exceptSelectors: ['pre', 'code'],
 });
 
-// add some listeners to handle interaction, such as hover
+// Handle highlight interactions.
 highlighter
-    .on('selection:hover', ({id}) => {
-        // display different bg color when hover
+    .on(Highlighter.event.HOVER, ({ id }) => {
         highlighter.addClass('highlight-wrap-hover', id);
     })
-    .on('selection:hover-out', ({id}) => {
-        // remove the hover effect when leaving
+    .on(Highlighter.event.HOVER_OUT, ({ id }) => {
         highlighter.removeClass('highlight-wrap-hover', id);
     })
-    .on('selection:create', ({sources}) => {
-        sources = sources.map(hs => ({hs}));
-        // save to backend
-        store.save(sources);
+    .on(Highlighter.event.CREATE, ({ sources }) => {
+        store.save(sources.map(hs => ({ hs })));
     });
 
-// retrieve data from store, and display highlights on the website
-store.getAll().forEach(
-    // hs is the same data saved by 'store.save(sources)'
-    ({hs}) => highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id)
-);
+// Restore persisted highlights.
+store.getAll().forEach(({ hs }) => {
+    highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id);
+});
 
-// auto-highlight selections
-highlighter.run()
+highlighter.run();
 ```
 
-Besides, there is an example in this repo (in `example` folder). To play with it, you just need ——
-
-Firstly enter the repository and run
+This repository also includes an interactive example in the `example` directory:
 
 ```bash
-npm i
-```
-
-Then start the example
-
-```
+npm ci
 npm start
 ```
 
-Finally visit http://127.0.0.1:8085/
+Then visit <http://127.0.0.1:8085/>.
 
 ---
 
-Another real product built with web-highlighter (for the highlighting area on the left):
+An example of a production product built with web-highlighter (the highlights appear on the left):
 
 ![product sample](https://user-images.githubusercontent.com/9822789/64678049-632e8500-d4ab-11e9-99d6-f960bc90d17b.gif)
 
 ## How it works
 
-It will read the selected range by [`Selection API`](https://caniuse.com/#search=selection%20api). Then the information of the range will be converted to a serializable data structure so that it can be store in backend. When users visit your page next time, these data will be returned and deserialized in your page. The data structure is tech stack independent. So you can use on any 'static' pages made with React / Vue / Angular / jQuery and others.
+web-highlighter reads the current selection through the [`Selection API`](https://caniuse.com/#search=selection%20api) and converts it into a serializable `HighlightSource`. You can persist this data in a backend and restore the highlight when the user returns to the page. The data format is independent of the technology stack, so it works with pages built using React, Vue, Angular, jQuery, and other libraries.
 
 ### Persistence constraints
 
-Persisted highlights record DOM paths and text offsets relative to `$root`; they are not screen coordinates. Restore highlights only after the content is fully rendered, and keep the same `$root`, document structure, text segmentation, and `wrapTag` configuration used when the highlight was created. If a framework re-renders the content or the document changes, persisted positions can no longer be guaranteed. Use the [`Serialize.Restore` hook](./docs/ADVANCE.md#serializerestore) to implement a restoration strategy for changing content.
+Persisted highlights record DOM paths and text offsets relative to `$root`; they are not screen coordinates. Restore highlights only after content is fully rendered, using a compatible `$root`, document structure, text segmentation, and `wrapTag` configuration. If a framework re-renders the content or the document changes, persisted positions may no longer be valid. Use the [`Serialize.Restore` hook](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md#serializerestore) to implement a restoration strategy for changing content.
 
 ### Cross-paragraph persistence and DOM restoration
 
-A cross-paragraph selection creates one continuous `HighlightSource`. If your application needs one record per paragraph, split the selection into one `Range` per paragraph before creating highlights, call `fromRange()` for each range, and persist the returned `HighlightSource` objects individually. Use the [`Serialize.RecordInfo` hook](./docs/ADVANCE.md#serializerecordinfo) to store paragraph-specific identifiers in `source.extra`.
+A cross-paragraph selection creates a single continuous `HighlightSource`. If your application requires one persisted record per paragraph, split the selection into a separate `Range` for each paragraph before creating highlights. Call `fromRange()` for each range and persist each returned `HighlightSource` separately. Use the [`Serialize.RecordInfo` hook](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md#serializerecordinfo) to store paragraph-specific identifiers in `source.extra`.
 
-```JavaScript
+```javascript
 highlighter.hooks.Serialize.RecordInfo.tap((start, end) => ({
     startParagraphId: start.$node.parentElement.closest('p').dataset.id,
     endParagraphId: end.$node.parentElement.closest('p').dataset.id,
@@ -167,7 +159,7 @@ const sources = paragraphRanges.map(range => highlighter.fromRange(range));
 
 ### Dynamic content and tables
 
-Dynamic DOM is supported after it becomes stable. For asynchronously loaded or frequently re-rendered content, initialize and restore highlights after rendering completes. The library does not support one continuous highlight across table cells, because a wrapper cannot safely span multiple `td` or `th` elements. Use the [`Render.SelectedNodes` hook](./docs/ADVANCE.md#renderselectednodes) to split those selections into supported fragments.
+Dynamic DOM is supported after it becomes stable. For asynchronously loaded or frequently re-rendered content, initialize and restore highlights after rendering completes. The library does not support one continuous highlight across table cells, because a wrapper cannot safely span multiple `td` or `th` elements. Use the [`Render.SelectedNodes` hook](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md#renderselectednodes) to split those selections into supported fragments.
 
 For more details, please read [this article (in Chinese)](https://www.alienzhou.com/2019/04/21/web-note-highlight-in-js/).
 
@@ -175,46 +167,44 @@ For more details, please read [this article (in Chinese)](https://www.alienzhou.
 
 ### 1. Options
 
-```JavaScript
-const highlighter = new Highlighter([opts])
+```javascript
+const highlighter = new Highlighter([opts]);
 ```
 
-Create a new `highlighter` instance.
+Creates a new `Highlighter` instance. `opts` is merged with the default options shown below.
 
-`opts` will be merged into the default options (shown bellow).
-
-```JavaScript
-{
-    $root: document.documentElement,
+```javascript
+const highlighter = new Highlighter({
+    $root: document,
     exceptSelectors: null,
     wrapTag: 'span',
     style: {
-        className: 'highlight-mengshou-wrap'
-    }
-}
+        className: 'highlight-mengshou-wrap',
+    },
+});
 ```
 
 All options:
 
 | name | type | description | required | default |
 |---|---|---|---|---|
-| $root | `Document | HTMLElement` | the container to enable highlighting | No | `document` |
-| exceptSelectors | `Array<string>` | if an element matches the selector, it won't be highlighted | No | `null` |
-| wrapTag | `string` | the html tag used to wrap highlighted texts | No | `span` |
-| verbose | `boolean` | dose it need to output (print) some warning and error message | No | `false` |
-| style | `Object` | control highlighted areas style | No | details below |
+| $root | `Document | HTMLElement` | root container in which highlighting is enabled | No | `document` |
+| exceptSelectors | `Array<string> | null` | selectors for elements whose text must not be highlighted | No | `null` |
+| wrapTag | `string` | HTML tag used to wrap highlighted text | No | `span` |
+| verbose | `boolean` | logs library warnings and errors to the console | No | `false` |
+| style | `Object` | controls the style of highlight wrappers | No | see below |
 
-`style` field options:
+`style` options:
 
 | name | type | description | required | default |
 |---|---|---|---|---|
-| className | `string` | the className for wrap element | No | `highlight-mengshou-wrap` |
+| className | `string | string[]` | CSS class name(s) applied to highlight wrappers | No | `highlight-mengshou-wrap` |
 
-`exceptSelectors` needs `null` or `Array<string>`. It supports id selectors, class selectors and tag selectors. For example, to skip h1 and `.title` elements:
+`exceptSelectors` accepts `null` or an array of ID, class, or tag selectors. For example, to skip `h1` and `.title` elements:
 
-```JavaScript
-var highlighter = new Highlighter({
-    exceptSelectors: ['h1', '.title']
+```javascript
+const highlighter = new Highlighter({
+    exceptSelectors: ['h1', '.title'],
 });
 ```
 
@@ -222,187 +212,163 @@ var highlighter = new Highlighter({
 
 #### `Highlighter.isHighlightSource(source)`
 
-If the `source` is a highlight source object, it will return `true`, vice verse.
+Returns `true` when `source` is a valid `HighlightSource`; otherwise returns `false`.
 
 #### `Highlighter.isHighlightWrapNode($node)`
 
-If the `$node` is a highlight wrapper dom node, it will return `true`, vice verse.
+Returns `true` when `$node` is a highlight wrapper element; otherwise returns `false`.
 
 ### 3. Instance Methods
 
 #### `highlighter.run()`
 
-Start auto-highlighting. When the user select a text segment, a highlighting will be added to the text automatically.
+Enables automatic highlighting. When a user selects text, the library creates a highlight automatically.
 
 #### `highlighter.stop()`
 
-It will stop the auto-highlighting.
+Disables automatic highlighting without removing existing highlights.
 
 #### `highlighter.dispose()`
 
-When you don't want the highlighter anymore, remember to call it first. It will remove some listeners and do some cleanup.
+Stops the highlighter, removes its event listeners, and clears internal resources. Call this when the instance is no longer needed.
 
 #### `highlighter.fromRange(range, [options])`
 
-You can pass a [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range) object to it and then it will be highlighted. You can use `window.getSelection().getRangeAt(0)` to get a range object or use `document.createRange()` to create a new range.
+Creates a highlight from a [`Range`](https://developer.mozilla.org/en-US/docs/Web/API/Range). Obtain one from `window.getSelection().getRangeAt(0)` or create one with `document.createRange()`.
 
-Use it as bellow:
-
-```JavaScript
+```javascript
 const selection = window.getSelection();
-if (!selection.isCollapsed) {
+if (selection && !selection.isCollapsed && selection.rangeCount > 0) {
     highlighter.fromRange(selection.getRangeAt(0));
 }
 ```
 
-Highlighting splits and replaces text nodes. A native selection is live, so the browser recomputes its boundaries while that happens and may truncate it when the selection spans several text nodes. `options.selection` decides what happens to the native selection:
+Highlighting splits and replaces text nodes. A native selection is live, so the browser recomputes its boundaries while that happens and may truncate it when the selection spans several text nodes. `options.selection` controls what happens to the native selection:
 
-| value | behaviour |
+| value | behavior |
 |---|---|
-| `keep` | the default, the native selection is left to the caller |
-| `clear` | the native selection is dropped before the DOM is modified |
-| `restore` | the created wrappers are selected after highlighting |
+| `keep` | Default. Leaves the native selection to the caller. |
+| `clear` | Clears the native selection before the DOM is modified. |
+| `restore` | Selects the created wrappers after highlighting. |
 
-```JavaScript
-// pass the current selection and keep the same text selected afterwards
+```javascript
+// Keep the selected text selected after creating its highlight.
 highlighter.fromRange(selection.getRangeAt(0), { selection: 'restore' });
 ```
 
 `highlighter.run()` always clears the native selection before modifying the DOM.
 
-#### `highlighter.fromStore(start, end, text, id)`
+#### `highlighter.fromStore(start, end, text, id, [extra])`
 
-Mostly, you use this api to highlight text by the persisted information stored from backend.
-
-These four values are from the `HighlightSource` object. `HighlightSource` object is a special object created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to find a data structure to represent a dom node. This structure is called `HighlightSource` in web-highlighter.
-
-Four attributes' meanings:
-
-- start `Object`:    meta info about the beginning element
-- end   `Object`:    meta info about then end element
-- text  `string`:    text content
-- id    `string`:    unique id
+Restores a highlight from persisted `HighlightSource` data. Pass the corresponding `startMeta`, `endMeta`, `text`, `id`, and optional `extra` fields from a previously saved source.
 
 #### `highlighter.remove(id)`
 
-Remove (clean) a highlighted area by it's unique id. The id will be generated by web-highlighter by default. You can also add a hook for your own rule. [Hooks doc here](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
+Removes the highlight with the given ID. IDs are generated by web-highlighter by default; use the [`Render.UUID` hook](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md#renderuuid) to provide your own IDs.
 
 #### `highlighter.removeAll()`
 
-Remove all highlighted areas belonging to the root.
+Removes every highlight under the configured root.
 
-#### `highlighter.addClass(className, id)`
+#### `highlighter.addClass(className, [id])`
 
-Add a className for highlighted areas (wrap elements) by unique id. You can change a highlighted area's style by using this api.
+Adds a CSS class to the wrappers for a highlight. Omit `id` to apply the class to every highlight.
 
+#### `highlighter.removeClass(className, [id])`
 
-#### `highlighter.removeClass(className, id)`
-
-Remove the className by unique id. It's `highlighter.addClass`'s inverse operation.
+Removes a CSS class from highlight wrappers. Omit `id` to remove it from every highlight.
 
 #### `highlighter.getDoms([id])`
 
-Get all the wrap nodes in a highlighted area. A highlighted area may contain many segments. It will return all the dom nodes wrapping these segments.
-
-If the `id` is not passed, it will return all the areas' wrap nodes.
-
+Returns the wrapper elements for a highlight, which may consist of several segments. Omit `id` to return wrapper elements for every highlight under the root.
 
 #### `highlighter.getSourceByDom(node)`
 
-Get the `HighlightSource` for one wrap node. It accepts the wrapper itself or a descendant node, and returns `null` outside a highlight. Unlike the original source emitted by the `CREATE` event, this source describes only that individual wrapped segment, so its `startMeta` and `endMeta` can be persisted separately after a cross-node or cross-paragraph selection.
+Returns the `HighlightSource` for one wrapper element. It accepts the wrapper itself or one of its descendants, and returns `null` outside a highlight. Unlike the source emitted by the `CREATE` event, this source describes only the individual wrapped segment, so `startMeta` and `endMeta` can be persisted separately for a cross-node or cross-paragraph selection.
 
 #### `highlighter.getIdByDom(node)`
 
-If you have a DOM node, it can return the unique highlight id for you. When passing a non-wrapper element, it will find the nearest ancestor wrapper node.
+Returns the highlight ID for a DOM node. For a non-wrapper element, it looks up the nearest ancestor wrapper. Returns an empty string if none exists.
 
 #### `highlighter.getExtraIdByDom(node)`
 
-If you have a DOM node, it can return the extra unique highlight id for you. When passing a non-wrapper element, it will find the nearest ancestor wrapper node.
+Returns the extra IDs associated with a DOM node's highlight. For a non-wrapper element, it looks up the nearest ancestor wrapper. Returns an empty array if none exists.
 
 #### `highlighter.setOption(opt)`
 
-You can use this API to change the highlighter's options. The parameters' structure is the same as the constructor's. You can pass partial options.
+Updates the highlighter configuration. `opt` has the same shape as the constructor options and may contain only the fields you want to change.
+
+#### `highlighter.getDiagnostics([options])`
+
+Returns a diagnostic snapshot for bug reports. See [Diagnostics for bug reports](#diagnostics-for-bug-reports) for the available evidence levels and privacy considerations.
 
 ### 4. Event Listener
 
-web-highlighter use listeners to handle the events.
+Use `.on()` to subscribe to highlighter events:
 
-e.g.
-
-```JavaScript
-var highlighter = new Highlighter();
-highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
+```javascript
+const highlighter = new Highlighter();
+highlighter.on(Highlighter.event.CREATE, (data, instance) => {
     // ...
 });
 ```
 
-The callback function will receive three parameters:
+Every callback receives `data` and the current `Highlighter` instance. `CLICK`, `HOVER`, and `HOVER_OUT` callbacks also receive the native browser event as a third argument.
 
-- data `any`: event data
-- inst `Highlighter`: current Highlighter instance
-- e `Event`: some event is triggered by the browser (such as click), web-highlighter will expose it
+`Highlighter.event` includes:
 
-`Highlighter.event` is `EventType` type. It contains：
+- `EventType.CLICK`: a highlight is clicked.
+- `EventType.HOVER`: the pointer enters a highlight.
+- `EventType.HOVER_OUT`: the pointer leaves a highlight.
+- `EventType.CREATE`: a highlight is created.
+- `EventType.REMOVE`: a highlight is removed.
 
-- `EventType.CLICK`: click the highlighted area
-- `EventType.HOVER`: mouse enter the highlighted area
-- `EventType.HOVER_OUT`: mouse leave the highlighted area
-- `EventType.CREATE`: a highlighted area is created
-- `EventType.REMOVE`: a highlighted area is removed
-
-
-Different event has different `data`. Attributes below:
+Event data:
 
 #### `EventType.CLICK`
 
-|name|description|type|
+| name | description | type |
 |---|---|---|
-|`id`|the highlight id|string|
+| `id` | Highlight ID | `string` |
 
 #### `EventType.HOVER`
 
-|name|description|type|
+| name | description | type |
 |---|---|---|
-|`id`|the highlight id|string|
+| `id` | Highlight ID | `string` |
 
 #### `EventType.HOVER_OUT`
 
-|name|description|type|
+| name | description | type |
 |---|---|---|
-|`id`|the highlight id|string|
+| `id` | Highlight ID | `string` |
 
 #### `EventType.CREATE`
 
-> no parameter `e`
-
-|name|description|type|
+| name | description | type |
 |---|---|---|
-|`sources`|a list of `HighlightSource` objects|Array<HighlightSource>|
-|`type`|the reason for creating|string|
+| `sources` | Created `HighlightSource` objects | `HighlightSource[]` |
+| `type` | Creation origin: `from-input` or `from-store` | `string` |
 
-> The callback receives a single object, so destructure it as `({sources, type}) => ...`. Each item of `sources` is a `HighlightSource`; pass an item (not the wrapper object) to `Highlighter.isHighlightSource()`.
+The callback receives `(data, instance)`; it does not receive a browser event. Destructure `data` as `({ sources, type })`. Each item in `sources` is a `HighlightSource`, so pass an item—not the enclosing event data object—to `Highlighter.isHighlightSource()`.
 
-`sources` is a list of `HighlightSource` objects. Such an object is created by web-highlighter when highlighted area created. For persistence in backend (database), it's necessary to use a data structure which can be serialized (`JSON.stringify()`) to represent a dom node in browsers. `HighlightSource` is the data structure designed for this.
-
-`type` explains why a highlighted area is be created. Now `type` has two possible values: `from-input` and `from-store`. `from-input` shows that a highlighted area is created because of user's selection. `from-store` means it from a storage.
+`HighlightSource` is a JSON-serializable representation of a highlight location. Store it in your backend to restore the highlight later.
 
 #### `EventType.REMOVE`
 
-> no parameter `e`
-
-|name|description|type|
+| name | description | type |
 |---|---|---|
-|`ids`|a list of the highlight id|Array<string>|
+| `ids` | Removed highlight IDs | `string[]` |
 
 ### 5. Hooks
 
-Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
+Hooks let you customize the highlighting lifecycle. See the [advanced guide](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md) for available hooks and examples.
 
 ### Diagnostics for bug reports
 
 `getDiagnostics()` supports three evidence levels. Start with the default safe snapshot:
 
-```JavaScript
+```javascript
 copy(JSON.stringify(highlighter.getDiagnostics(), null, 2));
 ```
 
@@ -410,13 +376,13 @@ It includes browser/runtime capabilities, library lifecycle state, current selec
 
 For a structure mismatch or cross-device restore issue, export a text-free DOM structure where every text node is replaced by its length:
 
-```JavaScript
-copy(JSON.stringify(highlighter.getDiagnostics({dom: 'redacted'}), null, 2));
+```javascript
+copy(JSON.stringify(highlighter.getDiagnostics({ dom: 'redacted' }), null, 2));
 ```
 
 For a trusted/private reproduction only, you can explicitly opt in to the root HTML and original persisted sources. Review and redact this output before sharing; the DOM output is capped at 20,000 characters by default and can be adjusted with `maxDomLength`.
 
-```JavaScript
+```javascript
 copy(JSON.stringify(highlighter.getDiagnostics({
     dom: 'full',
     sources: 'full',
@@ -438,18 +404,16 @@ Include the suitable snapshot with a minimal HTML/JavaScript reproduction and ex
 - Safari 5.1+
 - Opera 15+
 
-_**Mobile supports:**_ automatically detect whether mobile devices and use touch events when on mobile devices.
+_**Mobile support:**_ Mobile devices are detected automatically and use touch events instead of mouse events.
 
 ### Runtime environment
 
 web-highlighter requires browser DOM APIs, including `document`, `Range`, and `Selection`. It supports browsers and WebViews that provide these APIs. Native mini-program renderers and non-DOM native application views are not supported.
 
-## Advance
+## Advanced usage
 
-It provides some hooks for you so that the highlighting behaviour can be controlled better by your own.
-
-To learn more about the hooks, read [this doc](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
+For more ways to customize highlighting behavior, read the [advanced guide](https://github.com/alienzhou/web-highlighter/blob/master/docs/ADVANCE.md).
 
 ## License
 
-[MIT](./LICENCE)
+[MIT](./LICENSE)

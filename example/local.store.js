@@ -5,59 +5,66 @@ class LocalStore {
 
     storeToJson() {
         const store = localStorage.getItem(this.key);
-        let sources;
         try {
-            sources = JSON.parse(store) || [];
+            const sources = JSON.parse(store) || [];
+            return Array.isArray(sources) ? sources : [];
         }
         catch (e) {
-            sources = [];
+            return [];
         }
-        return sources;
     }
 
     jsonToStore(stores) {
-        localStorage.setItem(this.key, JSON.stringify(stores));
+        try {
+            localStorage.setItem(this.key, JSON.stringify(stores));
+            return true;
+        }
+        catch (e) {
+            console.warn('[highlighter] unable to save highlights to localStorage', e);
+            return false;
+        }
     }
 
     save(data) {
         const stores = this.storeToJson();
         const map = {};
-        stores.forEach((store, idx) => map[store.hs.id] = idx);
+        stores.forEach((store, idx) => {
+            if (store?.hs?.id) {
+                map[store.hs.id] = idx;
+            }
+        });
 
-        if (!Array.isArray(data)) {
-            data = [data];
-        }
+        const entries = (Array.isArray(data) ? data : [data])
+            .filter(store => store?.hs?.id);
 
-        data.forEach(store => {
-            // update
+        entries.forEach(store => {
             if (map[store.hs.id] !== undefined) {
                 stores[map[store.hs.id]] = store;
             }
-            // append
             else {
                 stores.push(store);
             }
-        })
-        this.jsonToStore(stores);
+        });
+
+        return this.jsonToStore(stores);
     }
 
     forceSave(store) {
         const stores = this.storeToJson();
         stores.push(store);
-        this.jsonToStore(stores);
+        return this.jsonToStore(stores);
     }
 
     remove(id) {
         const stores = this.storeToJson();
-        let index = null;
-        for (let i = 0; i < stores.length; i++) {
-            if (stores[i].hs.id === id) {
-                index = i;
-                break;
-            }
+        const index = stores.findIndex(store => store?.hs?.id === id);
+
+        if (index === -1) {
+            return false;
         }
+
         stores.splice(index, 1);
-        this.jsonToStore(stores);
+        return this.jsonToStore(stores);
     }
 
     getAll() {
@@ -65,7 +72,7 @@ class LocalStore {
     }
 
     removeAll() {
-        this.jsonToStore([]);
+        return this.jsonToStore([]);
     }
 }
 
