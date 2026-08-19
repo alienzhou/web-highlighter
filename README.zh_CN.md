@@ -394,6 +394,35 @@ highlighter.on(Highlighter.event.CREATE, function (data, inst, e) {
 
 钩子可以用来更好地控制整个高亮流程。通过它你几乎可以实现任何自定义的逻辑。详细内容请参考[下面部分](#更多使用方式)。
 
+### 6.6. 问题排查信息
+
+`getDiagnostics()` 支持三个证据等级。请优先使用默认的安全快照：
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics(), null, 2));
+```
+
+它会收集浏览器与运行能力、库生命周期状态、当前选区形态、配置、最近的库内部错误和持久化位置元数据，**不会包含页面 HTML 或被选中的文本内容**。
+
+如果需要排查 DOM 结构变化或跨设备恢复不一致，可以导出脱敏的 DOM 结构：每个文本节点都会被替换为其长度，不含原文。
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics({dom: 'redacted'}), null, 2));
+```
+
+仅在可信、私有的复现场景中，可以显式导出 `$root` HTML 与完整的持久化 source。分享前请自行检查和脱敏；DOM 默认最多导出 20,000 个字符，可通过 `maxDomLength` 调整：
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics({
+    dom: 'full',
+    sources: 'full',
+    maxDomLength: 50000,
+}), null, 2));
+```
+
+请结合合适等级的快照、最小 HTML/JavaScript 复现和准确操作步骤提交问题。对于 `fromStore()` 失败，请同时提供内容变更前后的相关 DOM 和原始 source。
+
+
 ##  7. <a name='-1'></a>兼容性
 
 > 依赖 [Selection API](https://caniuse.com/#search=selection%20api)。

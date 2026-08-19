@@ -1,8 +1,18 @@
-import type { DomNode, DomMeta, HookMap, HighlighterOptions, FromRangeOptions, SelectionMode } from '@src/types';
+import type {
+    DomNode,
+    DomMeta,
+    HookMap,
+    HighlighterOptions,
+    FromRangeOptions,
+    SelectionMode,
+    DiagnosticSnapshot,
+    DiagnosticOptions,
+} from '@src/types';
 import EventEmitter from '@src/util/event.emitter';
 import HighlightRange from '@src/model/range';
 import { getDomMeta } from '@src/model/range/dom';
 import HighlightSource from '@src/model/source';
+import version from '@src/version';
 import uuid from '@src/util/uuid';
 import Hook from '@src/util/hook';
 import getInteraction from '@src/util/interaction';
@@ -46,6 +56,16 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
 
     private _hoverId: string;
 
+    private _isRunning = false;
+
+    private _isDisposed = false;
+
+    private readonly _diagnosticErrors: Array<{
+        type: ERROR;
+        message?: string;
+        sourceId?: string;
+    }> = [];
+
     private options: HighlighterOptions;
 
     private readonly event = getInteraction();
@@ -71,9 +91,13 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     static isHighlightSource = (d: any) => !!d.__isHighlightSource;
 
-    run = () => addEventListener(this.options.$root, this.event.PointerEnd, this._handleSelection);
+    run = () => {
+        this._isRunning = true;
+        addEventListener(this.options.$root, this.event.PointerEnd, this._handleSelection);
+    };
 
     stop = () => {
+        this._isRunning = false;
         removeEventListener(this.options.$root, this.event.PointerEnd, this._handleSelection);
     };
 
@@ -112,11 +136,117 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         return new HighlightSource(start, end, $text.textContent, getHighlightId($wrap, this.options.$root));
     };
 
+    /**
+     * Capture a reproducible runtime snapshot for a bug report.
+     * Default mode is safe: it excludes root HTML and HighlightSource text.
+     * Pass `{dom: 'redacted'}` for a text-free structure, or explicitly opt in
+     * to `{dom: 'full', sources: 'full'}` only after reviewing sensitive data.
+     */
+    getDiagnostics = (options: DiagnosticOptions = {}): DiagnosticSnapshot => {
+        const { dom = 'none', sources: sourceMode = 'metadata', maxDomLength = 20000 } = options;
+        const selection = window.getSelection();
+        const range = selection?.rangeCount ? selection.getRangeAt(0) : null;
+        const $root = this.options.$root;
+        const rootElement = $root instanceof Document ? $root.documentElement : $root;
+        const sources = this.cache.getAll();
+        const snapshot: DiagnosticSnapshot = {
+            libraryVersion: version,
+            timestamp: new Date().toISOString(),
+            lifecycle: {
+                isRunning: this._isRunning,
+                isDisposed: this._isDisposed,
+            },
+            runtime: {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                viewport:
+                    typeof window.innerWidth === 'number'
+                        ? {
+                              width: window.innerWidth,
+                              height: window.innerHeight,
+                          }
+                        : undefined,
+                capabilities: {
+                    selection: typeof window.getSelection === 'function',
+                    range: typeof document.createRange === 'function',
+                    touch: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                },
+            },
+            configuration: {
+                root: {
+                    nodeName: rootElement?.nodeName || '#document',
+                    id: rootElement?.id || null,
+                    className: rootElement?.className || null,
+                },
+                wrapTag: this.options.wrapTag,
+                exceptSelectors: this.options.exceptSelectors,
+                verbose: this.options.verbose,
+            },
+            selection: {
+                rangeCount: selection?.rangeCount || 0,
+                isCollapsed: selection?.isCollapsed || false,
+                textLength: selection?.toString().length || 0,
+                ...(range
+                    ? {
+                          start: {
+                              nodeType: range.startContainer.nodeType,
+                              nodeName: range.startContainer.nodeName,
+                              offset: range.startOffset,
+                          },
+                          end: {
+                              nodeType: range.endContainer.nodeType,
+                              nodeName: range.endContainer.nodeName,
+                              offset: range.endOffset,
+                          },
+                      }
+                    : {}),
+            },
+            highlights: {
+                wrapperCount: this.getDoms().length,
+                sourceCount: sources.length,
+                sources: sources.map(source => ({
+                    id: source.id,
+                    textLength: source.text.length,
+                    startMeta: source.startMeta,
+                    endMeta: source.endMeta,
+                })),
+            },
+            errors: [...this._diagnosticErrors],
+        };
+
+        if (dom !== 'none' && rootElement) {
+            const originalHtml = rootElement.outerHTML;
+            const html = dom === 'redacted' ? this._redactHtml(rootElement) : originalHtml;
+
+            snapshot.document = {
+                mode: dom,
+                html: html.slice(0, Math.max(0, maxDomLength)),
+                originalLength: html.length,
+                truncated: html.length > maxDomLength,
+            };
+        }
+
+        if (sourceMode === 'full') {
+            snapshot.fullSources = sources.map(source => ({
+                startMeta: source.startMeta,
+                endMeta: source.endMeta,
+                text: source.text,
+                id: source.id,
+                ...(typeof source.extra === 'undefined' ? {} : { extra: source.extra }),
+            }));
+        }
+
+        return snapshot;
+    };
+
     dispose = () => {
+        this._isDisposed = true;
+        this.stop();
+
         const $root = this.options.$root;
 
         removeEventListener($root, this.event.PointerOver, this._handleHighlightHover);
-        removeEventListener($root, this.event.PointerEnd, this._handleSelection);
         removeEventListener($root, this.event.PointerTap, this._handleHighlightClick);
         this.removeAll();
     };
@@ -205,6 +335,23 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
 
         this.emit(EventType.REMOVE, { ids }, this);
     }
+
+    private readonly _redactHtml = (root: HTMLElement): string => {
+        const clone = root.cloneNode(true) as HTMLElement;
+        const textNodes: Text[] = [];
+        const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+        let current: Node;
+
+        while ((current = walker.nextNode())) {
+            textNodes.push(current as Text);
+        }
+
+        textNodes.forEach($text => {
+            $text.textContent = `[…](${($text.textContent || '').length})`;
+        });
+
+        return clone.outerHTML;
+    };
 
     private readonly _getHooks = (): HookMap => ({
         Render: {
@@ -305,10 +452,20 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         this.emit(EventType.HOVER, { id: this._hoverId }, this, e);
     };
 
-    private readonly _handleError = (type: { type: ERROR; detail?: HighlightSource; error?: any }) => {
+    private readonly _handleError = (data: { type: ERROR; detail?: HighlightSource; error?: any }) => {
+        this._diagnosticErrors.push({
+            type: data.type,
+            ...(data.error instanceof Error ? { message: data.error.message } : {}),
+            ...(data.detail?.id ? { sourceId: data.detail.id } : {}),
+        });
+
+        if (this._diagnosticErrors.length > 20) {
+            this._diagnosticErrors.shift();
+        }
+
         if (this.options.verbose) {
             // eslint-disable-next-line no-console
-            console.warn(type);
+            console.warn(data);
         }
     };
 

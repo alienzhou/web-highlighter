@@ -1,0 +1,96 @@
+---
+name: Bug report
+description: Report a reproducible problem with web-highlighter
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-reproduction
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting, please capture a diagnostic snapshot. The default snapshot contains browser/runtime/configuration metadata, selection shape, lifecycle state, and recent library errors, but deliberately excludes page HTML and selected text:
+
+        ```js
+        copy(JSON.stringify(highlighter.getDiagnostics(), null, 2))
+        ```
+
+        For DOM structure mismatches, use the text-free structure snapshot:
+
+        ```js
+        copy(JSON.stringify(highlighter.getDiagnostics({dom: 'redacted'}), null, 2))
+        ```
+
+        Only use `{dom: 'full', sources: 'full'}` after reviewing its private content.
+  - type: input
+    id: version
+    attributes:
+      label: web-highlighter version / commit
+      placeholder: "e.g. 0.7.4 or 0ab66f6"
+    validations:
+      required: true
+  - type: dropdown
+    id: operation
+    attributes:
+      label: Affected operation
+      options:
+        - Selecting text automatically (.run())
+        - Creating from a Range (.fromRange())
+        - Restoring persisted data (.fromStore())
+        - Removing a highlight
+        - Highlight interaction (click / hover)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and complete error / console output
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: "Please provide a runnable repository / CodePen / StackBlitz, or the smallest HTML + initialization code and exact selection steps."
+      placeholder: |
+        HTML:
+        ```html
+        <main id="content">...</main>
+        ```
+
+        JavaScript:
+        ```js
+        const highlighter = new Highlighter({ $root: document.querySelector('#content'), verbose: true });
+        highlighter.run();
+        ```
+
+        Steps:
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic snapshot
+      description: "Paste getDiagnostics() output. The default is safe; use {dom: 'redacted'} for structure issues and review any full output before sharing."
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: persistence
+    attributes:
+      label: Persisted HighlightSource and before/after DOM (required for fromStore issues)
+      description: "For restore failures, include a redacted source object plus the relevant DOM before saving and before restoration."
+  - type: input
+    id: recording
+    attributes:
+      label: Screen recording / screenshot (especially for mobile)
+      description: "Drag and drop an attachment or paste a link."

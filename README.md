@@ -398,6 +398,35 @@ Different event has different `data`. Attributes below:
 
 Hooks let you control the highlighting flow powerfully. You can almost customize any logic by hooks. See more in ['Advance' part](#Advance).
 
+### Diagnostics for bug reports
+
+`getDiagnostics()` supports three evidence levels. Start with the default safe snapshot:
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics(), null, 2));
+```
+
+It includes browser/runtime capabilities, library lifecycle state, current selection shape, configuration, recent library errors, and persisted-position metadata. It intentionally **does not include page HTML or selected text**.
+
+For a structure mismatch or cross-device restore issue, export a text-free DOM structure where every text node is replaced by its length:
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics({dom: 'redacted'}), null, 2));
+```
+
+For a trusted/private reproduction only, you can explicitly opt in to the root HTML and original persisted sources. Review and redact this output before sharing; the DOM output is capped at 20,000 characters by default and can be adjusted with `maxDomLength`.
+
+```JavaScript
+copy(JSON.stringify(highlighter.getDiagnostics({
+    dom: 'full',
+    sources: 'full',
+    maxDomLength: 50000,
+}), null, 2));
+```
+
+Include the suitable snapshot with a minimal HTML/JavaScript reproduction and exact interaction steps. For `fromStore()` failures, include the original source and the relevant DOM before and after content changes.
+
+
 ## Compatibility
 
 > It depends on [Selection API](https://caniuse.com/#search=selection%20api).
