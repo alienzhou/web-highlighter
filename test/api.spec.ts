@@ -295,6 +295,20 @@ describe('Highlighter API', function () {
             highlighter.remove('');
             expect(html).to.be.equal(document.body.innerHTML);
         });
+
+        it('should hand over to an overlapping highlight whose id has selector metacharacters', () => {
+            const [s0, s1] = sources;
+            const trickyId = 'a"b],.x[data-y="';
+
+            // the later highlight becomes the wrapper's main id, the earlier one moves to the extra ids
+            highlighter.removeAll();
+            highlighter.fromStore(s0.startMeta, s0.endMeta, s0.text, trickyId);
+            highlighter.fromStore(s1.startMeta, s1.endMeta, s1.text, s1.id);
+
+            expect(() => highlighter.remove(s1.id)).not.to.throw();
+            expect(highlighter.getDoms(s1.id)).to.have.length(0);
+            expect(highlighter.getDoms(trickyId).length).to.be.greaterThan(0);
+        });
     });
 
     describe('#removeAll', () => {

@@ -109,7 +109,6 @@ export const getHighlightsByRoot = ($roots: RootElement | RootElement[], wrapTag
  */
 export const getHighlightById = ($root: RootElement, id: string, wrapTag: string): HTMLElement[] => {
     const $highlights: HTMLElement[] = [];
-    const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
     const $list = $root.querySelectorAll<HTMLElement>(`${wrapTag}[data-${DATASET_IDENTIFIER}]`);
 
     for (const $l of $list) {
@@ -123,7 +122,7 @@ export const getHighlightById = ($root: RootElement, id: string, wrapTag: string
 
         const extraId = $n.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
 
-        if (reg.test(extraId)) {
+        if (extraId && extraId.split(ID_DIVISION).indexOf(id) !== -1) {
             $highlights.push($n);
             continue;
         }

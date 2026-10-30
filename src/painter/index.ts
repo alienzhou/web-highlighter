@@ -102,9 +102,6 @@ export default class Painter {
     // id: target id - highlight with this id should be clean
     // if there is no highlight for this id, it will return false, vice versa
     removeHighlight(id: string): boolean {
-        // whether extra ids contains the target id
-        const reg = new RegExp(`(${id}\\${ID_DIVISION}|\\${ID_DIVISION}?${id}$)`);
-
         const hooks = this.hooks;
         const wrapTag = this.options.wrapTag;
         const $spans = document.querySelectorAll<HTMLElement>(`${wrapTag}[data-${DATASET_IDENTIFIER}]`);
@@ -129,7 +126,7 @@ export default class Painter {
                 $idToUpdate.push($s);
             }
             // main id isn't the target id but extra ids contains it -> just remove it from extra id
-            else if (spanId !== id && reg.test(spanExtraIds)) {
+            else if (spanId !== id && spanExtraIds && spanExtraIds.split(ID_DIVISION).indexOf(id) !== -1) {
                 $extraToUpdate.push($s);
             }
         }
@@ -156,9 +153,8 @@ export default class Painter {
             const newId = ids.shift();
 
             // find overlapped wrapper associated with "extra id"
-            const $overlapSpan = document.querySelector<HTMLElement>(
-                `${wrapTag}[data-${DATASET_IDENTIFIER}="${newId}"]`,
-            );
+            // compare literally: the id is data and must never be parsed as part of a selector
+            const $overlapSpan = [...$spans].find($o => $o.dataset[CAMEL_DATASET_IDENTIFIER] === newId);
 
             if ($overlapSpan) {
                 // empty the current class list
@@ -174,9 +170,9 @@ export default class Painter {
         });
 
         $extraToUpdate.forEach($s => {
-            const extraIds = $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA];
+            const extraIds = $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA].split(ID_DIVISION);
 
-            $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = extraIds.replace(reg, '');
+            $s.dataset[CAMEL_DATASET_IDENTIFIER_EXTRA] = extraIds.filter(i => i !== id).join(ID_DIVISION);
             hooks.Remove.UpdateNodes.call(id, $s, 'extra-update');
         });
 
