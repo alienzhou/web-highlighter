@@ -248,6 +248,7 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
 
         removeEventListener($root, this.event.PointerOver, this._handleHighlightHover);
         removeEventListener($root, this.event.PointerTap, this._handleHighlightClick);
+        eventEmitter.off(INTERNAL_ERROR_EVENT, this._handleError);
         this.removeAll();
     };
 
