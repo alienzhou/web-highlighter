@@ -2,7 +2,6 @@
  * generate UUID
  */
 
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
 export default function createUUID(a?): string {
     return a
         ? (a ^ ((Math.random() * 16) >> (a / 4))).toString(16)

@@ -7,5 +7,4 @@
 _config.yml
 .gitattributes
 package-lock.json
-.nyc_output
 coverage

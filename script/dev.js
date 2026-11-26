@@ -1,4 +1,3 @@
-const opn = require('better-opn');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
@@ -9,10 +8,9 @@ const config = require('../config/webpack.config.dev.js');
 const serverConfig = require('../config/server.config.js');
 
 const compiler = webpack(config);
-const {port, host} = serverConfig;
 
-const devServer = new WebpackDevServer(serverConfig, compiler);
+// `open: true` lets webpack-dev-server launch the browser once the server is listening.
+const devServer = new WebpackDevServer({ ...serverConfig, open: true }, compiler);
 devServer.start().then(() => {
     console.log('Starting the development server...\n');
-    opn(`http://${host}:${port}`);
 });

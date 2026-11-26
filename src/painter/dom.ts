@@ -100,7 +100,7 @@ export const getSelectedNodes = (
     const isExcepted = ($e: HTMLElement) => exceptSelectors?.some(s => isMatchSelector($e, s));
 
     let withinSelectedRange = false;
-    let curNode: Node = null;
+    let curNode: Node;
 
     while ((curNode = nodeStack.pop())) {
         // do not traverse the excepted node

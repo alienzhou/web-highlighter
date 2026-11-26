@@ -5,5 +5,4 @@ example/index.html
 dist
 docs/TODO.md
 typings
-.nyc_output
 coverage

@@ -1,11 +1,10 @@
 const MarkdownIt = require('markdown-it');
+const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const { styleText } = require('util');
 const paths = require('../config/paths');
-const fs = require('fs-extra');
-const g = chalk.green;
 
-const log = (...args) => console.log.apply(console, [g('[convert]'), ...args.map(s => g(s))]);
+const log = (...args) => console.log(...['[convert]', ...args].map(s => styleText('green', String(s))));
 
 module.exports = function () {
     const mdPath = path.resolve(paths.basePath, 'README.md');
@@ -18,7 +17,9 @@ module.exports = function () {
     // instead of escaping them into visible source text in the example page.
     const html = new MarkdownIt({ html: true }).render(md);
     const tpl = fs.readFileSync(paths.exampleTplPath, 'utf-8');
-    fs.outputFileSync(paths.exampleMdPath, tpl.replace(/{{\$markdown}}/, html), 'utf-8');
+
+    fs.mkdirSync(path.dirname(paths.exampleMdPath), { recursive: true });
+    fs.writeFileSync(paths.exampleMdPath, tpl.replace(/{{\$markdown}}/, html), 'utf-8');
 
     log(mdPath, '-', 'convert md to html success!');
 }

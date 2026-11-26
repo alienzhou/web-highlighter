@@ -25,7 +25,7 @@ const countGlobalNodeIndex = ($node: Node, $root: Document | HTMLElement): numbe
 const getTextPreOffset = ($root: Node, $text: Node): number => {
     const nodeStack: Node[] = [$root];
 
-    let $curNode: Node = null;
+    let $curNode: Node;
     let offset = 0;
 
     while (($curNode = nodeStack.pop())) {
