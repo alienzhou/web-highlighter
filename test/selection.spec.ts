@@ -1,10 +1,8 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import jsdomGlobal from 'jsdom-global';
 import Highlighter from '../src/index';
 
-describe('Native selection lifecycle', function () {
-    this.timeout(50000);
-
+describe('Native selection lifecycle', () => {
     let cleanup: () => void;
 
     beforeEach(() => {

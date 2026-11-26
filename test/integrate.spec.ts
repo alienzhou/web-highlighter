@@ -1,13 +1,11 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import jsdomGlobal from 'jsdom-global';
 import Highlighter from '../src/index';
 import HighlightSource from '../src/model/source';
 
-describe('Integration Usage', function () {
-    this.timeout(50000);
-
+describe('Integration Usage', () => {
     let cleanup;
 
     beforeEach(() => {

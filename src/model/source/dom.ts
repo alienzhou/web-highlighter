@@ -14,7 +14,7 @@ import { ROOT_IDX } from '@src/util/const';
 export const getTextChildByOffset = ($parent: Node, offset: number): DomNode => {
     const nodeStack: Node[] = [$parent];
 
-    let $curNode: Node = null;
+    let $curNode: Node;
     let curOffset = 0;
     let startOffset = 0;
 

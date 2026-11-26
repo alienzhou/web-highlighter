@@ -88,7 +88,6 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         eventEmitter.on(INTERNAL_ERROR_EVENT, this._handleError);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     static isHighlightSource = (d: any) => !!d.__isHighlightSource;
 
     run = () => {
@@ -464,7 +463,6 @@ export default class Highlighter extends EventEmitter<EventHandlerMap> {
         }
 
         if (this.options.verbose) {
-            // eslint-disable-next-line no-console
             console.warn(data);
         }
     };

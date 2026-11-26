@@ -142,7 +142,6 @@ export enum ERROR {
     SOURCE_TYPE_ERROR = "[SOURCE] Object isn't a highlight source instance.",
     HIGHLIGHT_RANGE_FROZEN = '[HIGHLIGHT_RANGE] A highlight range must be frozen before render.',
     HIGHLIGHT_SOURCE_RECREATE = '[HIGHLIGHT_SOURCE] Recreate highlights from sources error.',
-    // eslint-disable-next-line max-len
     HIGHLIGHT_SOURCE_NONE_RENDER = "[HIGHLIGHT_SOURCE] This highlight source isn't rendered. May be the exception skips it or the dom structure has changed.",
 }
 

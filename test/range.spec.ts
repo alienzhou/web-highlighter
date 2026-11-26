@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import jsdomGlobal from 'jsdom-global';
 import Highlighter from '../src/index';
 import { DATASET_IDENTIFIER, getDefaultOptions } from '../src/util/const';

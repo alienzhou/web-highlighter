@@ -1,11 +1,9 @@
-import { expect } from 'chai';
+import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { JSDOM } from 'jsdom';
 
-describe('Distribution bundle', function () {
-    this.timeout(50000);
-
+describe('Distribution bundle', () => {
     it('stops before an excluded end node', () => {
         const bundle = readFileSync(resolve(__dirname, '..', 'dist', 'web-highlighter.min.js'), 'utf-8');
         const dom = new JSDOM(

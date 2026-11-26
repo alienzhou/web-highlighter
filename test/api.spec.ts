@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import jsdomGlobal from 'jsdom-global';
@@ -9,9 +9,7 @@ import sources from './fixtures/source.json';
 import brokenSources from './fixtures/broken.json';
 import getInteraction from '../src/util/interaction';
 
-describe('Highlighter API', function () {
-    this.timeout(50000);
-
+describe('Highlighter API', () => {
     let highlighter: Highlighter;
     let cleanup;
     let wrapSelector: string;

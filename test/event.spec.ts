@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import jsdomGlobal from 'jsdom-global';
@@ -9,18 +9,17 @@ import HighlightSource from '../src/model/source/index';
 import sources from './fixtures/source.json';
 import sinon from 'sinon';
 
-describe('Event Emit', function () {
-    this.timeout(50000);
-
+describe('Event Emit', () => {
     let highlighter: Highlighter;
     let cleanup;
 
     beforeEach(() => {
         const html = readFileSync(resolve(__dirname, 'fixtures', 'index.html'), 'utf-8');
+
         cleanup = jsdomGlobal('', {
             resources: new jsdom.ResourceLoader({
-                userAgent: 'Mellblomenator/9000'
-            })
+                userAgent: 'Mellblomenator/9000',
+            }),
         });
         document.body.innerHTML = html;
         highlighter = new Highlighter();
@@ -37,6 +36,7 @@ describe('Event Emit', function () {
         it('should be emitted by calling .fromRange', () => {
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[0];
+
             range.setStart($p.childNodes[0], 0);
             range.setEnd($p.childNodes[0], 17);
             highlighter.fromRange(range);
@@ -47,10 +47,14 @@ describe('Event Emit', function () {
         it('should get correct arguments by calling .fromRange', () => {
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[0];
+
             range.setStart($p.childNodes[0], 0);
             range.setEnd($p.childNodes[0], 17);
+
             const content = range.toString();
+
             highlighter.fromRange(range);
+
             const sources: HighlightSource[] = listener.args[0][0].sources;
 
             expect(listener.args[0][0].type).to.be.equal(CreateFrom.INPUT);
@@ -60,6 +64,7 @@ describe('Event Emit', function () {
 
         it('should be emitted by calling .fromStore', () => {
             const s = sources[0];
+
             highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id);
 
             expect(listener.calledOnce).to.be.true;
@@ -67,7 +72,9 @@ describe('Event Emit', function () {
 
         it('should get correct arguments by calling .fromStore', () => {
             const s = sources[0];
+
             highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id);
+
             const sourcesRes: HighlightSource[] = listener.args[0][0].sources;
 
             expect(listener.args[0][0].type).to.be.equal(CreateFrom.STORE);
@@ -80,6 +87,7 @@ describe('Event Emit', function () {
 
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[0];
+
             range.setStart($p.childNodes[0], 0);
             range.setEnd($p.childNodes[0], 17);
             window.getSelection().addRange(range);
@@ -87,8 +95,9 @@ describe('Event Emit', function () {
             const e = new MouseEvent('mouseup', {
                 view: window,
                 bubbles: true,
-                cancelable: true
+                cancelable: true,
             });
+
             document.body.dispatchEvent(e);
 
             expect(listener.calledOnce).to.be.true;
@@ -99,6 +108,7 @@ describe('Event Emit', function () {
 
             const range = document.createRange();
             const $p = document.querySelectorAll('p')[0];
+
             range.setStart($p.childNodes[0], 0);
             range.setEnd($p.childNodes[0], 17);
             window.getSelection().addRange(range);
@@ -107,11 +117,13 @@ describe('Event Emit', function () {
             const e = new MouseEvent('mouseup', {
                 view: window,
                 bubbles: true,
-                cancelable: true
+                cancelable: true,
             });
+
             document.body.dispatchEvent(e);
 
             const sources: HighlightSource[] = listener.args[0][0].sources;
+
             expect(listener.args[0][0].type).to.be.equal(CreateFrom.INPUT);
             expect(sources[0].text).to.be.equal(content);
             expect(Highlighter.isHighlightSource(sources[0])).to.be.true;
@@ -121,7 +133,7 @@ describe('Event Emit', function () {
     describe('#REMOVE event', () => {
         let listener: sinon.SinonSpy<any[], any[]>;
 
-        beforeEach(() => {      
+        beforeEach(() => {
             highlighter.removeAll();
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
             listener = sinon.spy();
@@ -135,7 +147,9 @@ describe('Event Emit', function () {
 
         it('should get correct ids as arguments by calling .removeAll', () => {
             highlighter.removeAll();
+
             const ids: string[] = listener.args[0][0].ids;
+
             expect(ids).lengthOf(sources.length);
             expect(ids.every(id => sources.map(o => o.id).indexOf(id) > -1)).to.be.true;
             expect(listener.calledOnce).to.be.true;
@@ -147,9 +161,12 @@ describe('Event Emit', function () {
         });
 
         it('should get correct ids as arguments by calling .remove', () => {
-            const id = sources[0].id
+            const id = sources[0].id;
+
             highlighter.remove(id);
+
             const ids: string[] = listener.args[0][0].ids;
+
             expect(ids).lengthOf(1);
             expect(ids[0]).to.be.equal(id);
         });
@@ -164,7 +181,7 @@ describe('Event Emit', function () {
         let listener: sinon.SinonSpy<any[], any[]>;
         let event: MouseEvent;
 
-        beforeEach(() => {      
+        beforeEach(() => {
             highlighter.removeAll();
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
             listener = sinon.spy();
@@ -172,7 +189,7 @@ describe('Event Emit', function () {
             event = new MouseEvent('click', {
                 view: window,
                 bubbles: true,
-                cancelable: true
+                cancelable: true,
             });
         });
 
@@ -183,7 +200,9 @@ describe('Event Emit', function () {
 
         it('should get correct id as arguments', () => {
             const id = sources[0].id;
+
             highlighter.getDoms(id)[0].dispatchEvent(event);
+
             const args = listener.args[0][0];
 
             expect(args.id).to.be.equal(id);
@@ -199,7 +218,7 @@ describe('Event Emit', function () {
         let listener: sinon.SinonSpy<any[], any[]>;
         let event: MouseEvent;
 
-        beforeEach(() => {      
+        beforeEach(() => {
             highlighter.removeAll();
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
             listener = sinon.spy();
@@ -207,7 +226,7 @@ describe('Event Emit', function () {
             event = new MouseEvent('mouseover', {
                 view: window,
                 bubbles: true,
-                cancelable: true
+                cancelable: true,
             });
         });
 
@@ -218,7 +237,9 @@ describe('Event Emit', function () {
 
         it('should get correct id as arguments', () => {
             const id = sources[0].id;
+
             highlighter.getDoms(id)[0].dispatchEvent(event);
+
             const args = listener.args[0][0];
 
             expect(args.id).to.be.equal(id);
@@ -240,7 +261,7 @@ describe('Event Emit', function () {
         let listener: sinon.SinonSpy<any[], any[]>;
         let event: MouseEvent;
 
-        beforeEach(() => {      
+        beforeEach(() => {
             highlighter.removeAll();
             sources.forEach(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id));
             listener = sinon.spy();
@@ -248,7 +269,7 @@ describe('Event Emit', function () {
             event = new MouseEvent('mouseover', {
                 view: window,
                 bubbles: true,
-                cancelable: true
+                cancelable: true,
             });
         });
 
@@ -260,6 +281,7 @@ describe('Event Emit', function () {
 
         it('should get correct id as arguments', () => {
             const id = sources[0].id;
+
             highlighter.getDoms(sources[0].id)[0].dispatchEvent(event);
             highlighter.getDoms(sources[1].id)[0].dispatchEvent(event);
 
